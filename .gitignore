@@ -1,0 +1,22 @@
+## .NET Core / Visual Studio
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+appsettings.Development.json
+!appsettings.json
+
+## OS generated
+.DS_Store
+Thumbs.db
+desktop.ini
+
+## JetBrains Rider
+.idea/
+*.sln.iml
