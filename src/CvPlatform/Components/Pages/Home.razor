@@ -1,24 +1,25 @@
 @page "/"
+@inject IStringLocalizer<SharedResource> Loc
 
-<PageTitle>Open Opportunities | CvPlatform</PageTitle>
+<PageTitle>@Loc["Page_Title"] | @Loc["App_Title"]</PageTitle>
 
 <!-- Introduction: Concise, Focused, Human-Designed -->
 <div class="mb-4">
     <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
         <div>
-            <h1 class="mb-1 fw-bold">Build once. Customize for every opportunity.</h1>
+            <h1 class="mb-1 fw-bold">@Loc["Hero_Title"]</h1>
             <p class="text-muted mb-0" style="font-size: 0.95rem;">
-                Maintain a master candidate profile with reusable attributes and generate tailored, position-aligned CVs with one click.
+                @Loc["Hero_Subtitle"]
             </p>
         </div>
         <div class="d-flex align-items-center gap-2">
             <a href="candidate/profile" class="btn btn-outline-custom btn-sm">
                 <i class="bi bi-person-lines-fill"></i>
-                <span>Manage Profile</span>
+                <span>@Loc["Btn_ManageProfile"]</span>
             </a>
             <a href="recruiter/positions" class="btn btn-primary btn-sm">
                 <i class="bi bi-plus-lg"></i>
-                <span>Post Opportunity</span>
+                <span>@Loc["Btn_PostOpportunity"]</span>
             </a>
         </div>
     </div>
@@ -28,7 +29,7 @@
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
         <div class="app-surface p-3">
-            <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">Active Positions</div>
+            <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">@Loc["Metric_ActivePositions"]</div>
             <div class="d-flex align-items-baseline justify-content-between">
                 <span class="fs-4 fw-bold">24</span>
                 <span class="badge bg-primary-subtle text-primary" style="font-size: 0.7rem;">+3 today</span>
@@ -37,7 +38,7 @@
     </div>
     <div class="col-6 col-md-3">
         <div class="app-surface p-3">
-            <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">Registered Candidates</div>
+            <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">@Loc["Metric_RegisteredCandidates"]</div>
             <div class="d-flex align-items-baseline justify-content-between">
                 <span class="fs-4 fw-bold">148</span>
                 <span class="badge bg-success-subtle text-success" style="font-size: 0.7rem;">Active</span>
@@ -46,7 +47,7 @@
     </div>
     <div class="col-6 col-md-3">
         <div class="app-surface p-3">
-            <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">Partner Recruiters</div>
+            <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">@Loc["Metric_PartnerRecruiters"]</div>
             <div class="d-flex align-items-baseline justify-content-between">
                 <span class="fs-4 fw-bold">12</span>
                 <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.7rem;">Verified</span>
@@ -55,7 +56,7 @@
     </div>
     <div class="col-6 col-md-3">
         <div class="app-surface p-3">
-            <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">CVs Generated</div>
+            <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">@Loc["Metric_CvsGenerated"]</div>
             <div class="d-flex align-items-baseline justify-content-between">
                 <span class="fs-4 fw-bold">310</span>
                 <span class="badge bg-info-subtle text-info" style="font-size: 0.7rem;">Automated</span>
@@ -71,32 +72,32 @@
         <div class="table-toolbar-left">
             <div class="app-search-input">
                 <i class="bi bi-search"></i>
-                <input type="text" class="form-control form-control-sm" placeholder="Filter positions..." @bind="searchQuery" @bind:event="oninput" />
+                <input type="text" class="form-control form-control-sm" placeholder="@Loc["Search_Positions_Placeholder"]" @bind="searchQuery" @bind:event="oninput" />
             </div>
-            <select class="form-select form-select-sm" style="max-width: 160px;" @bind="selectedType">
-                <option value="">All Employment</option>
-                <option value="Full-time">Full-time</option>
-                <option value="Contract">Contract</option>
-                <option value="Remote">Remote</option>
+            <select class="form-select form-select-sm" style="max-width: 170px;" @bind="selectedType">
+                <option value="">@Loc["Filter_AllEmployment"]</option>
+                <option value="Full-time">@Loc["Employment_FullTime"]</option>
+                <option value="Contract">@Loc["Employment_Contract"]</option>
+                <option value="Remote">@Loc["Employment_Remote"]</option>
             </select>
         </div>
 
         <div class="table-toolbar-right">
             @if (selectedPositionId.HasValue)
             {
-                <span class="text-muted small me-2">1 position selected</span>
+                <span class="text-muted small me-2">@Loc["Position_Selected_Hint"]</span>
                 <button class="btn btn-outline-custom btn-sm" @onclick="ClearSelection">
                     <i class="bi bi-x"></i>
-                    <span>Deselect</span>
+                    <span>@Loc["Btn_Deselect"]</span>
                 </button>
                 <button class="btn btn-primary btn-sm" @onclick="ApplyForSelected">
                     <i class="bi bi-lightning-charge-fill"></i>
-                    <span>Generate CV</span>
+                    <span>@Loc["Btn_GenerateCv"]</span>
                 </button>
             }
             else
             {
-                <span class="text-muted small"><i class="bi bi-info-circle me-1"></i>Select a row to activate actions</span>
+                <span class="text-muted small"><i class="bi bi-info-circle me-1"></i>@Loc["Select_Row_Hint"]</span>
             }
         </div>
     </div>
@@ -107,13 +108,13 @@
             <thead>
                 <tr>
                     <th style="width: 40px;" class="text-center">#</th>
-                    <th>Position Title</th>
-                    <th>Company</th>
-                    <th>Employment Type</th>
-                    <th>Location</th>
-                    <th>Key Attributes / Tags</th>
-                    <th>Posted</th>
-                    <th class="text-end">Applications</th>
+                    <th>@Loc["Th_PositionTitle"]</th>
+                    <th>@Loc["Th_Company"]</th>
+                    <th>@Loc["Th_EmploymentType"]</th>
+                    <th>@Loc["Th_Location"]</th>
+                    <th>@Loc["Th_Attributes"]</th>
+                    <th>@Loc["Th_Posted"]</th>
+                    <th class="text-end">@Loc["Th_Applications"]</th>
                 </tr>
             </thead>
             <tbody>
@@ -167,8 +168,8 @@
 <!-- Subtle Tag Cloud (PRD Section 9) -->
 <div class="app-surface p-3">
     <div class="d-flex align-items-center justify-content-between mb-2">
-        <h6 class="mb-0 fw-semibold text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Popular Opportunity Tags</h6>
-        <span class="text-muted small">Click to filter</span>
+        <h6 class="mb-0 fw-semibold text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">@Loc["Popular_Tags"]</h6>
+        <span class="text-muted small">@Loc["Click_To_Filter"]</span>
     </div>
     <div class="d-flex flex-wrap gap-2">
         @foreach (var tag in popularTags)
@@ -181,7 +182,7 @@
         @if (!string.IsNullOrEmpty(searchQuery))
         {
             <button class="btn btn-ghost btn-sm text-danger" @onclick="() => searchQuery = string.Empty">
-                <i class="bi bi-x-circle me-1"></i>Reset Filter
+                <i class="bi bi-x-circle me-1"></i>@Loc["Btn_ResetFilter"]
             </button>
         }
     </div>
@@ -234,7 +235,7 @@
     {
         if (selectedPositionId.HasValue)
         {
-            // Flow will link to Phase 7 CV Generation engine
+            // Flow links to Phase 7 CV Generation engine
         }
     }
 }

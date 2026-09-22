@@ -1,11 +1,13 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.Extensions.Localization;
 using CvPlatform.Components;
+using CvPlatform.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure ASP.NET Core Localization
-builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+builder.Services.AddLocalization();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
@@ -34,6 +36,7 @@ app.UseAntiforgery();
 
 app.MapStaticAssets();
 
+
 // Language switching endpoint preserving return URL and setting persistent culture cookie
 app.MapGet("/api/culture/set", (string culture, string? redirectUri, HttpContext httpContext) =>
 {
@@ -42,7 +45,13 @@ app.MapGet("/api/culture/set", (string culture, string? redirectUri, HttpContext
         httpContext.Response.Cookies.Append(
             CookieRequestCultureProvider.DefaultCookieName,
             CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)),
-            new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1), IsEssential = true, SameSite = SameSiteMode.Lax }
+            new CookieOptions 
+            { 
+                Path = "/",
+                Expires = DateTimeOffset.UtcNow.AddYears(1), 
+                IsEssential = true, 
+                SameSite = SameSiteMode.Lax 
+            }
         );
     }
 

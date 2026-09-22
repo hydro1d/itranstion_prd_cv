@@ -1,66 +1,68 @@
+@inject IStringLocalizer<SharedResource> Loc
+
 <div class="app-sidebar-nav">
     <!-- Public Section -->
-    <div class="nav-section-title">Public Portal</div>
+    <div class="nav-section-title">@Loc["Nav_PublicPortal"]</div>
     <NavLink class="app-nav-link" href="" Match="NavLinkMatch.All">
         <i class="bi bi-briefcase"></i>
-        <span>Positions</span>
+        <span>@Loc["Nav_Positions"]</span>
     </NavLink>
     <NavLink class="app-nav-link" href="search">
         <i class="bi bi-search"></i>
-        <span>Explore & Search</span>
+        <span>@Loc["Nav_Search"]</span>
     </NavLink>
     <NavLink class="app-nav-link" href="statistics">
         <i class="bi bi-bar-chart"></i>
-        <span>Platform Stats</span>
+        <span>@Loc["Nav_Statistics"]</span>
     </NavLink>
 
     <!-- Candidate Portal -->
-    <div class="nav-section-title">Candidate Space</div>
+    <div class="nav-section-title">@Loc["Nav_CandidateSpace"]</div>
     <NavLink class="app-nav-link" href="candidate/dashboard">
         <i class="bi bi-grid-1x2"></i>
-        <span>My Dashboard</span>
+        <span>@Loc["Nav_CandidateDashboard"]</span>
     </NavLink>
     <NavLink class="app-nav-link" href="candidate/profile">
         <i class="bi bi-person-badge"></i>
-        <span>My Profile (4 Sections)</span>
+        <span>@Loc["Nav_CandidateProfile"]</span>
     </NavLink>
     <NavLink class="app-nav-link" href="candidate/cvs">
         <i class="bi bi-file-earmark-person"></i>
-        <span>Generated CVs</span>
+        <span>@Loc["Nav_CandidateCvs"]</span>
     </NavLink>
     <NavLink class="app-nav-link" href="discussions">
         <i class="bi bi-chat-square-dots"></i>
-        <span>Discussions</span>
+        <span>@Loc["Nav_Discussions"]</span>
     </NavLink>
 
     <!-- Recruiter Portal -->
-    <div class="nav-section-title">Recruiter Workspace</div>
+    <div class="nav-section-title">@Loc["Nav_RecruiterWorkspace"]</div>
     <NavLink class="app-nav-link" href="recruiter/dashboard">
         <i class="bi bi-speedometer2"></i>
-        <span>Recruitment Desk</span>
+        <span>@Loc["Nav_RecruiterDashboard"]</span>
     </NavLink>
     <NavLink class="app-nav-link" href="recruiter/positions">
         <i class="bi bi-folder2-open"></i>
-        <span>Manage Positions</span>
+        <span>@Loc["Nav_ManagePositions"]</span>
     </NavLink>
     <NavLink class="app-nav-link" href="recruiter/attributes">
         <i class="bi bi-sliders"></i>
-        <span>Attribute Library</span>
+        <span>@Loc["Nav_AttributeLibrary"]</span>
     </NavLink>
     <NavLink class="app-nav-link" href="recruiter/cvs">
         <i class="bi bi-people"></i>
-        <span>Review Candidate CVs</span>
+        <span>@Loc["Nav_ReviewCvs"]</span>
     </NavLink>
 
     <!-- Admin Portal -->
-    <div class="nav-section-title">Administration</div>
+    <div class="nav-section-title">@Loc["Nav_Administration"]</div>
     <NavLink class="app-nav-link" href="admin/dashboard">
         <i class="bi bi-shield-check"></i>
-        <span>System Admin</span>
+        <span>@Loc["Nav_AdminDashboard"]</span>
     </NavLink>
     <NavLink class="app-nav-link" href="admin/users">
         <i class="bi bi-people-fill"></i>
-        <span>Users & Roles</span>
+        <span>@Loc["Nav_AdminUsers"]</span>
     </NavLink>
 </div>
 

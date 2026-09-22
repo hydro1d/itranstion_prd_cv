@@ -52,46 +52,70 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="App_Title" xml:space="preserve">
-    <value>সিভি প্ল্যাটফর্ম</value>
-  </data>
-  <data name="App_Tagline" xml:space="preserve">
-    <value>স্মার্ট নিয়োগ এবং সিভি প্ল্যাটফর্ম</value>
-  </data>
-  <data name="Nav_Positions" xml:space="preserve">
-    <value>নিয়োগ বিজ্ঞপ্তি</value>
-  </data>
-  <data name="Nav_Search" xml:space="preserve">
-    <value>অনুসন্ধান</value>
-  </data>
-  <data name="Nav_Statistics" xml:space="preserve">
-    <value>পরিসংখ্যান</value>
-  </data>
-  <data name="Nav_CandidateDashboard" xml:space="preserve">
-    <value>আমার ড্যাশবোর্ড</value>
-  </data>
-  <data name="Nav_CandidateProfile" xml:space="preserve">
-    <value>আমার প্রোফাইল</value>
-  </data>
-  <data name="Nav_CandidateCvs" xml:space="preserve">
-    <value>তৈরিকৃত সিভি</value>
-  </data>
-  <data name="Nav_Discussions" xml:space="preserve">
-    <value>আলোচনা</value>
-  </data>
-  <data name="Nav_RecruiterDashboard" xml:space="preserve">
-    <value>নিয়োগ ডেস্ক</value>
-  </data>
-  <data name="Nav_AttributeLibrary" xml:space="preserve">
-    <value>অ্যাট্রিবিউট লাইব্রেরি</value>
-  </data>
-  <data name="Hero_Title" xml:space="preserve">
-    <value>একবার তৈরি করুন। প্রতিটি সুযোগের জন্য সাজিয়ে নিন।</value>
-  </data>
-  <data name="Btn_SignIn" xml:space="preserve">
-    <value>প্রবেশ করুন</value>
-  </data>
-  <data name="Btn_GenerateCv" xml:space="preserve">
-    <value>সিভি তৈরি করুন</value>
-  </data>
+
+  <!-- App Header & Brand -->
+  <data name="App_Title" xml:space="preserve"><value>সিভি প্ল্যাটফর্ম</value></data>
+  <data name="App_Tagline" xml:space="preserve"><value>স্মার্ট নিয়োগ এবং সিভি প্ল্যাটফর্ম</value></data>
+  <data name="Search_Placeholder" xml:space="preserve"><value>পদ, অ্যাট্রিবিউট বা দক্ষতা খুঁজুন...</value></data>
+  <data name="Btn_SignIn" xml:space="preserve"><value>প্রবেশ করুন</value></data>
+
+  <!-- Nav Menu Sections & Links -->
+  <data name="Nav_PublicPortal" xml:space="preserve"><value>পাবলিক পোর্টাল</value></data>
+  <data name="Nav_Positions" xml:space="preserve"><value>নিয়োগ বিজ্ঞপ্তি</value></data>
+  <data name="Nav_Search" xml:space="preserve"><value>অনুসন্ধান</value></data>
+  <data name="Nav_Statistics" xml:space="preserve"><value>পরিসংখ্যান</value></data>
+
+  <data name="Nav_CandidateSpace" xml:space="preserve"><value>প্রার্থী স্পেস</value></data>
+  <data name="Nav_CandidateDashboard" xml:space="preserve"><value>আমার ড্যাশবোর্ড</value></data>
+  <data name="Nav_CandidateProfile" xml:space="preserve"><value>আমার প্রোফাইল (৪টি সেকশন)</value></data>
+  <data name="Nav_CandidateCvs" xml:space="preserve"><value>তৈরিকৃত সিভি</value></data>
+  <data name="Nav_Discussions" xml:space="preserve"><value>আলোচনা</value></data>
+
+  <data name="Nav_RecruiterWorkspace" xml:space="preserve"><value>নিয়োগকারী ওয়ার্কস্পেস</value></data>
+  <data name="Nav_RecruiterDashboard" xml:space="preserve"><value>নিয়োগ ডেস্ক</value></data>
+  <data name="Nav_ManagePositions" xml:space="preserve"><value>পদসমূহ পরিচালনা</value></data>
+  <data name="Nav_AttributeLibrary" xml:space="preserve"><value>অ্যাট্রিবিউট লাইব্রেরি</value></data>
+  <data name="Nav_ReviewCvs" xml:space="preserve"><value>প্রার্থী সিভি পর্যালোচনা</value></data>
+
+  <data name="Nav_Administration" xml:space="preserve"><value>প্রশাসন</value></data>
+  <data name="Nav_AdminDashboard" xml:space="preserve"><value>সিস্টেম অ্যাডমিন</value></data>
+  <data name="Nav_AdminUsers" xml:space="preserve"><value>ব্যবহারকারী ও ভূমিকা</value></data>
+
+  <!-- Home Page -->
+  <data name="Page_Title" xml:space="preserve"><value>উপলব্ধ সুযোগসমূহ</value></data>
+  <data name="Hero_Title" xml:space="preserve"><value>একবার তৈরি করুন। প্রতিটি সুযোগের জন্য সাজিয়ে নিন।</value></data>
+  <data name="Hero_Subtitle" xml:space="preserve"><value>পুনর্ব্যবহারযোগ্য অ্যাট্রিবিউটসহ একটি মূল প্রোফাইল তৈরি করুন এবং এক ক্লিকেই প্রতিটি পদের সাথে সামঞ্জস্যপূর্ণ সিভি তৈরি করুন।</value></data>
+  <data name="Btn_ManageProfile" xml:space="preserve"><value>প্রোফাইল পরিচালনা</value></data>
+  <data name="Btn_PostOpportunity" xml:space="preserve"><value>নতুন পদ তৈরি করুন</value></data>
+  <data name="Btn_GenerateCv" xml:space="preserve"><value>সিভি তৈরি করুন</value></data>
+  <data name="Btn_Deselect" xml:space="preserve"><value>নির্বাচন বাতিল</value></data>
+  <data name="Btn_ResetFilter" xml:space="preserve"><value>ফিল্টার মুছুন</value></data>
+
+  <!-- Metrics -->
+  <data name="Metric_ActivePositions" xml:space="preserve"><value>চলমান পদসমূহ</value></data>
+  <data name="Metric_RegisteredCandidates" xml:space="preserve"><value>নিবন্ধিত প্রার্থী</value></data>
+  <data name="Metric_PartnerRecruiters" xml:space="preserve"><value>নিয়োগকারী পার্টনার</value></data>
+  <data name="Metric_CvsGenerated" xml:space="preserve"><value>তৈরিকৃত সিভি</value></data>
+
+  <!-- Table & Filters -->
+  <data name="Search_Positions_Placeholder" xml:space="preserve"><value>পদসমূহ ফিল্টার করুন...</value></data>
+  <data name="Filter_AllEmployment" xml:space="preserve"><value>সকল চাকরির ধরন</value></data>
+  <data name="Employment_FullTime" xml:space="preserve"><value>ফুল-টাইম</value></data>
+  <data name="Employment_Contract" xml:space="preserve"><value>চুক্তিভিত্তিক</value></data>
+  <data name="Employment_Remote" xml:space="preserve"><value>রিমোট</value></data>
+  <data name="Select_Row_Hint" xml:space="preserve"><value>অ্যাকশন সক্রিয় করতে একটি সারি নির্বাচন করুন</value></data>
+  <data name="Position_Selected_Hint" xml:space="preserve"><value>১টি পদ নির্বাচিত হয়েছে</value></data>
+
+  <!-- Table Headers -->
+  <data name="Th_PositionTitle" xml:space="preserve"><value>পদের নাম</value></data>
+  <data name="Th_Company" xml:space="preserve"><value>প্রতিষ্ঠান</value></data>
+  <data name="Th_EmploymentType" xml:space="preserve"><value>চাকরির ধরন</value></data>
+  <data name="Th_Location" xml:space="preserve"><value>অবস্থান</value></data>
+  <data name="Th_Attributes" xml:space="preserve"><value>প্রয়োজনীয় দক্ষতা ও ট্যাগ</value></data>
+  <data name="Th_Posted" xml:space="preserve"><value>প্রকাশিত</value></data>
+  <data name="Th_Applications" xml:space="preserve"><value>আবেদন সংখ্যা</value></data>
+
+  <!-- Tags -->
+  <data name="Popular_Tags" xml:space="preserve"><value>জনপ্রিয় কাজের ট্যাগসমূহ</value></data>
+  <data name="Click_To_Filter" xml:space="preserve"><value>ফিল্টার করতে ক্লিক করুন</value></data>
 </root>

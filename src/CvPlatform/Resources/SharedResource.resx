@@ -52,46 +52,70 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="App_Title" xml:space="preserve">
-    <value>CvPlatform</value>
-  </data>
-  <data name="App_Tagline" xml:space="preserve">
-    <value>Smart Recruiting &amp; CVs</value>
-  </data>
-  <data name="Nav_Positions" xml:space="preserve">
-    <value>Positions</value>
-  </data>
-  <data name="Nav_Search" xml:space="preserve">
-    <value>Explore &amp; Search</value>
-  </data>
-  <data name="Nav_Statistics" xml:space="preserve">
-    <value>Platform Stats</value>
-  </data>
-  <data name="Nav_CandidateDashboard" xml:space="preserve">
-    <value>My Dashboard</value>
-  </data>
-  <data name="Nav_CandidateProfile" xml:space="preserve">
-    <value>My Profile</value>
-  </data>
-  <data name="Nav_CandidateCvs" xml:space="preserve">
-    <value>Generated CVs</value>
-  </data>
-  <data name="Nav_Discussions" xml:space="preserve">
-    <value>Discussions</value>
-  </data>
-  <data name="Nav_RecruiterDashboard" xml:space="preserve">
-    <value>Recruitment Desk</value>
-  </data>
-  <data name="Nav_AttributeLibrary" xml:space="preserve">
-    <value>Attribute Library</value>
-  </data>
-  <data name="Hero_Title" xml:space="preserve">
-    <value>Build once. Customize for every opportunity.</value>
-  </data>
-  <data name="Btn_SignIn" xml:space="preserve">
-    <value>Sign In</value>
-  </data>
-  <data name="Btn_GenerateCv" xml:space="preserve">
-    <value>Generate CV</value>
-  </data>
+
+  <!-- App Header & Brand -->
+  <data name="App_Title" xml:space="preserve"><value>CvPlatform</value></data>
+  <data name="App_Tagline" xml:space="preserve"><value>Smart Recruiting &amp; CVs</value></data>
+  <data name="Search_Placeholder" xml:space="preserve"><value>Search positions, attributes, skills...</value></data>
+  <data name="Btn_SignIn" xml:space="preserve"><value>Sign In</value></data>
+
+  <!-- Nav Menu Sections & Links -->
+  <data name="Nav_PublicPortal" xml:space="preserve"><value>Public Portal</value></data>
+  <data name="Nav_Positions" xml:space="preserve"><value>Positions</value></data>
+  <data name="Nav_Search" xml:space="preserve"><value>Explore &amp; Search</value></data>
+  <data name="Nav_Statistics" xml:space="preserve"><value>Platform Stats</value></data>
+
+  <data name="Nav_CandidateSpace" xml:space="preserve"><value>Candidate Space</value></data>
+  <data name="Nav_CandidateDashboard" xml:space="preserve"><value>My Dashboard</value></data>
+  <data name="Nav_CandidateProfile" xml:space="preserve"><value>My Profile (4 Sections)</value></data>
+  <data name="Nav_CandidateCvs" xml:space="preserve"><value>Generated CVs</value></data>
+  <data name="Nav_Discussions" xml:space="preserve"><value>Discussions</value></data>
+
+  <data name="Nav_RecruiterWorkspace" xml:space="preserve"><value>Recruiter Workspace</value></data>
+  <data name="Nav_RecruiterDashboard" xml:space="preserve"><value>Recruitment Desk</value></data>
+  <data name="Nav_ManagePositions" xml:space="preserve"><value>Manage Positions</value></data>
+  <data name="Nav_AttributeLibrary" xml:space="preserve"><value>Attribute Library</value></data>
+  <data name="Nav_ReviewCvs" xml:space="preserve"><value>Review Candidate CVs</value></data>
+
+  <data name="Nav_Administration" xml:space="preserve"><value>Administration</value></data>
+  <data name="Nav_AdminDashboard" xml:space="preserve"><value>System Admin</value></data>
+  <data name="Nav_AdminUsers" xml:space="preserve"><value>Users &amp; Roles</value></data>
+
+  <!-- Home Page -->
+  <data name="Page_Title" xml:space="preserve"><value>Open Opportunities</value></data>
+  <data name="Hero_Title" xml:space="preserve"><value>Build once. Customize for every opportunity.</value></data>
+  <data name="Hero_Subtitle" xml:space="preserve"><value>Maintain a master candidate profile with reusable attributes and generate tailored, position-aligned CVs with one click.</value></data>
+  <data name="Btn_ManageProfile" xml:space="preserve"><value>Manage Profile</value></data>
+  <data name="Btn_PostOpportunity" xml:space="preserve"><value>Post Opportunity</value></data>
+  <data name="Btn_GenerateCv" xml:space="preserve"><value>Generate CV</value></data>
+  <data name="Btn_Deselect" xml:space="preserve"><value>Deselect</value></data>
+  <data name="Btn_ResetFilter" xml:space="preserve"><value>Reset Filter</value></data>
+
+  <!-- Metrics -->
+  <data name="Metric_ActivePositions" xml:space="preserve"><value>Active Positions</value></data>
+  <data name="Metric_RegisteredCandidates" xml:space="preserve"><value>Registered Candidates</value></data>
+  <data name="Metric_PartnerRecruiters" xml:space="preserve"><value>Partner Recruiters</value></data>
+  <data name="Metric_CvsGenerated" xml:space="preserve"><value>CVs Generated</value></data>
+
+  <!-- Table & Filters -->
+  <data name="Search_Positions_Placeholder" xml:space="preserve"><value>Filter positions...</value></data>
+  <data name="Filter_AllEmployment" xml:space="preserve"><value>All Employment</value></data>
+  <data name="Employment_FullTime" xml:space="preserve"><value>Full-time</value></data>
+  <data name="Employment_Contract" xml:space="preserve"><value>Contract</value></data>
+  <data name="Employment_Remote" xml:space="preserve"><value>Remote</value></data>
+  <data name="Select_Row_Hint" xml:space="preserve"><value>Select a row to activate actions</value></data>
+  <data name="Position_Selected_Hint" xml:space="preserve"><value>1 position selected</value></data>
+
+  <!-- Table Headers -->
+  <data name="Th_PositionTitle" xml:space="preserve"><value>Position Title</value></data>
+  <data name="Th_Company" xml:space="preserve"><value>Company</value></data>
+  <data name="Th_EmploymentType" xml:space="preserve"><value>Employment Type</value></data>
+  <data name="Th_Location" xml:space="preserve"><value>Location</value></data>
+  <data name="Th_Attributes" xml:space="preserve"><value>Key Attributes / Tags</value></data>
+  <data name="Th_Posted" xml:space="preserve"><value>Posted</value></data>
+  <data name="Th_Applications" xml:space="preserve"><value>Applications</value></data>
+
+  <!-- Tags -->
+  <data name="Popular_Tags" xml:space="preserve"><value>Popular Opportunity Tags</value></data>
+  <data name="Click_To_Filter" xml:space="preserve"><value>Click to filter</value></data>
 </root>

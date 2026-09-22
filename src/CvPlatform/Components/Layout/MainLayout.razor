@@ -1,4 +1,5 @@
 @inherits LayoutComponentBase
+@inject IStringLocalizer<SharedResource> Loc
 
 <div class="app-container">
     <!-- Sidebar for Desktop & Offcanvas for Mobile -->
@@ -6,8 +7,8 @@
         <div class="app-sidebar-brand">
             <span class="brand-badge">CV</span>
             <div>
-                <div class="brand-title">CvPlatform</div>
-                <div class="brand-subtitle">Smart Recruiting & CVs</div>
+                <div class="brand-title">@Loc["App_Title"]</div>
+                <div class="brand-subtitle">@Loc["App_Tagline"]</div>
             </div>
         </div>
         <NavMenu />
@@ -27,7 +28,7 @@
                 </button>
                 <div class="app-search-input d-none d-sm-block">
                     <i class="bi bi-search"></i>
-                    <input type="text" class="form-control form-control-sm" placeholder="Search positions, attributes, skills..." />
+                    <input type="text" class="form-control form-control-sm" placeholder="@Loc["Search_Placeholder"]" />
                 </div>
             </div>
 
@@ -42,7 +43,7 @@
                 <div class="ms-1 border-start ps-2">
                     <a href="login" class="btn btn-primary btn-sm">
                         <i class="bi bi-box-arrow-in-right"></i>
-                        <span>Sign In</span>
+                        <span>@Loc["Btn_SignIn"]</span>
                     </a>
                 </div>
             </div>
