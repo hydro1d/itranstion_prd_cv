@@ -1,19 +1,57 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
-
-    <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+<div class="app-container">
+    <!-- Sidebar for Desktop & Offcanvas for Mobile -->
+    <aside class="app-sidebar @(sidebarOpen ? "show" : "")">
+        <div class="app-sidebar-brand">
+            <span class="brand-badge">CV</span>
+            <div>
+                <div class="brand-title">CvPlatform</div>
+                <div class="brand-subtitle">Smart Recruiting & CVs</div>
+            </div>
         </div>
+        <NavMenu />
+    </aside>
 
-        <article class="content px-4">
+    @if (sidebarOpen)
+    {
+        <div class="sidebar-overlay d-lg-none" @onclick="ToggleSidebar"></div>
+    }
+
+    <!-- Main Content Area -->
+    <div class="app-main">
+        <header class="app-header">
+            <div class="app-header-left">
+                <button class="btn btn-ghost d-lg-none p-1" @onclick="ToggleSidebar" aria-label="Toggle menu">
+                    <i class="bi bi-list fs-5"></i>
+                </button>
+                <div class="app-search-input d-none d-sm-block">
+                    <i class="bi bi-search"></i>
+                    <input type="text" class="form-control form-control-sm" placeholder="Search positions, attributes, skills..." />
+                </div>
+            </div>
+
+            <div class="app-header-right">
+                <!-- Language Selector -->
+                <LanguageSelector />
+
+                <!-- Theme Toggle -->
+                <ThemeToggle />
+
+                <!-- Auth / Profile Trigger Placeholder -->
+                <div class="ms-1 border-start ps-2">
+                    <a href="login" class="btn btn-primary btn-sm">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        <span>Sign In</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main class="app-body">
             @Body
-        </article>
-    </main>
+        </main>
+    </div>
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>
@@ -21,3 +59,12 @@
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    private bool sidebarOpen = false;
+
+    private void ToggleSidebar()
+    {
+        sidebarOpen = !sidebarOpen;
+    }
+}

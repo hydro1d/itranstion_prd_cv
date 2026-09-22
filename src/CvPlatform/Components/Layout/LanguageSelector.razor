@@ -1,0 +1,38 @@
+@inject NavigationManager Navigation
+
+<div class="dropdown">
+    <button class="btn btn-ghost btn-sm border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-translate text-secondary"></i>
+        <span class="ms-1">@(currentCulture == "bn" ? "বাংলা" : "English")</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+        <li>
+            <button class="dropdown-item d-flex align-items-center justify-content-between @(currentCulture == "en" ? "active" : "")" 
+                    @onclick="@(() => SelectLanguage("en"))">
+                <span>English</span>
+                <small class="text-muted ms-2">EN</small>
+            </button>
+        </li>
+        <li>
+            <button class="dropdown-item d-flex align-items-center justify-content-between @(currentCulture == "bn" ? "active" : "")" 
+                    @onclick="@(() => SelectLanguage("bn"))">
+                <span>বাংলা</span>
+                <small class="text-muted ms-2">BN</small>
+            </button>
+        </li>
+    </ul>
+</div>
+
+@code {
+    private string currentCulture = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+    private void SelectLanguage(string culture)
+    {
+        if (currentCulture != culture)
+        {
+            currentCulture = culture;
+            var currentUri = Navigation.Uri;
+            Navigation.NavigateTo($"/api/culture/set?culture={culture}&redirectUri={Uri.EscapeDataString(currentUri)}", forceLoad: true);
+        }
+    }
+}

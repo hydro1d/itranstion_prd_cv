@@ -1,0 +1,48 @@
+@inject IJSRuntime JSRuntime
+
+<button class="btn btn-ghost btn-sm border" @onclick="ToggleTheme" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
+    @if (isDark)
+    {
+        <i class="bi bi-moon-stars-fill text-warning"></i>
+        <span class="d-none d-md-inline ms-1">Dark</span>
+    }
+    else
+    {
+        <i class="bi bi-sun-fill text-secondary"></i>
+        <span class="d-none d-md-inline ms-1">Light</span>
+    }
+</button>
+
+@code {
+    private bool isDark = false;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                var theme = await JSRuntime.InvokeAsync<string>("ThemeManager.getTheme");
+                isDark = theme == "dark";
+                StateHasChanged();
+            }
+            catch
+            {
+                // Fallback for SSR pre-rendering
+            }
+        }
+    }
+
+    private async Task ToggleTheme()
+    {
+        try
+        {
+            var newTheme = await JSRuntime.InvokeAsync<string>("ThemeManager.toggleTheme");
+            isDark = newTheme == "dark";
+        }
+        catch
+        {
+            isDark = !isDark;
+        }
+    }
+}

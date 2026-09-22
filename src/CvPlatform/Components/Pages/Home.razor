@@ -1,7 +1,240 @@
-﻿@page "/"
+@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Open Opportunities | CvPlatform</PageTitle>
 
-<h1>Hello, world!</h1>
+<!-- Introduction: Concise, Focused, Human-Designed -->
+<div class="mb-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+        <div>
+            <h1 class="mb-1 fw-bold">Build once. Customize for every opportunity.</h1>
+            <p class="text-muted mb-0" style="font-size: 0.95rem;">
+                Maintain a master candidate profile with reusable attributes and generate tailored, position-aligned CVs with one click.
+            </p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="candidate/profile" class="btn btn-outline-custom btn-sm">
+                <i class="bi bi-person-lines-fill"></i>
+                <span>Manage Profile</span>
+            </a>
+            <a href="recruiter/positions" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-lg"></i>
+                <span>Post Opportunity</span>
+            </a>
+        </div>
+    </div>
+</div>
 
-Welcome to your new app.
+<!-- Subtle Platform Metrics (Clean, Flat, Non-distracting) -->
+<div class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+        <div class="app-surface p-3">
+            <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">Active Positions</div>
+            <div class="d-flex align-items-baseline justify-content-between">
+                <span class="fs-4 fw-bold">24</span>
+                <span class="badge bg-primary-subtle text-primary" style="font-size: 0.7rem;">+3 today</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="app-surface p-3">
+            <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">Registered Candidates</div>
+            <div class="d-flex align-items-baseline justify-content-between">
+                <span class="fs-4 fw-bold">148</span>
+                <span class="badge bg-success-subtle text-success" style="font-size: 0.7rem;">Active</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="app-surface p-3">
+            <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">Partner Recruiters</div>
+            <div class="d-flex align-items-baseline justify-content-between">
+                <span class="fs-4 fw-bold">12</span>
+                <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.7rem;">Verified</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-md-3">
+        <div class="app-surface p-3">
+            <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">CVs Generated</div>
+            <div class="d-flex align-items-baseline justify-content-between">
+                <span class="fs-4 fw-bold">310</span>
+                <span class="badge bg-info-subtle text-info" style="font-size: 0.7rem;">Automated</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Section: Latest Positions (Table-Centric Design) -->
+<div class="table-responsive-wrapper mb-4">
+    <!-- Action Toolbar (Driven by Selection, No Repeating In-Row Action Buttons) -->
+    <div class="table-toolbar">
+        <div class="table-toolbar-left">
+            <div class="app-search-input">
+                <i class="bi bi-search"></i>
+                <input type="text" class="form-control form-control-sm" placeholder="Filter positions..." @bind="searchQuery" @bind:event="oninput" />
+            </div>
+            <select class="form-select form-select-sm" style="max-width: 160px;" @bind="selectedType">
+                <option value="">All Employment</option>
+                <option value="Full-time">Full-time</option>
+                <option value="Contract">Contract</option>
+                <option value="Remote">Remote</option>
+            </select>
+        </div>
+
+        <div class="table-toolbar-right">
+            @if (selectedPositionId.HasValue)
+            {
+                <span class="text-muted small me-2">1 position selected</span>
+                <button class="btn btn-outline-custom btn-sm" @onclick="ClearSelection">
+                    <i class="bi bi-x"></i>
+                    <span>Deselect</span>
+                </button>
+                <button class="btn btn-primary btn-sm" @onclick="ApplyForSelected">
+                    <i class="bi bi-lightning-charge-fill"></i>
+                    <span>Generate CV</span>
+                </button>
+            }
+            else
+            {
+                <span class="text-muted small"><i class="bi bi-info-circle me-1"></i>Select a row to activate actions</span>
+            }
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive">
+        <table class="app-table">
+            <thead>
+                <tr>
+                    <th style="width: 40px;" class="text-center">#</th>
+                    <th>Position Title</th>
+                    <th>Company</th>
+                    <th>Employment Type</th>
+                    <th>Location</th>
+                    <th>Key Attributes / Tags</th>
+                    <th>Posted</th>
+                    <th class="text-end">Applications</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pos in FilteredPositions)
+                {
+                    var isSelected = selectedPositionId == pos.Id;
+                    <tr class="@(isSelected ? "is-selected" : "")" style="cursor: pointer;" @onclick="() => SelectPosition(pos.Id)">
+                        <td class="text-center" @onclick:stopPropagation="true">
+                            <input type="radio" name="selectedPos" checked="@isSelected" class="table-selection-checkbox" @onchange="() => SelectPosition(pos.Id)" />
+                        </td>
+                        <td>
+                            <div class="fw-semibold">@pos.Title</div>
+                            <div class="text-muted small">@pos.Department</div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <i class="bi bi-building text-muted"></i>
+                                <span>@pos.Company</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="badge @(pos.Type == "Remote" ? "badge-status-published" : "badge-tag")">@pos.Type</span>
+                        </td>
+                        <td><i class="bi bi-geo-alt text-muted me-1"></i>@pos.Location</td>
+                        <td>
+                            <div class="d-flex gap-1 flex-wrap">
+                                @foreach (var tag in pos.Tags)
+                                {
+                                    <span class="badge-tag">@tag</span>
+                                }
+                            </div>
+                        </td>
+                        <td class="text-muted small">@pos.PostedDate</td>
+                        <td class="text-end fw-semibold">@pos.ApplicationsCount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination Footer -->
+    <div class="table-pagination">
+        <span>Showing @FilteredPositions.Count of @mockPositions.Count positions</span>
+        <div class="d-flex gap-1">
+            <button class="btn btn-outline-custom btn-sm" disabled><i class="bi bi-chevron-left"></i></button>
+            <button class="btn btn-outline-custom btn-sm" disabled><i class="bi bi-chevron-right"></i></button>
+        </div>
+    </div>
+</div>
+
+<!-- Subtle Tag Cloud (PRD Section 9) -->
+<div class="app-surface p-3">
+    <div class="d-flex align-items-center justify-content-between mb-2">
+        <h6 class="mb-0 fw-semibold text-muted text-uppercase" style="font-size: 0.75rem; letter-spacing: 0.05em;">Popular Opportunity Tags</h6>
+        <span class="text-muted small">Click to filter</span>
+    </div>
+    <div class="d-flex flex-wrap gap-2">
+        @foreach (var tag in popularTags)
+        {
+            <button class="btn btn-sm @(searchQuery == tag ? "btn-primary" : "btn-outline-custom")" @onclick="() => FilterByTag(tag)">
+                <i class="bi bi-tag-fill me-1" style="font-size: 0.75rem;"></i>
+                @tag
+            </button>
+        }
+        @if (!string.IsNullOrEmpty(searchQuery))
+        {
+            <button class="btn btn-ghost btn-sm text-danger" @onclick="() => searchQuery = string.Empty">
+                <i class="bi bi-x-circle me-1"></i>Reset Filter
+            </button>
+        }
+    </div>
+</div>
+
+@code {
+    private string searchQuery = string.Empty;
+    private string selectedType = string.Empty;
+    private int? selectedPositionId = null;
+
+    private readonly List<string> popularTags = new()
+    {
+        ".NET 9", "C#", "Blazor", "PostgreSQL", "Entity Framework", "Architecture", "Docker", "REST API", "SignalR", "Microservices"
+    };
+
+    private record PositionItem(int Id, string Title, string Department, string Company, string Type, string Location, List<string> Tags, string PostedDate, int ApplicationsCount);
+
+    private readonly List<PositionItem> mockPositions = new()
+    {
+        new(1, "Senior .NET Backend Architect", "Engineering", "Nexus Tech Systems", "Full-time", "Dhaka (Hybrid)", new() { ".NET 9", "C#", "PostgreSQL", "EF Core" }, "Today", 14),
+        new(2, "Full Stack Blazor & C# Developer", "Product Team", "Apex Digital Labs", "Remote", "Global", new() { "Blazor", "C#", "REST API", "SignalR" }, "1 day ago", 28),
+        new(3, "Enterprise Software Engineer (.NET)", "Financial Platforms", "FinTrust Corp", "Full-time", "Chittagong", new() { ".NET 9", "Architecture", "Docker" }, "2 days ago", 9),
+        new(4, "Lead Systems Developer", "Infrastructure", "CloudSphere Global", "Contract", "Remote", new() { "Microservices", "PostgreSQL", "Docker" }, "3 days ago", 19)
+    };
+
+    private List<PositionItem> FilteredPositions => mockPositions
+        .Where(p => string.IsNullOrWhiteSpace(searchQuery) ||
+                    p.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
+                    p.Company.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
+                    p.Tags.Any(t => t.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)))
+        .Where(p => string.IsNullOrWhiteSpace(selectedType) || p.Type == selectedType)
+        .ToList();
+
+    private void SelectPosition(int id)
+    {
+        selectedPositionId = selectedPositionId == id ? null : id;
+    }
+
+    private void ClearSelection()
+    {
+        selectedPositionId = null;
+    }
+
+    private void FilterByTag(string tag)
+    {
+        searchQuery = searchQuery == tag ? string.Empty : tag;
+    }
+
+    private void ApplyForSelected()
+    {
+        if (selectedPositionId.HasValue)
+        {
+            // Flow will link to Phase 7 CV Generation engine
+        }
+    }
+}

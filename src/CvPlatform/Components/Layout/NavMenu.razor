@@ -1,30 +1,72 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">CvPlatform</a>
+<div class="app-sidebar-nav">
+    <!-- Public Section -->
+    <div class="nav-section-title">Public Portal</div>
+    <NavLink class="app-nav-link" href="" Match="NavLinkMatch.All">
+        <i class="bi bi-briefcase"></i>
+        <span>Positions</span>
+    </NavLink>
+    <NavLink class="app-nav-link" href="search">
+        <i class="bi bi-search"></i>
+        <span>Explore & Search</span>
+    </NavLink>
+    <NavLink class="app-nav-link" href="statistics">
+        <i class="bi bi-bar-chart"></i>
+        <span>Platform Stats</span>
+    </NavLink>
+
+    <!-- Candidate Portal -->
+    <div class="nav-section-title">Candidate Space</div>
+    <NavLink class="app-nav-link" href="candidate/dashboard">
+        <i class="bi bi-grid-1x2"></i>
+        <span>My Dashboard</span>
+    </NavLink>
+    <NavLink class="app-nav-link" href="candidate/profile">
+        <i class="bi bi-person-badge"></i>
+        <span>My Profile (4 Sections)</span>
+    </NavLink>
+    <NavLink class="app-nav-link" href="candidate/cvs">
+        <i class="bi bi-file-earmark-person"></i>
+        <span>Generated CVs</span>
+    </NavLink>
+    <NavLink class="app-nav-link" href="discussions">
+        <i class="bi bi-chat-square-dots"></i>
+        <span>Discussions</span>
+    </NavLink>
+
+    <!-- Recruiter Portal -->
+    <div class="nav-section-title">Recruiter Workspace</div>
+    <NavLink class="app-nav-link" href="recruiter/dashboard">
+        <i class="bi bi-speedometer2"></i>
+        <span>Recruitment Desk</span>
+    </NavLink>
+    <NavLink class="app-nav-link" href="recruiter/positions">
+        <i class="bi bi-folder2-open"></i>
+        <span>Manage Positions</span>
+    </NavLink>
+    <NavLink class="app-nav-link" href="recruiter/attributes">
+        <i class="bi bi-sliders"></i>
+        <span>Attribute Library</span>
+    </NavLink>
+    <NavLink class="app-nav-link" href="recruiter/cvs">
+        <i class="bi bi-people"></i>
+        <span>Review Candidate CVs</span>
+    </NavLink>
+
+    <!-- Admin Portal -->
+    <div class="nav-section-title">Administration</div>
+    <NavLink class="app-nav-link" href="admin/dashboard">
+        <i class="bi bi-shield-check"></i>
+        <span>System Admin</span>
+    </NavLink>
+    <NavLink class="app-nav-link" href="admin/users">
+        <i class="bi bi-people-fill"></i>
+        <span>Users & Roles</span>
+    </NavLink>
+</div>
+
+<div class="app-sidebar-footer">
+    <div class="d-flex align-items-center justify-content-between">
+        <span class="text-muted"><i class="bi bi-dot text-success me-1"></i>.NET 9 + Postgres</span>
+        <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.65rem;">v1.0-dev</span>
     </div>
 </div>
-
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-    </nav>
-</div>
-
