@@ -27,9 +27,9 @@ if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
+    app.UseHttpsRedirection();
 }
 
-app.UseHttpsRedirection();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
@@ -46,7 +46,19 @@ app.MapGet("/api/culture/set", (string culture, string? redirectUri, HttpContext
         );
     }
 
-    var target = string.IsNullOrWhiteSpace(redirectUri) ? "/" : redirectUri;
+    string target = "/";
+    if (!string.IsNullOrWhiteSpace(redirectUri))
+    {
+        if (Uri.TryCreate(redirectUri, UriKind.Absolute, out var parsedAbsolute))
+        {
+            target = parsedAbsolute.PathAndQuery;
+        }
+        else if (redirectUri.StartsWith('/') && !redirectUri.StartsWith("//"))
+        {
+            target = redirectUri;
+        }
+    }
+
     return Results.LocalRedirect(target);
 });
 

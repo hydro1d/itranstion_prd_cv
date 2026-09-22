@@ -31,8 +31,8 @@
         if (currentCulture != culture)
         {
             currentCulture = culture;
-            var currentUri = Navigation.Uri;
-            Navigation.NavigateTo($"/api/culture/set?culture={culture}&redirectUri={Uri.EscapeDataString(currentUri)}", forceLoad: true);
+            var relativePath = "/" + Navigation.ToBaseRelativePath(Navigation.Uri);
+            Navigation.NavigateTo($"/api/culture/set?culture={culture}&redirectUri={Uri.EscapeDataString(relativePath)}", forceLoad: true);
         }
     }
 }
