@@ -1,13 +1,22 @@
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
 using CvPlatform.Components;
+using CvPlatform.Data;
 using CvPlatform.Resources;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure ASP.NET Core Localization
 builder.Services.AddLocalization();
+
+// Configure PostgreSQL with EF Core
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseNpgsql(connectionString));
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
