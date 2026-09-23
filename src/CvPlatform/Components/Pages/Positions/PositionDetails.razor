@@ -1,0 +1,252 @@
+@page "/positions/{Id:int}"
+@inject IPositionService PositionService
+@inject IStringLocalizer<SharedResource> Loc
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthStateProvider
+@using System.Security.Claims
+
+<PageTitle>@(position != null ? position.Title : "Position Details") - @Loc["App_Title"]</PageTitle>
+
+<div class="container py-4">
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <div class="text-muted small mt-2">Loading opening specifications...</div>
+        </div>
+    }
+    else if (position == null)
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-folder-x fs-1 text-muted d-block mb-3"></i>
+            <h3 class="fw-bold">Opening Not Found</h3>
+            <p class="text-muted small mb-4">This position opening may have been closed, deleted, or set to draft.</p>
+            <a href="" class="btn btn-primary btn-sm">
+                <i class="bi bi-house me-1"></i> Return to Openings
+            </a>
+        </div>
+    }
+    else
+    {
+        <!-- Breadcrumb -->
+        <div class="mb-3">
+            <a href="" class="text-muted small text-decoration-none">
+                <i class="bi bi-arrow-left me-1"></i> Back to all positions
+            </a>
+        </div>
+
+        <div class="row g-4">
+            <!-- Left: Main Job Specifications & Requirements -->
+            <div class="col-lg-8">
+                <!-- Header Card -->
+                <div class="card border shadow-sm p-4 mb-4">
+                    <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-2">
+                        <div>
+                            <span class="badge @GetEmploymentBadgeClass(position.EmploymentType) mb-2">
+                                @position.EmploymentType
+                            </span>
+                            <h2 class="fw-bold mb-1">@position.Title</h2>
+                            <h5 class="text-primary fw-semibold mb-0">@position.Company</h5>
+                        </div>
+                        <span class="badge @GetVisibilityBadgeClass(position.Visibility)">
+                            @position.Visibility
+                        </span>
+                    </div>
+
+                    <div class="d-flex flex-wrap align-items-center gap-3 text-muted small mt-3 pt-3 border-top">
+                        <span><i class="bi bi-geo-alt me-1"></i>@position.Location</span>
+                        <span><i class="bi bi-calendar3 me-1"></i>Posted: @position.CreatedAt.ToString("MMM dd, yyyy")</span>
+                        @if (position.Deadline.HasValue)
+                        {
+                            <span class="text-warning-emphasis">
+                                <i class="bi bi-hourglass-split me-1"></i>Deadline: @position.Deadline.Value.ToString("MMM dd, yyyy")
+                            </span>
+                        }
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(position.Tags))
+                    {
+                        <div class="d-flex flex-wrap gap-1 mt-3">
+                            @foreach (var tag in position.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                            {
+                                <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.72rem;">
+                                    #@tag
+                                </span>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <!-- Job Description -->
+                <div class="card border shadow-sm p-4 mb-4">
+                    <h5 class="fw-bold mb-3 d-flex align-items-center text-primary">
+                        <i class="bi bi-file-text me-2"></i>
+                        Role Overview & Mission
+                    </h5>
+                    <div class="text-body" style="white-space: pre-line; line-height: 1.6;">
+                        @position.Description
+                    </div>
+                </div>
+
+                <!-- Structured Dynamic Requirements (Killer Feature #2) -->
+                <div class="card border shadow-sm p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0 d-flex align-items-center text-primary">
+                            <i class="bi bi-sliders me-2"></i>
+                            Position Qualification Template
+                        </h5>
+                        <span class="badge bg-primary-subtle text-primary">Killer Feature #2</span>
+                    </div>
+                    <p class="text-muted small mb-4">
+                        This opening utilizes standardized qualifications from the platform's reusable attribute library.
+                    </p>
+
+                    <!-- Mandatory Requirements -->
+                    <div class="mb-4">
+                        <h6 class="fw-bold text-danger mb-2 d-flex align-items-center">
+                            <i class="bi bi-asterisk me-1"></i>
+                            Mandatory Requirements (@position.PositionAttributes.Count(pa => pa.IsRequired))
+                        </h6>
+                        <div class="list-group">
+                            @foreach (var pa in position.PositionAttributes.Where(pa => pa.IsRequired).OrderBy(pa => pa.DisplayOrder))
+                            {
+                                <div class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                    <div>
+                                        <div class="fw-bold text-body">@pa.Attribute.Name</div>
+                                        <div class="text-muted small">@(pa.Attribute.Category?.Name ?? "General")</div>
+                                        @if (!string.IsNullOrEmpty(pa.Attribute.Description))
+                                        {
+                                            <div class="text-muted" style="font-size: 0.75rem;">@pa.Attribute.Description</div>
+                                        }
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge-type @GetBadgeClass(pa.Attribute.DataType)">
+                                            @pa.Attribute.DataType
+                                        </span>
+                                        <span class="badge bg-danger-subtle text-danger">Required</span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Preferred Qualifications -->
+                    @if (position.PositionAttributes.Any(pa => !pa.IsRequired))
+                    {
+                        <div>
+                            <h6 class="fw-bold text-primary mb-2 d-flex align-items-center">
+                                <i class="bi bi-plus-circle me-1"></i>
+                                Preferred / Optional Qualifications (@position.PositionAttributes.Count(pa => !pa.IsRequired))
+                            </h6>
+                            <div class="list-group">
+                                @foreach (var pa in position.PositionAttributes.Where(pa => !pa.IsRequired).OrderBy(pa => pa.DisplayOrder))
+                                {
+                                    <div class="list-group-item d-flex justify-content-between align-items-center p-3">
+                                        <div>
+                                            <div class="fw-bold text-body">@pa.Attribute.Name</div>
+                                            <div class="text-muted small">@(pa.Attribute.Category?.Name ?? "General")</div>
+                                            @if (!string.IsNullOrEmpty(pa.Attribute.Description))
+                                            {
+                                                <div class="text-muted" style="font-size: 0.75rem;">@pa.Attribute.Description</div>
+                                            }
+                                        </div>
+                                        <div class="d-flex align-items-center gap-2">
+                                            <span class="badge-type @GetBadgeClass(pa.Attribute.DataType)">
+                                                @pa.Attribute.DataType
+                                            </span>
+                                            <span class="badge bg-light text-muted border">Optional</span>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <!-- Right: Action & Application Card -->
+            <div class="col-lg-4">
+                <div class="card border shadow-sm p-4 sticky-top" style="top: 1rem; z-index: 10;">
+                    <h5 class="fw-bold mb-2">Ready to Apply?</h5>
+                    <p class="text-muted small mb-3">
+                        The platform auto-generates a tailored CV for this opening by mapping your reusable profile attributes to these exact requirements.
+                    </p>
+
+                    <div class="alert alert-info py-2 small mb-3">
+                        <i class="bi bi-lightning-charge-fill me-1"></i>
+                        <strong>Killer Feature #3 Preview:</strong> Auto-populates 1 CV per position with zero manual copy-pasting.
+                    </div>
+
+                    <AuthorizeView Roles="@($"{ApplicationRole.Candidate},{ApplicationRole.Administrator}")">
+                        <Authorized>
+                            <a href="candidate/cvs" class="btn btn-primary w-100 py-2 mb-2">
+                                <i class="bi bi-file-earmark-person me-1"></i> Generate Tailored CV
+                            </a>
+                        </Authorized>
+                        <NotAuthorized>
+                            <a href="account/login?returnUrl=/positions/@Id" class="btn btn-primary w-100 py-2 mb-2">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> Sign In to Generate CV
+                            </a>
+                        </NotAuthorized>
+                    </AuthorizeView>
+
+                    <div class="border-top pt-3 mt-3">
+                        <div class="d-flex justify-content-between text-muted small mb-1">
+                            <span>Posted By:</span>
+                            <span class="fw-semibold text-body">@(position.Recruiter?.FullName ?? "Hiring Lead")</span>
+                        </div>
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span>Application Constraint:</span>
+                            <span class="text-success fw-semibold">1 CV per candidate</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter] public int Id { get; set; }
+
+    private Position? position;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        position = await PositionService.GetPositionByIdAsync(Id);
+        isLoading = false;
+    }
+
+    private string GetEmploymentBadgeClass(EmploymentType type) => type switch
+    {
+        EmploymentType.FullTime => "bg-primary-subtle text-primary",
+        EmploymentType.PartTime => "bg-info-subtle text-info",
+        EmploymentType.Contract => "bg-warning-subtle text-warning",
+        EmploymentType.Remote => "bg-success-subtle text-success",
+        EmploymentType.Internship => "bg-secondary-subtle text-secondary",
+        _ => "bg-secondary-subtle text-secondary"
+    };
+
+    private string GetVisibilityBadgeClass(PositionVisibility visibility) => visibility switch
+    {
+        PositionVisibility.Public => "bg-success-subtle text-success",
+        PositionVisibility.Draft => "bg-warning-subtle text-warning",
+        PositionVisibility.Closed => "bg-secondary-subtle text-secondary",
+        _ => "bg-secondary-subtle text-secondary"
+    };
+
+    private string GetBadgeClass(AttributeDataType type) => type switch
+    {
+        AttributeDataType.Text => "badge-type-text",
+        AttributeDataType.LongText => "badge-type-longtext",
+        AttributeDataType.Number => "badge-type-number",
+        AttributeDataType.Date => "badge-type-date",
+        AttributeDataType.Boolean => "badge-type-boolean",
+        AttributeDataType.Dropdown => "badge-type-dropdown",
+        AttributeDataType.MultiSelect => "badge-type-multiselect",
+        AttributeDataType.Url => "badge-type-url",
+        _ => "badge-type-text"
+    };
+}

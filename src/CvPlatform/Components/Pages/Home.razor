@@ -1,5 +1,7 @@
 @page "/"
+@inject IPositionService PositionService
 @inject IStringLocalizer<SharedResource> Loc
+@inject NavigationManager NavigationManager
 
 <PageTitle>@Loc["Page_Title"] | @Loc["App_Title"]</PageTitle>
 
@@ -25,14 +27,14 @@
     </div>
 </div>
 
-<!-- Subtle Platform Metrics (Clean, Flat, Non-distracting) -->
+<!-- Dynamic Platform Metrics -->
 <div class="row g-3 mb-4">
     <div class="col-6 col-md-3">
         <div class="app-surface p-3">
             <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">@Loc["Metric_ActivePositions"]</div>
             <div class="d-flex align-items-baseline justify-content-between">
-                <span class="fs-4 fw-bold">24</span>
-                <span class="badge bg-primary-subtle text-primary" style="font-size: 0.7rem;">+3 today</span>
+                <span class="fs-4 fw-bold">@metrics.ActivePositions</span>
+                <span class="badge bg-primary-subtle text-primary" style="font-size: 0.7rem;">Live</span>
             </div>
         </div>
     </div>
@@ -40,7 +42,7 @@
         <div class="app-surface p-3">
             <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">@Loc["Metric_RegisteredCandidates"]</div>
             <div class="d-flex align-items-baseline justify-content-between">
-                <span class="fs-4 fw-bold">148</span>
+                <span class="fs-4 fw-bold">@metrics.RegisteredCandidates</span>
                 <span class="badge bg-success-subtle text-success" style="font-size: 0.7rem;">Active</span>
             </div>
         </div>
@@ -49,7 +51,7 @@
         <div class="app-surface p-3">
             <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">@Loc["Metric_PartnerRecruiters"]</div>
             <div class="d-flex align-items-baseline justify-content-between">
-                <span class="fs-4 fw-bold">12</span>
+                <span class="fs-4 fw-bold">@metrics.PartnerRecruiters</span>
                 <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.7rem;">Verified</span>
             </div>
         </div>
@@ -58,7 +60,7 @@
         <div class="app-surface p-3">
             <div class="text-muted small fw-medium text-uppercase mb-1" style="font-size: 0.7rem; letter-spacing: 0.05em;">@Loc["Metric_CvsGenerated"]</div>
             <div class="d-flex align-items-baseline justify-content-between">
-                <span class="fs-4 fw-bold">310</span>
+                <span class="fs-4 fw-bold">@metrics.CvsGenerated</span>
                 <span class="badge bg-info-subtle text-info" style="font-size: 0.7rem;">Automated</span>
             </div>
         </div>
@@ -76,9 +78,10 @@
             </div>
             <select class="form-select form-select-sm" style="max-width: 170px;" @bind="selectedType">
                 <option value="">@Loc["Filter_AllEmployment"]</option>
-                <option value="Full-time">@Loc["Employment_FullTime"]</option>
+                <option value="FullTime">@Loc["Employment_FullTime"]</option>
                 <option value="Contract">@Loc["Employment_Contract"]</option>
                 <option value="Remote">@Loc["Employment_Remote"]</option>
+                <option value="Internship">Internship</option>
             </select>
         </div>
 
@@ -86,14 +89,18 @@
             @if (selectedPositionId.HasValue)
             {
                 <span class="text-muted small me-2">@Loc["Position_Selected_Hint"]</span>
+                <a href="positions/@selectedPositionId.Value" class="btn btn-outline-custom btn-sm">
+                    <i class="bi bi-box-arrow-up-right me-1"></i>
+                    <span>View Opening</span>
+                </a>
                 <button class="btn btn-outline-custom btn-sm" @onclick="ClearSelection">
                     <i class="bi bi-x"></i>
                     <span>@Loc["Btn_Deselect"]</span>
                 </button>
-                <button class="btn btn-primary btn-sm" @onclick="ApplyForSelected">
+                <a href="positions/@selectedPositionId.Value" class="btn btn-primary btn-sm">
                     <i class="bi bi-lightning-charge-fill"></i>
                     <span>@Loc["Btn_GenerateCv"]</span>
-                </button>
+                </a>
             }
             else
             {
@@ -112,44 +119,64 @@
                     <th>@Loc["Th_Company"]</th>
                     <th>@Loc["Th_EmploymentType"]</th>
                     <th>@Loc["Th_Location"]</th>
-                    <th>@Loc["Th_Attributes"]</th>
+                    <th>Required Qualifications</th>
                     <th>@Loc["Th_Posted"]</th>
-                    <th class="text-end">@Loc["Th_Applications"]</th>
+                    <th class="text-end">Applications</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var pos in FilteredPositions)
+                @if (FilteredPositions.Count == 0)
                 {
-                    var isSelected = selectedPositionId == pos.Id;
-                    <tr class="@(isSelected ? "is-selected" : "")" style="cursor: pointer;" @onclick="() => SelectPosition(pos.Id)">
-                        <td class="text-center" @onclick:stopPropagation="true">
-                            <input type="radio" name="selectedPos" checked="@isSelected" class="table-selection-checkbox" @onchange="() => SelectPosition(pos.Id)" />
+                    <tr>
+                        <td colspan="8" class="text-center py-4 text-muted">
+                            No open positions match your search filter.
                         </td>
-                        <td>
-                            <div class="fw-semibold">@pos.Title</div>
-                            <div class="text-muted small">@pos.Department</div>
-                        </td>
-                        <td>
-                            <div class="d-flex align-items-center gap-2">
-                                <i class="bi bi-building text-muted"></i>
-                                <span>@pos.Company</span>
-                            </div>
-                        </td>
-                        <td>
-                            <span class="badge @(pos.Type == "Remote" ? "badge-status-published" : "badge-tag")">@pos.Type</span>
-                        </td>
-                        <td><i class="bi bi-geo-alt text-muted me-1"></i>@pos.Location</td>
-                        <td>
-                            <div class="d-flex gap-1 flex-wrap">
-                                @foreach (var tag in pos.Tags)
-                                {
-                                    <span class="badge-tag">@tag</span>
-                                }
-                            </div>
-                        </td>
-                        <td class="text-muted small">@pos.PostedDate</td>
-                        <td class="text-end fw-semibold">@pos.ApplicationsCount</td>
                     </tr>
+                }
+                else
+                {
+                    @foreach (var pos in FilteredPositions)
+                    {
+                        var isSelected = selectedPositionId == pos.Id;
+                        var reqCount = pos.PositionAttributes.Count(pa => pa.IsRequired);
+
+                        <tr class="@(isSelected ? "is-selected" : "")" style="cursor: pointer;" @onclick="() => SelectPosition(pos.Id)">
+                            <td class="text-center" @onclick:stopPropagation="true">
+                                <input type="radio" name="selectedPos" checked="@isSelected" class="table-selection-checkbox" @onchange="() => SelectPosition(pos.Id)" />
+                            </td>
+                            <td>
+                                <div class="fw-semibold">@pos.Title</div>
+                                @if (!string.IsNullOrEmpty(pos.Tags))
+                                {
+                                    <div class="text-muted small">@pos.Tags</div>
+                                }
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <i class="bi bi-building text-muted"></i>
+                                    <span>@pos.Company</span>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge @(pos.EmploymentType == EmploymentType.Remote ? "badge-status-published" : "badge-tag")">
+                                    @pos.EmploymentType
+                                </span>
+                            </td>
+                            <td><i class="bi bi-geo-alt text-muted me-1"></i>@pos.Location</td>
+                            <td>
+                                <div class="d-flex gap-1 flex-wrap align-items-center">
+                                    <span class="badge bg-danger-subtle text-danger" style="font-size: 0.7rem;">
+                                        @reqCount Mandatory
+                                    </span>
+                                    <span class="text-muted small" style="font-size: 0.7rem;">
+                                        (@pos.PositionAttributes.Count total)
+                                    </span>
+                                </div>
+                            </td>
+                            <td class="text-muted small">@pos.CreatedAt.ToString("MMM dd")</td>
+                            <td class="text-end fw-semibold">@(pos.CVs?.Count ?? 0)</td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>
@@ -157,7 +184,7 @@
 
     <!-- Pagination Footer -->
     <div class="table-pagination">
-        <span>Showing @FilteredPositions.Count of @mockPositions.Count positions</span>
+        <span>Showing @FilteredPositions.Count of @livePositions.Count positions</span>
         <div class="d-flex gap-1">
             <button class="btn btn-outline-custom btn-sm" disabled><i class="bi bi-chevron-left"></i></button>
             <button class="btn btn-outline-custom btn-sm" disabled><i class="bi bi-chevron-right"></i></button>
@@ -193,27 +220,32 @@
     private string selectedType = string.Empty;
     private int? selectedPositionId = null;
 
+    private List<Position> livePositions = new();
+    private PlatformMetrics metrics = new()
+    {
+        ActivePositions = 4,
+        RegisteredCandidates = 148,
+        PartnerRecruiters = 12,
+        CvsGenerated = 310
+    };
+
     private readonly List<string> popularTags = new()
     {
-        ".NET 9", "C#", "Blazor", "PostgreSQL", "Entity Framework", "Architecture", "Docker", "REST API", "SignalR", "Microservices"
+        ".NET 9", "C#", "Blazor", "Cloud", "Microservices", "Architecture", "Docker", "Kubernetes", "TypeScript", "React"
     };
 
-    private record PositionItem(int Id, string Title, string Department, string Company, string Type, string Location, List<string> Tags, string PostedDate, int ApplicationsCount);
-
-    private readonly List<PositionItem> mockPositions = new()
+    protected override async Task OnInitializedAsync()
     {
-        new(1, "Senior .NET Backend Architect", "Engineering", "Nexus Tech Systems", "Full-time", "Dhaka (Hybrid)", new() { ".NET 9", "C#", "PostgreSQL", "EF Core" }, "Today", 14),
-        new(2, "Full Stack Blazor & C# Developer", "Product Team", "Apex Digital Labs", "Remote", "Global", new() { "Blazor", "C#", "REST API", "SignalR" }, "1 day ago", 28),
-        new(3, "Enterprise Software Engineer (.NET)", "Financial Platforms", "FinTrust Corp", "Full-time", "Chittagong", new() { ".NET 9", "Architecture", "Docker" }, "2 days ago", 9),
-        new(4, "Lead Systems Developer", "Infrastructure", "CloudSphere Global", "Contract", "Remote", new() { "Microservices", "PostgreSQL", "Docker" }, "3 days ago", 19)
-    };
+        livePositions = await PositionService.GetPositionsAsync(visibility: PositionVisibility.Public);
+        metrics = await PositionService.GetMetricsAsync();
+    }
 
-    private List<PositionItem> FilteredPositions => mockPositions
+    private List<Position> FilteredPositions => livePositions
         .Where(p => string.IsNullOrWhiteSpace(searchQuery) ||
                     p.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
                     p.Company.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
-                    p.Tags.Any(t => t.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)))
-        .Where(p => string.IsNullOrWhiteSpace(selectedType) || p.Type == selectedType)
+                    (!string.IsNullOrEmpty(p.Tags) && p.Tags.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)))
+        .Where(p => string.IsNullOrWhiteSpace(selectedType) || p.EmploymentType.ToString() == selectedType)
         .ToList();
 
     private void SelectPosition(int id)
@@ -229,13 +261,5 @@
     private void FilterByTag(string tag)
     {
         searchQuery = searchQuery == tag ? string.Empty : tag;
-    }
-
-    private void ApplyForSelected()
-    {
-        if (selectedPositionId.HasValue)
-        {
-            // Flow links to Phase 7 CV Generation engine
-        }
     }
 }
