@@ -185,4 +185,11 @@
   <data name="Btn_Close" xml:space="preserve"><value>Close</value></data>
   <data name="Btn_Edit" xml:space="preserve"><value>Edit</value></data>
   <data name="Btn_Delete" xml:space="preserve"><value>Delete</value></data>
+
+  <!-- Position Management & Templates (Killer Feature #2) -->
+  <data name="Pos_ManageTitle" xml:space="preserve"><value>Manage Positions &amp; Templates</value></data>
+  <data name="Pos_CreateOpening" xml:space="preserve"><value>Create Position Opening</value></data>
+  <data name="Pos_EditTemplate" xml:space="preserve"><value>Edit Position Template</value></data>
+  <data name="Btn_PublishOpening" xml:space="preserve"><value>Publish Opening</value></data>
+  <data name="Btn_UpdateTemplate" xml:space="preserve"><value>Update Template</value></data>
 </root>

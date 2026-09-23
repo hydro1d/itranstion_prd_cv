@@ -185,4 +185,11 @@
   <data name="Btn_Close" xml:space="preserve"><value>বন্ধ করুন</value></data>
   <data name="Btn_Edit" xml:space="preserve"><value>সম্পাদনা</value></data>
   <data name="Btn_Delete" xml:space="preserve"><value>মুছুন</value></data>
+
+  <!-- Position Management & Templates (Killer Feature #2) -->
+  <data name="Pos_ManageTitle" xml:space="preserve"><value>পদ ও টেমপ্লেট পরিচালনা</value></data>
+  <data name="Pos_CreateOpening" xml:space="preserve"><value>নতুন পদ তৈরি করুন</value></data>
+  <data name="Pos_EditTemplate" xml:space="preserve"><value>পদ টেমপ্লেট সম্পাদনা</value></data>
+  <data name="Btn_PublishOpening" xml:space="preserve"><value>পদ প্রকাশ করুন</value></data>
+  <data name="Btn_UpdateTemplate" xml:space="preserve"><value>টেমপ্লেট আপডেট করুন</value></data>
 </root>
