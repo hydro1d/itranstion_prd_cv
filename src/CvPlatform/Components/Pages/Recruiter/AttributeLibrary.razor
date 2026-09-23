@@ -1,0 +1,439 @@
+@page "/recruiter/attributes"
+@page "/attributes"
+@attribute [Authorize(Roles = $"{ApplicationRole.Recruiter},{ApplicationRole.Administrator}")]
+@inject IAttributeService AttributeService
+@inject IStringLocalizer<SharedResource> Loc
+@using CvPlatform.Components.Pages.Recruiter.Components
+
+<PageTitle>@Loc["Attr_LibraryTitle"] - @Loc["App_Title"]</PageTitle>
+
+<div class="container-fluid px-4 py-3">
+    <!-- Header Section -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-primary-subtle text-primary">
+                    <i class="bi bi-stars me-1"></i> Killer Feature #1
+                </span>
+                <span class="text-muted small">• Standardized Candidate Qualifications</span>
+            </div>
+            <h2 class="fw-bold mb-1">@Loc["Attr_LibraryTitle"]</h2>
+            <p class="text-muted small mb-0">
+                Define reusable dynamic attributes once. Positions compose templates from this library, and candidates fill them in once in their master profile.
+            </p>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-outline-secondary btn-sm" @onclick="() => isCategoryModalOpen = true">
+                <i class="bi bi-folder2 me-1"></i> @Loc["Attr_ManageCategories"]
+            </button>
+            <button class="btn btn-primary btn-sm" @onclick="OpenCreateModal">
+                <i class="bi bi-plus-lg me-1"></i> @Loc["Attr_NewAttribute"]
+            </button>
+        </div>
+    </div>
+
+    <!-- Quick Metrics Counters -->
+    <div class="row g-3 mb-3">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-semibold">Total Attributes</span>
+                    <i class="bi bi-sliders text-primary fs-5"></i>
+                </div>
+                <h3 class="fw-bold mb-0 mt-1">@attributes.Count</h3>
+                <div class="text-muted mt-1" style="font-size: 0.72rem;">Reusable across all job templates</div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-semibold">Categories</span>
+                    <i class="bi bi-folder-check text-success fs-5"></i>
+                </div>
+                <h3 class="fw-bold mb-0 mt-1">@categories.Count</h3>
+                <div class="text-muted mt-1" style="font-size: 0.72rem;">Organized domain groupings</div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-semibold">Active & Searchable</span>
+                    <i class="bi bi-check-circle text-info fs-5"></i>
+                </div>
+                <h3 class="fw-bold mb-0 mt-1">@attributes.Count(a => a.IsActive && a.IsSearchable)</h3>
+                <div class="text-muted mt-1" style="font-size: 0.72rem;">Available for candidate indexing</div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-semibold">Predefined Options</span>
+                    <i class="bi bi-list-check text-warning fs-5"></i>
+                </div>
+                <h3 class="fw-bold mb-0 mt-1">@attributes.Sum(a => a.Options?.Count ?? 0)</h3>
+                <div class="text-muted mt-1" style="font-size: 0.72rem;">Values across dropdowns & multi-select</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Action Toolbar (Strict Evaluation Defense Requirement: No repeating row buttons) -->
+    <div class="card border shadow-sm mb-3">
+        <div class="card-body p-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <!-- Left: Search and Filters -->
+            <div class="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
+                <div class="input-group input-group-sm" style="max-width: 260px;">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Search attributes..." 
+                           @bind="searchTerm" @bind:event="oninput" @bind:after="ApplyFilters" />
+                </div>
+
+                <div style="min-width: 170px;">
+                    <select class="form-select form-select-sm" @bind="selectedCategoryId" @bind:after="ApplyFilters">
+                        <option value="0">All Categories</option>
+                        @foreach (var cat in categories)
+                        {
+                            <option value="@cat.Id">@cat.Name</option>
+                        }
+                    </select>
+                </div>
+
+                <div style="min-width: 150px;">
+                    <select class="form-select form-select-sm" @bind="selectedDataType" @bind:after="ApplyFilters">
+                        <option value="">All Data Types</option>
+                        <option value="@AttributeDataType.Text">Text</option>
+                        <option value="@AttributeDataType.LongText">LongText</option>
+                        <option value="@AttributeDataType.Number">Number</option>
+                        <option value="@AttributeDataType.Date">Date</option>
+                        <option value="@AttributeDataType.Boolean">Boolean</option>
+                        <option value="@AttributeDataType.Dropdown">Dropdown</option>
+                        <option value="@AttributeDataType.MultiSelect">MultiSelect</option>
+                        <option value="@AttributeDataType.Url">URL</option>
+                    </select>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(searchTerm) || selectedCategoryId != 0 || selectedDataType.HasValue)
+                {
+                    <button class="btn btn-outline-secondary btn-sm" @onclick="ResetFilters">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+                    </button>
+                }
+            </div>
+
+            <!-- Right: Row-Contextual Actions (Visible when a row is selected) -->
+            <div class="d-flex align-items-center gap-2">
+                @if (selectedAttribute != null)
+                {
+                    <span class="badge bg-primary-subtle text-primary py-2 px-2 d-none d-lg-inline-block">
+                        <i class="bi bi-check-circle me-1"></i> Selected: <strong>@selectedAttribute.Name</strong>
+                    </span>
+
+                    <button class="btn btn-outline-primary btn-sm" @onclick="OpenEditModal">
+                        <i class="bi bi-pencil me-1"></i> @Loc["Btn_Edit"]
+                    </button>
+
+                    <button class="btn btn-outline-secondary btn-sm" @onclick="ToggleActiveStatus">
+                        <i class="bi @(selectedAttribute.IsActive ? "bi-eye-slash" : "bi-eye") me-1"></i>
+                        @(selectedAttribute.IsActive ? "Deactivate" : "Activate")
+                    </button>
+
+                    <button class="btn btn-outline-danger btn-sm" @onclick="DeleteSelected">
+                        <i class="bi bi-trash me-1"></i> @Loc["Btn_Delete"]
+                    </button>
+
+                    <button class="btn btn-ghost btn-sm p-1 text-muted" @onclick="ClearSelection" title="Clear selection">
+                        <i class="bi bi-x-circle fs-6"></i>
+                    </button>
+                }
+                else
+                {
+                    <span class="text-muted small d-none d-md-inline">
+                        <i class="bi bi-cursor-fill me-1"></i> @Loc["Select_Row_Hint"]
+                    </span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Attributes Data Table -->
+    <div class="card border shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 40px;" class="text-center"></th>
+                        <th>@Loc["Attr_NameLabel"]</th>
+                        <th>@Loc["Attr_CategoryLabel"]</th>
+                        <th>@Loc["Attr_DataTypeLabel"]</th>
+                        <th>Predefined Options</th>
+                        <th class="text-center">Template Default</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-muted small">Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (filteredAttributes.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i class="bi bi-sliders fs-3 d-block mb-2 text-muted"></i>
+                                <span class="fw-semibold">No attributes found.</span>
+                                <p class="small text-muted mb-0">Try changing your search filters or create a new attribute.</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var attr in filteredAttributes)
+                        {
+                            var isSelected = selectedAttribute?.Id == attr.Id;
+                            <tr class="@(isSelected ? "table-active" : "")" style="cursor: pointer;" @onclick="() => SelectAttribute(attr)">
+                                <td class="text-center">
+                                    <input type="radio" name="selectedAttributeRadio" checked="@isSelected" />
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-body">@attr.Name</div>
+                                    @if (!string.IsNullOrEmpty(attr.Description))
+                                    {
+                                        <div class="text-muted" style="font-size: 0.72rem;">@attr.Description</div>
+                                    }
+                                </td>
+                                <td>
+                                    <span class="badge bg-secondary-subtle text-secondary">
+                                        <i class="bi bi-folder2 me-1"></i>@(attr.Category?.Name ?? "General")
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge-type @GetBadgeClass(attr.DataType)">
+                                        <i class="bi @GetDataTypeIcon(attr.DataType)"></i>
+                                        @attr.DataType
+                                    </span>
+                                </td>
+                                <td>
+                                    @if (attr.DataType == AttributeDataType.Dropdown || attr.DataType == AttributeDataType.MultiSelect)
+                                    {
+                                        var optCount = attr.Options?.Count ?? 0;
+                                        if (optCount > 0)
+                                        {
+                                            <div class="d-flex align-items-center gap-1 flex-wrap" style="max-width: 250px;">
+                                                <span class="badge bg-light text-body border" style="font-size: 0.7rem;">
+                                                    @optCount options
+                                                </span>
+                                                <span class="text-muted" style="font-size: 0.7rem;">
+                                                    (@string.Join(", ", attr.Options!.Take(2).Select(o => o.Value))@(optCount > 2 ? "..." : ""))
+                                                </span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-danger small" style="font-size: 0.72rem;">
+                                                <i class="bi bi-exclamation-circle me-1"></i> No options set
+                                            </span>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted" style="font-size: 0.75rem;">Direct User Input</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (attr.IsRequiredDefault)
+                                    {
+                                        <span class="badge bg-danger-subtle text-danger" style="font-size: 0.7rem;">Required</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-light text-muted border" style="font-size: 0.7rem;">Optional</span>
+                                    }
+                                </td>
+                                <td class="text-center">
+                                    @if (attr.IsActive)
+                                    {
+                                        <span class="badge bg-success-subtle text-success" style="font-size: 0.7rem;">
+                                            <i class="bi bi-check-circle-fill me-1"></i> Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.7rem;">Inactive</span>
+                                    }
+                                </td>
+                                <td class="text-muted small">
+                                    @((attr.UpdatedAt ?? attr.CreatedAt).ToString("MMM dd, yyyy"))
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Components -->
+<AttributeEditorModal 
+    @bind-IsOpen="isEditorModalOpen"
+    AttributeToEdit="attributeToEdit"
+    Categories="categories"
+    OnSaved="HandleAttributeSaved" />
+
+<CategoryManagerModal 
+    @bind-IsOpen="isCategoryModalOpen"
+    OnCategoriesUpdated="HandleCategoriesUpdated" />
+
+@code {
+    private List<CvAttribute> attributes = new();
+    private List<CvAttribute> filteredAttributes = new();
+    private List<AttributeCategory> categories = new();
+
+    private string searchTerm = string.Empty;
+    private int selectedCategoryId = 0;
+    private AttributeDataType? selectedDataType = null;
+
+    private CvAttribute? selectedAttribute = null;
+    private CvAttribute? attributeToEdit = null;
+
+    private bool isEditorModalOpen = false;
+    private bool isCategoryModalOpen = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        categories = await AttributeService.GetCategoriesAsync();
+        attributes = await AttributeService.GetAttributesAsync();
+        ApplyFilters();
+    }
+
+    private void ApplyFilters()
+    {
+        var query = attributes.AsQueryable();
+
+        if (selectedCategoryId > 0)
+        {
+            query = query.Where(a => a.CategoryId == selectedCategoryId);
+        }
+
+        if (selectedDataType.HasValue)
+        {
+            query = query.Where(a => a.DataType == selectedDataType.Value);
+        }
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var term = searchTerm.Trim();
+            query = query.Where(a =>
+                a.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                (a.Description != null && a.Description.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                (a.Category != null && a.Category.Name.Contains(term, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        filteredAttributes = query.ToList();
+
+        // If previously selected item is no longer in filtered list, keep or clear selection
+        if (selectedAttribute != null && !filteredAttributes.Any(a => a.Id == selectedAttribute.Id))
+        {
+            selectedAttribute = null;
+        }
+    }
+
+    private void ResetFilters()
+    {
+        searchTerm = string.Empty;
+        selectedCategoryId = 0;
+        selectedDataType = null;
+        ApplyFilters();
+    }
+
+    private void SelectAttribute(CvAttribute attr)
+    {
+        selectedAttribute = attr;
+    }
+
+    private void ClearSelection()
+    {
+        selectedAttribute = null;
+    }
+
+    private void OpenCreateModal()
+    {
+        attributeToEdit = null;
+        isEditorModalOpen = true;
+    }
+
+    private void OpenEditModal()
+    {
+        if (selectedAttribute != null)
+        {
+            attributeToEdit = selectedAttribute;
+            isEditorModalOpen = true;
+        }
+    }
+
+    private async Task ToggleActiveStatus()
+    {
+        if (selectedAttribute != null)
+        {
+            await AttributeService.ToggleAttributeStatusAsync(selectedAttribute.Id);
+            await LoadData();
+            // Refresh selection state
+            selectedAttribute = attributes.FirstOrDefault(a => a.Id == selectedAttribute.Id);
+        }
+    }
+
+    private async Task DeleteSelected()
+    {
+        if (selectedAttribute != null)
+        {
+            await AttributeService.DeleteAttributeAsync(selectedAttribute.Id);
+            selectedAttribute = null;
+            await LoadData();
+        }
+    }
+
+    private async Task HandleAttributeSaved()
+    {
+        await LoadData();
+        if (attributeToEdit != null)
+        {
+            selectedAttribute = attributes.FirstOrDefault(a => a.Id == attributeToEdit.Id);
+        }
+    }
+
+    private async Task HandleCategoriesUpdated()
+    {
+        await LoadData();
+    }
+
+    private string GetBadgeClass(AttributeDataType type) => type switch
+    {
+        AttributeDataType.Text => "badge-type-text",
+        AttributeDataType.LongText => "badge-type-longtext",
+        AttributeDataType.Number => "badge-type-number",
+        AttributeDataType.Date => "badge-type-date",
+        AttributeDataType.Boolean => "badge-type-boolean",
+        AttributeDataType.Dropdown => "badge-type-dropdown",
+        AttributeDataType.MultiSelect => "badge-type-multiselect",
+        AttributeDataType.Url => "badge-type-url",
+        _ => "badge-type-text"
+    };
+
+    private string GetDataTypeIcon(AttributeDataType type) => type switch
+    {
+        AttributeDataType.Text => "bi-input-cursor-text",
+        AttributeDataType.LongText => "bi-textarea-t",
+        AttributeDataType.Number => "bi-123",
+        AttributeDataType.Date => "bi-calendar3",
+        AttributeDataType.Boolean => "bi-toggle-on",
+        AttributeDataType.Dropdown => "bi-chevron-down",
+        AttributeDataType.MultiSelect => "bi-check2-all",
+        AttributeDataType.Url => "bi-link-45deg",
+        _ => "bi-tag"
+    };
+}
