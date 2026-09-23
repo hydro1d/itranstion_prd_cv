@@ -66,7 +66,10 @@ public static class IdentityDataSeeder
                 // 6. Seed Position Openings & Requirements Templates (Killer Feature #2)
                 await SeedPositionsAsync(context, userManager);
 
-                logger.LogInformation("Database seeded successfully with default roles, demo accounts, attribute library, and positions.");
+                // 7. Seed Candidate Master Profile Details, Projects, and Sample CVs
+                await SeedCandidateDetailsAsync(context, userManager);
+
+                logger.LogInformation("Database seeded successfully with default roles, demo accounts, attribute library, positions, and candidate profile.");
             }
             else
             {
@@ -366,5 +369,151 @@ public static class IdentityDataSeeder
 
         context.Positions.AddRange(p1, p2, p3, p4);
         await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedCandidateDetailsAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    {
+        var candidateUser = await userManager.FindByEmailAsync("candidate@cvplatform.com");
+        if (candidateUser == null) return;
+
+        var profile = await context.CandidateProfiles
+            .Include(p => p.AttributeValues)
+            .Include(p => p.Projects)
+            .Include(p => p.CVs)
+            .FirstOrDefaultAsync(p => p.UserId == candidateUser.Id);
+
+        if (profile == null) return;
+
+        // 1. Seed dynamic attributes if missing
+        if (!profile.AttributeValues.Any())
+        {
+            var attributes = await context.Attributes.ToListAsync();
+            var values = new Dictionary<string, string>
+            {
+                { "Years of Experience", "8" },
+                { "Current Job Title", "Senior Full-Stack & Cloud Architect" },
+                { "Primary Programming Language", "C# / .NET" },
+                { "Frameworks & Libraries", "ASP.NET Core, Blazor, Entity Framework Core" },
+                { "Cloud & Infrastructure Platforms", "AWS, Azure, Docker, Kubernetes" },
+                { "English Proficiency", "Fluent (C1/C2)" },
+                { "Highest Education Level", "Master's Degree" },
+                { "Willing to Relocate", "true" },
+                { "Remote Work Preference", "Remote Only" },
+                { "GitHub Profile URL", "https://github.com/alexrivera" },
+                { "Expected Annual Salary (USD)", "135000" },
+                { "Notice Period", "1 Month" }
+            };
+
+            foreach (var kvp in values)
+            {
+                var attr = attributes.FirstOrDefault(a => a.Name == kvp.Key);
+                if (attr != null)
+                {
+                    context.ProfileAttributeValues.Add(new ProfileAttributeValue
+                    {
+                        CandidateProfileId = profile.Id,
+                        AttributeId = attr.Id,
+                        Value = kvp.Value,
+                        UpdatedAt = DateTime.UtcNow
+                    });
+                }
+            }
+            await context.SaveChangesAsync();
+        }
+
+        // 2. Seed portfolio projects if missing
+        if (!profile.Projects.Any())
+        {
+            var proj1 = new Project
+            {
+                CandidateProfileId = profile.Id,
+                Title = "Distributed Event Sourcing & CQRS Engine",
+                Description = "High-throughput event sourcing architecture supporting over 25,000 events/sec with transactional outbox delivery.",
+                MarkdownContent = @"### Architectural Overview
+
+Designed and engineered a high-throughput event sourcing platform for financial transaction processing handling over **25,000 events/second** with zero data loss.
+
+#### Key Architectural Capabilities:
+- **CQRS Pattern**: Segregated read and write projections to optimize high-concurrency analytical queries.
+- **Event Store**: Implemented append-only event stream persistence on PostgreSQL with optimistic concurrency tokens.
+- **Transactional Outbox**: Guaranteed at-least-once message delivery via RabbitMQ broker.
+
+```csharp
+public async Task AppendEventAsync<TEvent>(Guid aggregateId, TEvent domainEvent)
+{
+    // Atomic event sequence increment and outbox dispatch
+    await _eventStore.SaveAsync(aggregateId, domainEvent);
+}
+```",
+                Technologies = "C#, .NET 9, RabbitMQ, PostgreSQL, Docker, Redis",
+                GitHubUrl = "https://github.com/alexrivera/distributed-cqrs",
+                ProjectUrl = "https://cqrs-demo.alexrivera.dev",
+                DisplayOrder = 1,
+                CreatedAt = DateTime.UtcNow.AddMonths(-2)
+            };
+
+            var proj2 = new Project
+            {
+                CandidateProfileId = profile.Id,
+                Title = "Real-Time Telemetry & Observability Hub",
+                Description = "Low-latency browser monitoring suite providing live telemetry, health metrics, and distributed tracing for cloud-native microservices.",
+                MarkdownContent = @"### System Summary
+
+A centralized developer dashboard providing real-time infrastructure observability, distributed tracing, and live error alerting for distributed microservices.
+
+#### Core Technical Highlights:
+- **Live Streaming**: Continuous node health broadcasting using WebSockets and SignalR.
+- **Sub-Second Dashboards**: Client-side reactive canvas charts rendering CPU, memory, and GC allocations.
+- **OpenTelemetry Standard**: Native export to Prometheus, Jaeger, and Grafana stacks.
+
+```csharp
+app.MapHub<TelemetryHub>(""/hubs/telemetry"");
+```",
+                Technologies = "Blazor Server, SignalR, OpenTelemetry, Prometheus, Grafana, Bootstrap 5",
+                GitHubUrl = "https://github.com/alexrivera/telemetry-hub",
+                ProjectUrl = "https://telemetry.alexrivera.dev",
+                DisplayOrder = 2,
+                CreatedAt = DateTime.UtcNow.AddMonths(-1)
+            };
+
+            context.Projects.AddRange(proj1, proj2);
+            await context.SaveChangesAsync();
+        }
+
+        // 3. Seed sample tailored CVs if missing
+        if (!profile.CVs.Any())
+        {
+            var positions = await context.Positions.ToListAsync();
+            var pos1 = positions.FirstOrDefault(p => p.Title.Contains("Architect"));
+            var pos2 = positions.FirstOrDefault(p => p.Title.Contains("Distributed"));
+
+            if (pos1 != null)
+            {
+                context.CVs.Add(new CV
+                {
+                    CandidateProfileId = profile.Id,
+                    PositionId = pos1.Id,
+                    Title = $"Tailored CV — {pos1.Title}",
+                    ProfessionalSummary = "Distinguished cloud architect with deep expertise in enterprise C# / .NET distributed systems, microservices architectures, and AWS cloud migrations.",
+                    CompletionPercentage = 95,
+                    CreatedAt = DateTime.UtcNow.AddDays(-10)
+                });
+            }
+
+            if (pos2 != null)
+            {
+                context.CVs.Add(new CV
+                {
+                    CandidateProfileId = profile.Id,
+                    PositionId = pos2.Id,
+                    Title = $"Tailored CV — {pos2.Title}",
+                    ProfessionalSummary = "Hands-on distributed systems engineer specializing in event-driven architectures, transactional outbox messaging, and PostgreSQL database performance.",
+                    CompletionPercentage = 88,
+                    CreatedAt = DateTime.UtcNow.AddDays(-4)
+                });
+            }
+
+            await context.SaveChangesAsync();
+        }
     }
 }
