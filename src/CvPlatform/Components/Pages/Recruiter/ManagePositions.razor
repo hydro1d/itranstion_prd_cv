@@ -1,0 +1,353 @@
+@page "/recruiter/positions"
+@attribute [Authorize(Roles = $"{ApplicationRole.Recruiter},{ApplicationRole.Administrator}")]
+@inject IPositionService PositionService
+@inject IStringLocalizer<SharedResource> Loc
+@inject NavigationManager NavigationManager
+
+<PageTitle>@Loc["Pos_ManageTitle"] - @Loc["App_Title"]</PageTitle>
+
+<div class="container-fluid px-4 py-3">
+    <!-- Header Section -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-primary-subtle text-primary">
+                    <i class="bi bi-briefcase-fill me-1"></i> Killer Feature #2
+                </span>
+                <span class="text-muted small">• Position Templates & Openings</span>
+            </div>
+            <h2 class="fw-bold mb-1">@Loc["Pos_ManageTitle"]</h2>
+            <p class="text-muted small mb-0">
+                Compose position templates by picking mandatory and optional qualification attributes from the library.
+            </p>
+        </div>
+
+        <div>
+            <a href="recruiter/positions/create" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-lg me-1"></i> @Loc["Pos_CreateOpening"]
+            </a>
+        </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="row g-3 mb-3">
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-semibold">Total Openings</span>
+                    <i class="bi bi-folder2-open text-primary fs-5"></i>
+                </div>
+                <h3 class="fw-bold mb-0 mt-1">@positions.Count</h3>
+                <div class="text-muted mt-1" style="font-size: 0.72rem;">All recorded position templates</div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-semibold">Published & Live</span>
+                    <i class="bi bi-globe2 text-success fs-5"></i>
+                </div>
+                <h3 class="fw-bold mb-0 mt-1">@positions.Count(p => p.Visibility == PositionVisibility.Public)</h3>
+                <div class="text-muted mt-1" style="font-size: 0.72rem;">Accepting tailored candidate CVs</div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-semibold">Draft Templates</span>
+                    <i class="bi bi-file-earmark-diff text-warning fs-5"></i>
+                </div>
+                <h3 class="fw-bold mb-0 mt-1">@positions.Count(p => p.Visibility == PositionVisibility.Draft)</h3>
+                <div class="text-muted mt-1" style="font-size: 0.72rem;">In preparation / unpublished</div>
+            </div>
+        </div>
+
+        <div class="col-sm-6 col-lg-3">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted small fw-semibold">Structured Attributes</span>
+                    <i class="bi bi-sliders text-info fs-5"></i>
+                </div>
+                <h3 class="fw-bold mb-0 mt-1">@positions.Sum(p => p.PositionAttributes.Count)</h3>
+                <div class="text-muted mt-1" style="font-size: 0.72rem;">Mapped qualifications across openings</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Action Toolbar (Strict Evaluation Defense Requirement: No repeating row buttons) -->
+    <div class="card border shadow-sm mb-3">
+        <div class="card-body p-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
+            <!-- Left: Search and Filters -->
+            <div class="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
+                <div class="input-group input-group-sm" style="max-width: 250px;">
+                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                    <input type="text" class="form-control" placeholder="Search openings..." 
+                           @bind="searchTerm" @bind:event="oninput" @bind:after="ApplyFilters" />
+                </div>
+
+                <div style="min-width: 150px;">
+                    <select class="form-select form-select-sm" @bind="selectedEmploymentType" @bind:after="ApplyFilters">
+                        <option value="">All Employment</option>
+                        <option value="@EmploymentType.FullTime">Full-time</option>
+                        <option value="@EmploymentType.PartTime">Part-time</option>
+                        <option value="@EmploymentType.Contract">Contract</option>
+                        <option value="@EmploymentType.Remote">Remote</option>
+                        <option value="@EmploymentType.Internship">Internship</option>
+                    </select>
+                </div>
+
+                <div style="min-width: 140px;">
+                    <select class="form-select form-select-sm" @bind="selectedVisibility" @bind:after="ApplyFilters">
+                        <option value="">All Statuses</option>
+                        <option value="@PositionVisibility.Public">Public</option>
+                        <option value="@PositionVisibility.Draft">Draft</option>
+                        <option value="@PositionVisibility.Closed">Closed</option>
+                    </select>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(searchTerm) || selectedEmploymentType.HasValue || selectedVisibility.HasValue)
+                {
+                    <button class="btn btn-outline-secondary btn-sm" @onclick="ResetFilters">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
+                    </button>
+                }
+            </div>
+
+            <!-- Right: Row-Contextual Actions (Visible when a row is selected) -->
+            <div class="d-flex align-items-center gap-2">
+                @if (selectedPosition != null)
+                {
+                    <span class="badge bg-primary-subtle text-primary py-2 px-2 d-none d-lg-inline-block">
+                        <i class="bi bi-check-circle me-1"></i> Selected: <strong>@selectedPosition.Title</strong>
+                    </span>
+
+                    <a href="positions/@selectedPosition.Id" class="btn btn-outline-custom btn-sm" target="_blank" title="View Public Page">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> Preview
+                    </a>
+
+                    <a href="recruiter/positions/edit/@selectedPosition.Id" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-pencil-square me-1"></i> @Loc["Btn_Edit"]
+                    </a>
+
+                    <div class="btn-group btn-group-sm">
+                        @if (selectedPosition.Visibility != PositionVisibility.Public)
+                        {
+                            <button class="btn btn-outline-success" @onclick="() => SetVisibility(PositionVisibility.Public)">
+                                <i class="bi bi-check-circle me-1"></i> Publish
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-secondary" @onclick="() => SetVisibility(PositionVisibility.Draft)">
+                                <i class="bi bi-pause-circle me-1"></i> Unpublish
+                            </button>
+                        }
+                    </div>
+
+                    <button class="btn btn-outline-danger btn-sm" @onclick="DeleteSelected">
+                        <i class="bi bi-trash me-1"></i> @Loc["Btn_Delete"]
+                    </button>
+
+                    <button class="btn btn-ghost btn-sm p-1 text-muted" @onclick="ClearSelection" title="Clear selection">
+                        <i class="bi bi-x-circle fs-6"></i>
+                    </button>
+                }
+                else
+                {
+                    <span class="text-muted small d-none d-md-inline">
+                        <i class="bi bi-cursor-fill me-1"></i> @Loc["Select_Row_Hint"]
+                    </span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Positions Table -->
+    <div class="card border shadow-sm">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 40px;" class="text-center"></th>
+                        <th>@Loc["Th_PositionTitle"]</th>
+                        <th>@Loc["Th_Company"]</th>
+                        <th>@Loc["Th_Location"]</th>
+                        <th>@Loc["Th_EmploymentType"]</th>
+                        <th>Template Requirements</th>
+                        <th class="text-center">Visibility</th>
+                        <th class="text-muted small">Posted</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (filteredPositions.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center py-5 text-muted">
+                                <i class="bi bi-folder-x fs-3 d-block mb-2 text-muted"></i>
+                                <span class="fw-semibold">No position openings match your criteria.</span>
+                                <p class="small text-muted mb-0">Create a new position template or adjust your filters.</p>
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var pos in filteredPositions)
+                        {
+                            var isSelected = selectedPosition?.Id == pos.Id;
+                            var requiredCount = pos.PositionAttributes.Count(pa => pa.IsRequired);
+                            var optionalCount = pos.PositionAttributes.Count(pa => !pa.IsRequired);
+
+                            <tr class="@(isSelected ? "table-active" : "")" style="cursor: pointer;" @onclick="() => SelectPosition(pos)">
+                                <td class="text-center">
+                                    <input type="radio" name="selectedPositionRadio" checked="@isSelected" />
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-body">@pos.Title</div>
+                                    @if (!string.IsNullOrEmpty(pos.Tags))
+                                    {
+                                        <div class="text-muted" style="font-size: 0.72rem;">@pos.Tags</div>
+                                    }
+                                </td>
+                                <td class="fw-semibold text-secondary">@pos.Company</td>
+                                <td class="text-muted small">
+                                    <i class="bi bi-geo-alt me-1"></i>@pos.Location
+                                </td>
+                                <td>
+                                    <span class="badge @GetEmploymentBadgeClass(pos.EmploymentType)">
+                                        @pos.EmploymentType
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-1">
+                                        <span class="badge bg-danger-subtle text-danger" title="Mandatory fields for applicants">
+                                            @requiredCount Required
+                                        </span>
+                                        <span class="badge bg-primary-subtle text-primary" title="Preferred qualifications">
+                                            @optionalCount Optional
+                                        </span>
+                                    </div>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge @GetVisibilityBadgeClass(pos.Visibility)">
+                                        @pos.Visibility
+                                    </span>
+                                </td>
+                                <td class="text-muted small">
+                                    @pos.CreatedAt.ToString("MMM dd, yyyy")
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@code {
+    private List<Position> positions = new();
+    private List<Position> filteredPositions = new();
+
+    private string searchTerm = string.Empty;
+    private EmploymentType? selectedEmploymentType = null;
+    private PositionVisibility? selectedVisibility = null;
+
+    private Position? selectedPosition = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPositions();
+    }
+
+    private async Task LoadPositions()
+    {
+        positions = await PositionService.GetPositionsAsync();
+        ApplyFilters();
+    }
+
+    private void ApplyFilters()
+    {
+        var query = positions.AsQueryable();
+
+        if (selectedEmploymentType.HasValue)
+            query = query.Where(p => p.EmploymentType == selectedEmploymentType.Value);
+
+        if (selectedVisibility.HasValue)
+            query = query.Where(p => p.Visibility == selectedVisibility.Value);
+
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            var term = searchTerm.Trim();
+            query = query.Where(p =>
+                p.Title.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                p.Company.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                p.Location.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                p.Tags.Contains(term, StringComparison.OrdinalIgnoreCase));
+        }
+
+        filteredPositions = query.ToList();
+
+        if (selectedPosition != null && !filteredPositions.Any(p => p.Id == selectedPosition.Id))
+        {
+            selectedPosition = null;
+        }
+    }
+
+    private void ResetFilters()
+    {
+        searchTerm = string.Empty;
+        selectedEmploymentType = null;
+        selectedVisibility = null;
+        ApplyFilters();
+    }
+
+    private void SelectPosition(Position pos)
+    {
+        selectedPosition = pos;
+    }
+
+    private void ClearSelection()
+    {
+        selectedPosition = null;
+    }
+
+    private async Task SetVisibility(PositionVisibility visibility)
+    {
+        if (selectedPosition != null)
+        {
+            await PositionService.UpdateVisibilityAsync(selectedPosition.Id, visibility);
+            await LoadPositions();
+            selectedPosition = positions.FirstOrDefault(p => p.Id == selectedPosition.Id);
+        }
+    }
+
+    private async Task DeleteSelected()
+    {
+        if (selectedPosition != null)
+        {
+            await PositionService.DeletePositionAsync(selectedPosition.Id);
+            selectedPosition = null;
+            await LoadPositions();
+        }
+    }
+
+    private string GetEmploymentBadgeClass(EmploymentType type) => type switch
+    {
+        EmploymentType.FullTime => "bg-primary-subtle text-primary",
+        EmploymentType.PartTime => "bg-info-subtle text-info",
+        EmploymentType.Contract => "bg-warning-subtle text-warning",
+        EmploymentType.Remote => "bg-success-subtle text-success",
+        EmploymentType.Internship => "bg-secondary-subtle text-secondary",
+        _ => "bg-secondary-subtle text-secondary"
+    };
+
+    private string GetVisibilityBadgeClass(PositionVisibility visibility) => visibility switch
+    {
+        PositionVisibility.Public => "bg-success-subtle text-success",
+        PositionVisibility.Draft => "bg-warning-subtle text-warning",
+        PositionVisibility.Closed => "bg-secondary-subtle text-secondary",
+        _ => "bg-secondary-subtle text-secondary"
+    };
+}
