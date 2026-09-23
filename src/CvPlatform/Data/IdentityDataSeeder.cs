@@ -63,7 +63,10 @@ public static class IdentityDataSeeder
                 // 5. Seed Dynamic Attribute Library Categories & Attributes
                 await SeedAttributesAsync(context);
 
-                logger.LogInformation("Database seeded successfully with default roles, demo accounts, and attribute library.");
+                // 6. Seed Position Openings & Requirements Templates (Killer Feature #2)
+                await SeedPositionsAsync(context, userManager);
+
+                logger.LogInformation("Database seeded successfully with default roles, demo accounts, attribute library, and positions.");
             }
             else
             {
@@ -237,6 +240,131 @@ public static class IdentityDataSeeder
         attributes.Add(attrWorkModel);
 
         context.Attributes.AddRange(attributes);
+        await context.SaveChangesAsync();
+    }
+
+    private static async Task SeedPositionsAsync(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+    {
+        if (await context.Positions.AnyAsync()) return;
+
+        var recruiter = await userManager.FindByEmailAsync("recruiter@cvplatform.com");
+        if (recruiter == null) return;
+
+        var allAttributes = await context.Attributes.ToListAsync();
+        var attrMap = allAttributes.ToDictionary(a => a.Name, a => a.Id);
+
+        // Helper to add attribute requirement
+        void AddReq(Position p, string attrName, bool isRequired, ref int order)
+        {
+            if (attrMap.TryGetValue(attrName, out var id))
+            {
+                p.PositionAttributes.Add(new PositionAttribute
+                {
+                    AttributeId = id,
+                    IsRequired = isRequired,
+                    DisplayOrder = order++
+                });
+            }
+        }
+
+        // Position 1: Senior .NET Core Cloud Architect
+        var p1 = new Position
+        {
+            Title = "Senior .NET Core Cloud Architect",
+            Company = "FinTech Global Solutions",
+            Location = "Stockholm, Sweden / Remote",
+            EmploymentType = EmploymentType.FullTime,
+            Visibility = PositionVisibility.Public,
+            Deadline = DateTime.UtcNow.AddDays(30),
+            Tags = "C#, .NET 9, Cloud, Microservices, Architecture",
+            Description = "We are seeking a seasoned .NET Cloud Architect to spearhead high-throughput distributed transaction systems. You will lead cloud design patterns, microservices decomposition, and ensure sub-millisecond database queries across distributed clusters.",
+            RecruiterId = recruiter.Id,
+            CreatedAt = DateTime.UtcNow.AddDays(-5),
+            UpdatedAt = DateTime.UtcNow.AddDays(-1)
+        };
+        int o1 = 1;
+        AddReq(p1, "Years of Experience", true, ref o1);
+        AddReq(p1, "Current Job Title", true, ref o1);
+        AddReq(p1, "Primary Programming Language", true, ref o1);
+        AddReq(p1, "Frameworks & Libraries", true, ref o1);
+        AddReq(p1, "English Proficiency", true, ref o1);
+        AddReq(p1, "Highest Education Level", false, ref o1);
+        AddReq(p1, "Cloud & Infrastructure Platforms", false, ref o1);
+        AddReq(p1, "GitHub Profile URL", false, ref o1);
+        AddReq(p1, "LinkedIn Profile URL", false, ref o1);
+        AddReq(p1, "Willing to Relocate", false, ref o1);
+
+        // Position 2: Full-Stack TypeScript & React Engineer
+        var p2 = new Position
+        {
+            Title = "Full-Stack TypeScript & React Engineer",
+            Company = "Nordic Tech Labs",
+            Location = "Gothenburg, Sweden (Hybrid)",
+            EmploymentType = EmploymentType.FullTime,
+            Visibility = PositionVisibility.Public,
+            Deadline = DateTime.UtcNow.AddDays(20),
+            Tags = "TypeScript, React, Node.js, Web, UI/UX",
+            Description = "Join our product engineering squad building rich, interactive web portals. You will craft accessible, high-performance web applications using modern TypeScript, React, and server-side component architectures.",
+            RecruiterId = recruiter.Id,
+            CreatedAt = DateTime.UtcNow.AddDays(-3),
+            UpdatedAt = DateTime.UtcNow.AddDays(-1)
+        };
+        int o2 = 1;
+        AddReq(p2, "Years of Experience", true, ref o2);
+        AddReq(p2, "Current Job Title", true, ref o2);
+        AddReq(p2, "Frameworks & Libraries", true, ref o2);
+        AddReq(p2, "English Proficiency", true, ref o2);
+        AddReq(p2, "Primary Programming Language", false, ref o2);
+        AddReq(p2, "GitHub Profile URL", false, ref o2);
+        AddReq(p2, "Preferred Work Model", false, ref o2);
+
+        // Position 3: Cloud Infrastructure & DevOps Lead
+        var p3 = new Position
+        {
+            Title = "Cloud Infrastructure & DevOps Lead",
+            Company = "CloudScale Systems",
+            Location = "Remote (Europe)",
+            EmploymentType = EmploymentType.Contract,
+            Visibility = PositionVisibility.Public,
+            Deadline = DateTime.UtcNow.AddDays(15),
+            Tags = "DevOps, Kubernetes, Docker, AWS, Terraform",
+            Description = "Seeking an infrastructure automation expert to design and maintain self-healing Kubernetes clusters, CI/CD pipelines, and multi-region infrastructure as code.",
+            RecruiterId = recruiter.Id,
+            CreatedAt = DateTime.UtcNow.AddDays(-2),
+            UpdatedAt = DateTime.UtcNow.AddDays(-1)
+        };
+        int o3 = 1;
+        AddReq(p3, "Years of Experience", true, ref o3);
+        AddReq(p3, "Cloud & Infrastructure Platforms", true, ref o3);
+        AddReq(p3, "English Proficiency", true, ref o3);
+        AddReq(p3, "Primary Programming Language", false, ref o3);
+        AddReq(p3, "GitHub Profile URL", false, ref o3);
+        AddReq(p3, "Available Start Date", false, ref o3);
+        AddReq(p3, "Willing to Relocate", false, ref o3);
+
+        // Position 4: Junior Backend Software Engineer
+        var p4 = new Position
+        {
+            Title = "Junior Backend Software Engineer",
+            Company = "InnovateIQ Labs",
+            Location = "Malmö, Sweden (On-site)",
+            EmploymentType = EmploymentType.Internship,
+            Visibility = PositionVisibility.Public,
+            Deadline = DateTime.UtcNow.AddDays(45),
+            Tags = "Backend, C#, SQL, Mentorship, Graduate",
+            Description = "An outstanding graduate or early-career role offering close mentorship with senior engineers. You will contribute to API endpoints, database migrations, and unit test suites.",
+            RecruiterId = recruiter.Id,
+            CreatedAt = DateTime.UtcNow.AddDays(-1),
+            UpdatedAt = DateTime.UtcNow
+        };
+        int o4 = 1;
+        AddReq(p4, "Highest Education Level", true, ref o4);
+        AddReq(p4, "Primary Programming Language", true, ref o4);
+        AddReq(p4, "English Proficiency", true, ref o4);
+        AddReq(p4, "GitHub Profile URL", false, ref o4);
+        AddReq(p4, "Available Start Date", false, ref o4);
+
+        context.Positions.AddRange(p1, p2, p3, p4);
         await context.SaveChangesAsync();
     }
 }
