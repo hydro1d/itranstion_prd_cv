@@ -702,4 +702,58 @@ a:hover {
 }
 .option-chip .btn-remove:hover {
     color: var(--app-danger);
+}
+
+/* --- Document-Style CV Editor (Killer Feature #3) --- */
+.cv-document-paper {
+    background-color: var(--app-surface);
+    border: 1px solid var(--app-border);
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    padding: 2.5rem;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.cv-section-divider {
+    border-top: 2px solid var(--app-border);
+    margin: 1.5rem 0;
+}
+
+.cv-field-missing {
+    border: 1.5px solid #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.04) !important;
+}
+
+.cv-field-missing:focus {
+    box-shadow: 0 0 0 0.25rem rgba(239, 68, 68, 0.25) !important;
+}
+
+/* Print Rules for CV */
+@media print {
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+    .no-print,
+    .top-row,
+    .sidebar,
+    .btn,
+    nav,
+    .breadcrumb,
+    .cv-editor-toolbar,
+    .cv-sidebar-sticky {
+        display: none !important;
+    }
+    .cv-document-paper {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        width: 100% !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+    }
+    .cv-field-missing {
+        border: 1px solid #ccc !important;
+        background: none !important;
+    }
 }
