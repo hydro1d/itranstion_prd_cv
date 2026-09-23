@@ -1,0 +1,209 @@
+@using CvPlatform.Data.Entities
+@using Markdig
+@inject IStringLocalizer<SharedResource> Loc
+
+@if (IsOpen)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.6); backdrop-filter: blur(2px); z-index: 1055;">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content shadow border">
+                <div class="modal-header border-bottom">
+                    <h5 class="modal-title fw-bold">
+                        <i class="bi bi-folder-plus text-primary me-2"></i>
+                        @(Project.Id > 0 ? Loc["Candidate_EditProject"] : Loc["Candidate_AddProject"])
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="CloseAsync" aria-label="Close"></button>
+                </div>
+                
+                <div class="modal-body p-4">
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger py-2 small mb-3">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i> @errorMessage
+                        </div>
+                    }
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold small mb-1">
+                                @Loc["Candidate_ProjectTitle"] <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" placeholder="e.g. Distributed Event Sourcing Engine"
+                                   @bind="Project.Title" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small mb-1">
+                                @Loc["Candidate_DisplayOrder"]
+                            </label>
+                            <input type="number" class="form-control" @bind="Project.DisplayOrder" min="1" max="99" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small mb-1">
+                            @Loc["Candidate_ShortSummary"] <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" 
+                               placeholder="Brief 1-line elevator pitch of this project"
+                               @bind="Project.Description" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small mb-1">
+                            @Loc["Candidate_Technologies"]
+                        </label>
+                        <input type="text" class="form-control" 
+                               placeholder="e.g. C#, .NET 9, RabbitMQ, PostgreSQL, Docker"
+                               @bind="Project.Technologies" />
+                        @if (!string.IsNullOrWhiteSpace(Project.Technologies))
+                        {
+                            <div class="d-flex flex-wrap gap-1 mt-2">
+                                @foreach (var tech in Project.Technologies.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary border">@tech</span>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small mb-1">
+                                <i class="bi bi-github me-1"></i> @Loc["Candidate_GitHubUrl"]
+                            </label>
+                            <input type="url" class="form-control" placeholder="https://github.com/username/project"
+                                   @bind="Project.GitHubUrl" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small mb-1">
+                                <i class="bi bi-box-arrow-up-right me-1"></i> @Loc["Candidate_ProjectUrl"]
+                            </label>
+                            <input type="url" class="form-control" placeholder="https://project-demo.com"
+                                   @bind="Project.ProjectUrl" />
+                        </div>
+                    </div>
+
+                    <!-- Markdown Content Editor with Live Preview -->
+                    <div class="card border mb-2">
+                        <div class="card-header bg-light d-flex justify-content-between align-items-center py-2">
+                            <span class="fw-semibold small">
+                                <i class="bi bi-markdown me-1 text-primary"></i> @Loc["Candidate_ProjectMarkdown"]
+                            </span>
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn @(editorTab == "write" ? "btn-primary active" : "btn-outline-secondary")"
+                                        @onclick='() => editorTab = "write"'>
+                                    <i class="bi bi-pencil me-1"></i> Write
+                                </button>
+                                <button type="button" class="btn @(editorTab == "preview" ? "btn-primary active" : "btn-outline-secondary")"
+                                        @onclick='() => editorTab = "preview"'>
+                                    <i class="bi bi-eye me-1"></i> Live Preview
+                                </button>
+                                <button type="button" class="btn @(editorTab == "split" ? "btn-primary active" : "btn-outline-secondary")"
+                                        @onclick='() => editorTab = "split"'>
+                                    <i class="bi bi-layout-split me-1"></i> Split
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="card-body p-2">
+                            @if (editorTab == "write")
+                            {
+                                <textarea class="form-control font-monospace small" rows="8"
+                                          placeholder="Write in Markdown: headers (###), bullet points, code blocks (```csharp ... ```), bold, etc."
+                                          @bind="Project.MarkdownContent" @bind:event="oninput"></textarea>
+                            }
+                            else if (editorTab == "preview")
+                            {
+                                <div class="p-3 border rounded bg-body-tertiary markdown-rendered" style="min-height: 200px; max-height: 350px; overflow-y: auto;">
+                                    @if (string.IsNullOrWhiteSpace(Project.MarkdownContent))
+                                    {
+                                        <p class="text-muted small fst-italic mb-0">No markdown content yet. Switch to 'Write' tab to add details.</p>
+                                    }
+                                    else
+                                    {
+                                        @RenderMarkdown(Project.MarkdownContent)
+                                    }
+                                </div>
+                            }
+                            else if (editorTab == "split")
+                            {
+                                <div class="row g-2">
+                                    <div class="col-md-6">
+                                        <textarea class="form-control font-monospace small" rows="8"
+                                                  placeholder="Type markdown here..."
+                                                  @bind="Project.MarkdownContent" @bind:event="oninput"></textarea>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="p-2 border rounded bg-body-tertiary markdown-rendered" style="height: 100%; min-height: 190px; max-height: 250px; overflow-y: auto;">
+                                            @if (string.IsNullOrWhiteSpace(Project.MarkdownContent))
+                                            {
+                                                <p class="text-muted small fst-italic mb-0">Live preview appears here.</p>
+                                            }
+                                            else
+                                            {
+                                                @RenderMarkdown(Project.MarkdownContent)
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-top bg-light">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" @onclick="CloseAsync">
+                        @Loc["Btn_Cancel"]
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm" @onclick="SaveAsync">
+                        <i class="bi bi-check2 me-1"></i> @Loc["Btn_Save"]
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public Project Project { get; set; } = new();
+    [Parameter] public EventCallback<Project> OnSave { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private string editorTab = "write";
+    private string? errorMessage;
+    private static readonly MarkdownPipeline _pipeline = new MarkdownPipelineBuilder()
+        .UseAdvancedExtensions()
+        .Build();
+
+    private MarkupString RenderMarkdown(string? markdown)
+    {
+        if (string.IsNullOrWhiteSpace(markdown)) return new MarkupString("");
+        var html = Markdown.ToHtml(markdown, _pipeline);
+        return new MarkupString(html);
+    }
+
+    private async Task SaveAsync()
+    {
+        errorMessage = null;
+        if (string.IsNullOrWhiteSpace(Project.Title))
+        {
+            errorMessage = Loc["Candidate_ProjectTitleRequired"];
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(Project.Description))
+        {
+            errorMessage = Loc["Candidate_ProjectDescRequired"];
+            return;
+        }
+
+        await OnSave.InvokeAsync(Project);
+    }
+
+    private async Task CloseAsync()
+    {
+        errorMessage = null;
+        await OnClose.InvokeAsync();
+    }
+}
