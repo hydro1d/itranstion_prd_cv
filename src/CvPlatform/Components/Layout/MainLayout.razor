@@ -1,5 +1,6 @@
 @inherits LayoutComponentBase
 @inject IStringLocalizer<SharedResource> Loc
+@using System.Security.Claims
 
 <div class="app-container">
     <!-- Sidebar for Desktop & Offcanvas for Mobile -->
@@ -39,13 +40,38 @@
                 <!-- Theme Toggle -->
                 <ThemeToggle />
 
-                <!-- Auth / Profile Trigger Placeholder -->
-                <div class="ms-1 border-start ps-2">
-                    <a href="login" class="btn btn-primary btn-sm">
-                        <i class="bi bi-box-arrow-in-right"></i>
-                        <span>@Loc["Btn_SignIn"]</span>
-                    </a>
-                </div>
+                <!-- Role-Aware Authentication Header -->
+                <AuthorizeView>
+                    <Authorized>
+                        <div class="d-flex align-items-center gap-2 ms-2 border-start ps-2">
+                            <div class="d-none d-md-flex flex-column text-end">
+                                <span class="fw-bold text-body small lh-1">@(context.User.Identity?.Name ?? "User")</span>
+                                <span class="badge @GetRoleBadgeClass(context.User) mt-1 align-self-end" style="font-size: 0.65rem;">
+                                    @GetRoleBadgeText(context.User)
+                                </span>
+                            </div>
+                            <div class="avatar-circle" title="@(context.User.Identity?.Name ?? "User")">
+                                @GetInitials(context.User.Identity?.Name)
+                            </div>
+                            <form action="/account/logout" method="post" class="m-0">
+                                <button type="submit" class="btn btn-outline-danger btn-sm p-1 px-2" title="@Loc["Btn_SignOut"]">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </Authorized>
+                    <NotAuthorized>
+                        <div class="d-flex align-items-center gap-1 ms-1 border-start ps-2">
+                            <a href="account/login" class="btn btn-primary btn-sm">
+                                <i class="bi bi-box-arrow-in-right"></i>
+                                <span class="d-none d-sm-inline">@Loc["Btn_SignIn"]</span>
+                            </a>
+                            <a href="account/register" class="btn btn-outline-secondary btn-sm d-none d-md-inline">
+                                <span>@Loc["Btn_Register"]</span>
+                            </a>
+                        </div>
+                    </NotAuthorized>
+                </AuthorizeView>
             </div>
         </header>
 
@@ -67,5 +93,32 @@
     private void ToggleSidebar()
     {
         sidebarOpen = !sidebarOpen;
+    }
+
+    private string GetInitials(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) return "U";
+        var parts = name.Split(new[] { ' ', '@', '.' }, StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2)
+        {
+            return $"{char.ToUpperInvariant(parts[0][0])}{char.ToUpperInvariant(parts[1][0])}";
+        }
+        return name.Length >= 2 ? name[..2].ToUpperInvariant() : name.ToUpperInvariant();
+    }
+
+    private string GetRoleBadgeClass(ClaimsPrincipal user)
+    {
+        if (user.IsInRole(ApplicationRole.Administrator)) return "bg-danger-subtle text-danger";
+        if (user.IsInRole(ApplicationRole.Recruiter)) return "bg-primary-subtle text-primary";
+        if (user.IsInRole(ApplicationRole.Candidate)) return "bg-success-subtle text-success";
+        return "bg-secondary-subtle text-secondary";
+    }
+
+    private string GetRoleBadgeText(ClaimsPrincipal user)
+    {
+        if (user.IsInRole(ApplicationRole.Administrator)) return Loc["Role_Administrator"];
+        if (user.IsInRole(ApplicationRole.Recruiter)) return Loc["Role_Recruiter"];
+        if (user.IsInRole(ApplicationRole.Candidate)) return Loc["Role_Candidate"];
+        return "Member";
     }
 }

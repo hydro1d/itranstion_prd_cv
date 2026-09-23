@@ -1,7 +1,7 @@
 @inject IStringLocalizer<SharedResource> Loc
 
 <div class="app-sidebar-nav">
-    <!-- Public Section -->
+    <!-- Public Section (Always Available) -->
     <div class="nav-section-title">@Loc["Nav_PublicPortal"]</div>
     <NavLink class="app-nav-link" href="" Match="NavLinkMatch.All">
         <i class="bi bi-briefcase"></i>
@@ -16,54 +16,81 @@
         <span>@Loc["Nav_Statistics"]</span>
     </NavLink>
 
-    <!-- Candidate Portal -->
-    <div class="nav-section-title">@Loc["Nav_CandidateSpace"]</div>
-    <NavLink class="app-nav-link" href="candidate/dashboard">
-        <i class="bi bi-grid-1x2"></i>
-        <span>@Loc["Nav_CandidateDashboard"]</span>
-    </NavLink>
-    <NavLink class="app-nav-link" href="candidate/profile">
-        <i class="bi bi-person-badge"></i>
-        <span>@Loc["Nav_CandidateProfile"]</span>
-    </NavLink>
-    <NavLink class="app-nav-link" href="candidate/cvs">
-        <i class="bi bi-file-earmark-person"></i>
-        <span>@Loc["Nav_CandidateCvs"]</span>
-    </NavLink>
-    <NavLink class="app-nav-link" href="discussions">
-        <i class="bi bi-chat-square-dots"></i>
-        <span>@Loc["Nav_Discussions"]</span>
-    </NavLink>
+    <!-- Candidate Portal (Candidates & Admins) -->
+    <AuthorizeView Roles="@($"{ApplicationRole.Candidate},{ApplicationRole.Administrator}")">
+        <Authorized>
+            <div class="nav-section-title">@Loc["Nav_CandidateSpace"]</div>
+            <NavLink class="app-nav-link" href="candidate/dashboard">
+                <i class="bi bi-grid-1x2"></i>
+                <span>@Loc["Nav_CandidateDashboard"]</span>
+            </NavLink>
+            <NavLink class="app-nav-link" href="candidate/profile">
+                <i class="bi bi-person-badge"></i>
+                <span>@Loc["Nav_CandidateProfile"]</span>
+            </NavLink>
+            <NavLink class="app-nav-link" href="candidate/cvs">
+                <i class="bi bi-file-earmark-person"></i>
+                <span>@Loc["Nav_CandidateCvs"]</span>
+            </NavLink>
+            <NavLink class="app-nav-link" href="discussions">
+                <i class="bi bi-chat-square-dots"></i>
+                <span>@Loc["Nav_Discussions"]</span>
+            </NavLink>
+        </Authorized>
+    </AuthorizeView>
 
-    <!-- Recruiter Portal -->
-    <div class="nav-section-title">@Loc["Nav_RecruiterWorkspace"]</div>
-    <NavLink class="app-nav-link" href="recruiter/dashboard">
-        <i class="bi bi-speedometer2"></i>
-        <span>@Loc["Nav_RecruiterDashboard"]</span>
-    </NavLink>
-    <NavLink class="app-nav-link" href="recruiter/positions">
-        <i class="bi bi-folder2-open"></i>
-        <span>@Loc["Nav_ManagePositions"]</span>
-    </NavLink>
-    <NavLink class="app-nav-link" href="recruiter/attributes">
-        <i class="bi bi-sliders"></i>
-        <span>@Loc["Nav_AttributeLibrary"]</span>
-    </NavLink>
-    <NavLink class="app-nav-link" href="recruiter/cvs">
-        <i class="bi bi-people"></i>
-        <span>@Loc["Nav_ReviewCvs"]</span>
-    </NavLink>
+    <!-- Recruiter Portal (Recruiters & Admins) -->
+    <AuthorizeView Roles="@($"{ApplicationRole.Recruiter},{ApplicationRole.Administrator}")">
+        <Authorized>
+            <div class="nav-section-title">@Loc["Nav_RecruiterWorkspace"]</div>
+            <NavLink class="app-nav-link" href="recruiter/dashboard">
+                <i class="bi bi-speedometer2"></i>
+                <span>@Loc["Nav_RecruiterDashboard"]</span>
+            </NavLink>
+            <NavLink class="app-nav-link" href="recruiter/positions">
+                <i class="bi bi-folder2-open"></i>
+                <span>@Loc["Nav_ManagePositions"]</span>
+            </NavLink>
+            <NavLink class="app-nav-link" href="recruiter/attributes">
+                <i class="bi bi-sliders"></i>
+                <span>@Loc["Nav_AttributeLibrary"]</span>
+            </NavLink>
+            <NavLink class="app-nav-link" href="recruiter/cvs">
+                <i class="bi bi-people"></i>
+                <span>@Loc["Nav_ReviewCvs"]</span>
+            </NavLink>
+        </Authorized>
+    </AuthorizeView>
 
-    <!-- Admin Portal -->
-    <div class="nav-section-title">@Loc["Nav_Administration"]</div>
-    <NavLink class="app-nav-link" href="admin/dashboard">
-        <i class="bi bi-shield-check"></i>
-        <span>@Loc["Nav_AdminDashboard"]</span>
-    </NavLink>
-    <NavLink class="app-nav-link" href="admin/users">
-        <i class="bi bi-people-fill"></i>
-        <span>@Loc["Nav_AdminUsers"]</span>
-    </NavLink>
+    <!-- Admin Portal (Strictly Administrators) -->
+    <AuthorizeView Roles="@ApplicationRole.Administrator">
+        <Authorized>
+            <div class="nav-section-title">@Loc["Nav_Administration"]</div>
+            <NavLink class="app-nav-link" href="admin/dashboard">
+                <i class="bi bi-shield-check"></i>
+                <span>@Loc["Nav_AdminDashboard"]</span>
+            </NavLink>
+            <NavLink class="app-nav-link" href="admin/users">
+                <i class="bi bi-people-fill"></i>
+                <span>@Loc["Nav_AdminUsers"]</span>
+            </NavLink>
+        </Authorized>
+    </AuthorizeView>
+
+    <!-- Guest Prompt -->
+    <AuthorizeView>
+        <NotAuthorized>
+            <div class="px-3 py-3 mt-2 border-top border-secondary-subtle">
+                <div class="p-2 rounded bg-surface-subtle border text-center">
+                    <div class="small fw-semibold mb-1 text-muted">Role-Restricted Workspaces</div>
+                    <div class="text-muted mb-2" style="font-size: 0.7rem;">Sign in to access candidate and recruiter tools</div>
+                    <a href="account/login" class="btn btn-primary btn-sm w-100 py-1" style="font-size: 0.75rem;">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> @Loc["Btn_SignIn"]
+                    </a>
+                </div>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
 </div>
 
 <div class="app-sidebar-footer">

@@ -621,3 +621,37 @@ a:hover {
         padding: 1rem;
     }
 }
+
+/* --- Avatar & User Badges --- */
+.avatar-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--app-primary);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    user-select: none;
+    flex-shrink: 0;
+}
+
+.avatar-circle.avatar-lg {
+    width: 48px;
+    height: 48px;
+    font-size: 1.1rem;
+}
+
+.role-select-card {
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+    background-color: var(--app-surface);
+}
+
+.role-select-card:hover {
+    border-color: var(--app-primary) !important;
+    background-color: var(--app-surface-hover);
+}
