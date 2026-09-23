@@ -58,6 +58,7 @@ builder.Services.AddAuthentication();
 builder.Services.AddScoped<CvPlatform.Services.IAttributeService, CvPlatform.Services.AttributeService>();
 builder.Services.AddScoped<CvPlatform.Services.IPositionService, CvPlatform.Services.PositionService>();
 builder.Services.AddScoped<CvPlatform.Services.ICandidateProfileService, CvPlatform.Services.CandidateProfileService>();
+builder.Services.AddScoped<CvPlatform.Services.ICvService, CvPlatform.Services.CvService>();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
