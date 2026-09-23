@@ -1,0 +1,34 @@
+@page "/account/access-denied"
+@page "/access-denied"
+@inject IStringLocalizer<SharedResource> Loc
+
+<PageTitle>@Loc["Auth_AccessDenied"] - @Loc["App_Title"]</PageTitle>
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <div class="card border shadow-sm p-4 text-center">
+                <div class="mb-3">
+                    <span class="badge bg-warning-subtle text-warning p-3 rounded-circle" style="font-size: 1.5rem;">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </span>
+                </div>
+                <h3 class="fw-bold mb-2">@Loc["Auth_AccessDenied"]</h3>
+                <p class="text-muted mb-4 small">
+                    @Loc["Auth_AccessDeniedExplanation"]
+                </p>
+
+                <div class="d-flex flex-column gap-2">
+                    <a href="" class="btn btn-primary">
+                        <i class="bi bi-house me-1"></i> @Loc["Btn_BackHome"]
+                    </a>
+                    <form action="/account/logout" method="post">
+                        <button type="submit" class="btn btn-outline-secondary w-100">
+                            <i class="bi bi-arrow-repeat me-1"></i> @Loc["Btn_SwitchAccount"]
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

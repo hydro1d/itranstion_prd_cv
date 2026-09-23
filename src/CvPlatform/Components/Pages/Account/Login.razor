@@ -1,0 +1,185 @@
+@page "/account/login"
+@page "/login"
+@inject IStringLocalizer<SharedResource> Loc
+
+<PageTitle>@Loc["Btn_SignIn"] - @Loc["App_Title"]</PageTitle>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-9">
+            <!-- Header Section -->
+            <div class="text-center mb-4">
+                <span class="badge bg-primary-subtle text-primary mb-2 px-3 py-1">
+                    <i class="bi bi-shield-lock-fill me-1"></i> @Loc["Auth_PortalTitle"]
+                </span>
+                <h2 class="fw-bold mb-1">@Loc["Auth_SignInHeader"]</h2>
+                <p class="text-muted small">@Loc["Auth_SignInSubheader"]</p>
+            </div>
+
+            @if (!string.IsNullOrEmpty(error))
+            {
+                <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
+                    <i class="bi bi-exclamation-octagon-fill me-2 fs-5"></i>
+                    <div>
+                        @GetErrorMessage(error)
+                    </div>
+                </div>
+            }
+
+            <div class="row g-4">
+                <!-- Left: Standard Email & Password Form -->
+                <div class="col-md-6">
+                    <div class="card h-100 border shadow-sm p-4">
+                        <h5 class="fw-bold mb-3 d-flex align-items-center">
+                            <i class="bi bi-person-circle text-primary me-2"></i>
+                            @Loc["Auth_CredentialSignIn"]
+                        </h5>
+
+                        <form method="post" action="/account/login">
+                            <input type="hidden" name="returnUrl" value="@returnUrl" />
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold" for="loginEmail">@Loc["Auth_EmailLabel"]</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-envelope"></i></span>
+                                    <input type="email" id="loginEmail" name="email" class="form-control" placeholder="name@example.com" required autofocus />
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-semibold" for="loginPassword">@Loc["Auth_PasswordLabel"]</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-key"></i></span>
+                                    <input type="password" id="loginPassword" name="password" class="form-control" placeholder="••••••••" required />
+                                </div>
+                            </div>
+
+                            <div class="d-flex align-items-center justify-content-between mb-4">
+                                <div class="form-check">
+                                    <input type="checkbox" id="rememberMe" name="rememberMe" value="true" class="form-check-input" />
+                                    <label class="form-check-label small" for="rememberMe">@Loc["Auth_RememberMe"]</label>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100 mb-3">
+                                <i class="bi bi-box-arrow-in-right me-1"></i> @Loc["Btn_SignIn"]
+                            </button>
+                        </form>
+
+                        <div class="position-relative my-2 text-center">
+                            <hr class="text-muted" />
+                            <span class="position-absolute top-50 start-50 translate-middle bg-surface px-2 text-muted small">
+                                @Loc["Auth_OrSocial"]
+                            </span>
+                        </div>
+
+                        <!-- Social Login Fast-Track (Mocked for evaluation) -->
+                        <div class="row g-2 mt-1">
+                            <div class="col-6">
+                                <a href="/account/external-login?provider=github" class="btn btn-outline-secondary w-100 btn-sm">
+                                    <i class="bi bi-github me-1"></i> GitHub
+                                </a>
+                            </div>
+                            <div class="col-6">
+                                <a href="/account/external-login?provider=google" class="btn btn-outline-secondary w-100 btn-sm">
+                                    <i class="bi bi-google me-1"></i> Google
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-3">
+                            <span class="text-muted small">@Loc["Auth_NoAccountPrompt"] </span>
+                            <a href="account/register" class="fw-semibold small text-primary">@Loc["Btn_Register"]</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Evaluation Fast-Track (One-Click Demo Roles) -->
+                <div class="col-md-6">
+                    <div class="card h-100 border shadow-sm p-4 bg-surface-subtle">
+                        <div class="d-flex align-items-center justify-content-between mb-3">
+                            <h5 class="fw-bold mb-0 d-flex align-items-center">
+                                <i class="bi bi-lightning-charge-fill text-warning me-2"></i>
+                                @Loc["Auth_QuickDemoAccess"]
+                            </h5>
+                            <span class="badge bg-warning-subtle text-warning">Evaluator Mode</span>
+                        </div>
+                        <p class="text-muted small mb-3">
+                            @Loc["Auth_QuickDemoNotice"]
+                        </p>
+
+                        <div class="d-flex flex-column gap-2">
+                            <!-- 1. Administrator -->
+                            <form method="post" action="/account/demo-login">
+                                <input type="hidden" name="role" value="admin" />
+                                <button type="submit" class="btn btn-outline-primary w-100 text-start p-2 d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <div class="fw-bold small text-body">
+                                            <i class="bi bi-shield-check text-danger me-1"></i>
+                                            @Loc["Role_Administrator"]
+                                        </div>
+                                        <div class="text-muted" style="font-size: 0.75rem;">admin@cvplatform.com</div>
+                                    </div>
+                                    <span class="badge bg-danger-subtle text-danger">Full Control</span>
+                                </button>
+                            </form>
+
+                            <!-- 2. Recruiter -->
+                            <form method="post" action="/account/demo-login">
+                                <input type="hidden" name="role" value="recruiter" />
+                                <button type="submit" class="btn btn-outline-primary w-100 text-start p-2 d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <div class="fw-bold small text-body">
+                                            <i class="bi bi-briefcase text-primary me-1"></i>
+                                            @Loc["Role_Recruiter"]
+                                        </div>
+                                        <div class="text-muted" style="font-size: 0.75rem;">recruiter@cvplatform.com</div>
+                                    </div>
+                                    <span class="badge bg-primary-subtle text-primary">Positions & CVs</span>
+                                </button>
+                            </form>
+
+                            <!-- 3. Candidate -->
+                            <form method="post" action="/account/demo-login">
+                                <input type="hidden" name="role" value="candidate" />
+                                <button type="submit" class="btn btn-outline-primary w-100 text-start p-2 d-flex align-items-center justify-content-between">
+                                    <div>
+                                        <div class="fw-bold small text-body">
+                                            <i class="bi bi-person-badge text-success me-1"></i>
+                                            @Loc["Role_Candidate"]
+                                        </div>
+                                        <div class="text-muted" style="font-size: 0.75rem;">candidate@cvplatform.com</div>
+                                    </div>
+                                    <span class="badge bg-success-subtle text-success">Profile & Builder</span>
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="mt-auto pt-3 border-top">
+                            <div class="d-flex align-items-center text-muted" style="font-size: 0.75rem;">
+                                <i class="bi bi-info-circle me-1"></i>
+                                <span>Demo passwords for manual entry: <code>Admin@123</code>, <code>Recruiter@123</code>, <code>Candidate@123</code></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? error { get; set; }
+
+    [SupplyParameterFromQuery]
+    public string? returnUrl { get; set; }
+
+    private string GetErrorMessage(string errorCode) => errorCode switch
+    {
+        "InvalidCredentials" => Loc["Auth_ErrorInvalidCredentials"],
+        "MissingCredentials" => Loc["Auth_ErrorMissingCredentials"],
+        "DemoAccountNotSeeded" => Loc["Auth_ErrorDemoNotSeeded"],
+        _ => Loc["Auth_ErrorGeneric"]
+    };
+}

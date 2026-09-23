@@ -1,0 +1,27 @@
+@inject IStringLocalizer<SharedResource> Loc
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-7 col-lg-5">
+            <div class="card border shadow-sm p-4 text-center">
+                <div class="mb-3">
+                    <span class="badge bg-danger-subtle text-danger p-3 rounded-circle" style="font-size: 1.5rem;">
+                        <i class="bi bi-shield-lock"></i>
+                    </span>
+                </div>
+                <h4 class="fw-bold mb-2">@Loc["Auth_AccessRestricted"]</h4>
+                <p class="text-muted mb-4 small">
+                    @Loc["Auth_AccessRestrictedDesc"]
+                </p>
+                <div class="d-flex flex-column gap-2">
+                    <a href="account/login" class="btn btn-primary">
+                        <i class="bi bi-box-arrow-in-right me-1"></i> @Loc["Btn_SignIn"]
+                    </a>
+                    <a href="" class="btn btn-outline-secondary">
+                        <i class="bi bi-house me-1"></i> @Loc["Btn_BackHome"]
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
