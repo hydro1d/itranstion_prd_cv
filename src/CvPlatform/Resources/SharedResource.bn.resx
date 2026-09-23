@@ -192,4 +192,56 @@
   <data name="Pos_EditTemplate" xml:space="preserve"><value>পদ টেমপ্লেট সম্পাদনা</value></data>
   <data name="Btn_PublishOpening" xml:space="preserve"><value>পদ প্রকাশ করুন</value></data>
   <data name="Btn_UpdateTemplate" xml:space="preserve"><value>টেমপ্লেট আপডেট করুন</value></data>
+
+  <!-- Candidate Master Profile & Portfolio (Phase 6) -->
+  <data name="Candidate_ProfileTitle" xml:space="preserve"><value>প্রার্থী মাস্টার প্রোফাইল</value></data>
+  <data name="Candidate_MasterProfile" xml:space="preserve"><value>মাস্টার প্রোফাইল</value></data>
+  <data name="Candidate_ProfileSubtitle" xml:space="preserve"><value>আপনার ব্যক্তিগত তথ্য, মানসম্মত যোগ্যতা, পোর্টফোলিও প্রজেক্ট এবং কাস্টমাইজড সিভির কেন্দ্রীয় তথ্যভাণ্ডার।</value></data>
+  <data name="Candidate_SavingStatus" xml:space="preserve"><value>সংরক্ষণ করা হচ্ছে...</value></data>
+  <data name="Candidate_SavedStatus" xml:space="preserve"><value>সকল পরিবর্তন সংরক্ষিত</value></data>
+  <data name="Candidate_ExploreOpenings" xml:space="preserve"><value>চাকরির সুযোগসমূহ দেখুন</value></data>
+  <data name="Candidate_ReadinessScore" xml:space="preserve"><value>প্রোফাইলের সম্পূর্ণতা</value></data>
+  <data name="Candidate_TabMe" xml:space="preserve"><value>আমি (ব্যক্তিগত)</value></data>
+  <data name="Candidate_TabInfo" xml:space="preserve"><value>তথ্য (যোগ্যতা)</value></data>
+  <data name="Candidate_TabProjects" xml:space="preserve"><value>প্রজেক্টসমূহ</value></data>
+  <data name="Candidate_TabCvs" xml:space="preserve"><value>উপযোগী সিভি</value></data>
+  <data name="Candidate_PersonalDetailsTitle" xml:space="preserve"><value>ব্যক্তিগত বিবরণ এবং যোগাযোগ</value></data>
+  <data name="Candidate_FullName" xml:space="preserve"><value>পুরো নাম</value></data>
+  <data name="Candidate_Headline" xml:space="preserve"><value>পেশাগত শিরোনাম</value></data>
+  <data name="Candidate_ProfessionalSummary" xml:space="preserve"><value>পেশাগত সংক্ষিপ্ত বিবরণ</value></data>
+  <data name="Candidate_Phone" xml:space="preserve"><value>ফোন নম্বর</value></data>
+  <data name="Candidate_Location" xml:space="preserve"><value>অবস্থান / শহর</value></data>
+  <data name="Candidate_ProfileImageUrl" xml:space="preserve"><value>প্রোফাইল ছবির লিংক</value></data>
+  <data name="Candidate_SocialPresence" xml:space="preserve"><value>সামাজিক ও পেশাগত প্রোফাইল</value></data>
+  <data name="Candidate_SavePersonalDetails" xml:space="preserve"><value>ব্যক্তিগত তথ্য সংরক্ষণ করুন</value></data>
+  <data name="Candidate_WhyMasterProfileTitle" xml:space="preserve"><value>মাস্টার প্রোফাইল কেন দরকার?</value></data>
+  <data name="Candidate_WhyMasterProfileDesc" xml:space="preserve"><value>আপনার যোগ্যতা এবং প্রজেক্ট একবারই যোগ করবেন। যেকোনো চাকরিতে আবেদনের সময় এগুলো স্বয়ংক্রিয়ভাবে উপযোগী সিভিতে যুক্ত হবে।</value></data>
+  <data name="Candidate_InfoTitle" xml:space="preserve"><value>মানসম্মত যোগ্যতার বৈশিষ্ট্যসমূহ</value></data>
+  <data name="Candidate_InfoSubtitle" xml:space="preserve"><value>প্ল্যাটফর্মের অ্যাট্রিবিউট লাইব্রেরির বৈশিষ্ট্য অনুযায়ী আপনার তথ্যাদি পূরণ করুন।</value></data>
+  <data name="Candidate_SaveAllAttributes" xml:space="preserve"><value>যোগ্যতার তথ্য সংরক্ষণ করুন</value></data>
+  <data name="Candidate_BoolYes" xml:space="preserve"><value>হ্যাঁ</value></data>
+  <data name="Candidate_BoolNo" xml:space="preserve"><value>না</value></data>
+  <data name="Candidate_SelectOption" xml:space="preserve"><value>একটি বিকল্প নির্বাচন করুন</value></data>
+  <data name="Candidate_ProjectsCount" xml:space="preserve"><value>প্রজেক্ট</value></data>
+  <data name="Candidate_AddProject" xml:space="preserve"><value>প্রজেক্ট যোগ করুন</value></data>
+  <data name="Candidate_EditProject" xml:space="preserve"><value>প্রজেক্ট সম্পাদনা</value></data>
+  <data name="Candidate_PreviewMarkdown" xml:space="preserve"><value>মার্কডাউন প্রিভিউ</value></data>
+  <data name="Candidate_NoProjectsTitle" xml:space="preserve"><value>কোনো পোর্টফোলিও প্রজেক্ট নেই</value></data>
+  <data name="Candidate_NoProjectsDesc" xml:space="preserve"><value>আপনার সেরা ইঞ্জিনিয়ারিং কাজ, আর্কিটেকচার ও ওপেন-সোর্স কাজ তুলে ধরুন।</value></data>
+  <data name="Candidate_AddFirstProject" xml:space="preserve"><value>প্রথম প্রজেক্ট যোগ করুন</value></data>
+  <data name="Candidate_ProjectTitle" xml:space="preserve"><value>প্রজেক্টের শিরোনাম</value></data>
+  <data name="Candidate_DisplayOrder" xml:space="preserve"><value>প্রদর্শন ক্রম</value></data>
+  <data name="Candidate_ShortSummary" xml:space="preserve"><value>সংক্ষিপ্ত বিবরণ</value></data>
+  <data name="Candidate_Technologies" xml:space="preserve"><value>প্রযুক্তি (কমা দিয়ে আলাদা করুন)</value></data>
+  <data name="Candidate_GitHubUrl" xml:space="preserve"><value>গিটহাব রিপোজিটরি লিংক</value></data>
+  <data name="Candidate_ProjectUrl" xml:space="preserve"><value>লাইভ প্রজেক্ট লিংক</value></data>
+  <data name="Candidate_ProjectMarkdown" xml:space="preserve"><value>বিস্তারিত বিবরণ (মার্কডাউন)</value></data>
+  <data name="Candidate_ProjectTitleRequired" xml:space="preserve"><value>প্রজেক্টের শিরোনাম আবশ্যক।</value></data>
+  <data name="Candidate_ProjectDescRequired" xml:space="preserve"><value>সংক্ষিপ্ত বিবরণ আবশ্যক।</value></data>
+  <data name="Candidate_PersonalSavedSuccess" xml:space="preserve"><value>ব্যক্তিগত তথ্য সফলভাবে সংরক্ষিত হয়েছে।</value></data>
+  <data name="Candidate_AttributesSavedSuccess" xml:space="preserve"><value>যোগ্যতার তথ্য সফলভাবে সংরক্ষিত হয়েছে।</value></data>
+  <data name="Candidate_ProjectSavedSuccess" xml:space="preserve"><value>প্রজেক্ট সফলভাবে সংরক্ষিত হয়েছে।</value></data>
+  <data name="Candidate_ProjectDeletedSuccess" xml:space="preserve"><value>প্রজেক্ট সফলভাবে মুছে ফেলা হয়েছে।</value></data>
+  <data name="Candidate_ApplyToPosition" xml:space="preserve"><value>আবেদন করুন</value></data>
+  <data name="Candidate_EditMasterProfile" xml:space="preserve"><value>মাস্টার প্রোফাইল সম্পাদনা</value></data>
 </root>

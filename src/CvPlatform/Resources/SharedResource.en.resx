@@ -192,4 +192,56 @@
   <data name="Pos_EditTemplate" xml:space="preserve"><value>Edit Position Template</value></data>
   <data name="Btn_PublishOpening" xml:space="preserve"><value>Publish Opening</value></data>
   <data name="Btn_UpdateTemplate" xml:space="preserve"><value>Update Template</value></data>
+
+  <!-- Candidate Master Profile & Portfolio (Phase 6) -->
+  <data name="Candidate_ProfileTitle" xml:space="preserve"><value>Candidate Master Profile</value></data>
+  <data name="Candidate_MasterProfile" xml:space="preserve"><value>Master Profile</value></data>
+  <data name="Candidate_ProfileSubtitle" xml:space="preserve"><value>Single source of truth for your personal details, dynamic qualifications, portfolio projects, and tailored CVs.</value></data>
+  <data name="Candidate_SavingStatus" xml:space="preserve"><value>Saving...</value></data>
+  <data name="Candidate_SavedStatus" xml:space="preserve"><value>All changes saved</value></data>
+  <data name="Candidate_ExploreOpenings" xml:space="preserve"><value>Explore Openings</value></data>
+  <data name="Candidate_ReadinessScore" xml:space="preserve"><value>Profile Readiness</value></data>
+  <data name="Candidate_TabMe" xml:space="preserve"><value>Me (Personal)</value></data>
+  <data name="Candidate_TabInfo" xml:space="preserve"><value>Info (Qualifications)</value></data>
+  <data name="Candidate_TabProjects" xml:space="preserve"><value>Projects</value></data>
+  <data name="Candidate_TabCvs" xml:space="preserve"><value>Tailored CVs</value></data>
+  <data name="Candidate_PersonalDetailsTitle" xml:space="preserve"><value>Personal Details &amp; Contact</value></data>
+  <data name="Candidate_FullName" xml:space="preserve"><value>Full Name</value></data>
+  <data name="Candidate_Headline" xml:space="preserve"><value>Professional Headline</value></data>
+  <data name="Candidate_ProfessionalSummary" xml:space="preserve"><value>Executive Summary</value></data>
+  <data name="Candidate_Phone" xml:space="preserve"><value>Phone Number</value></data>
+  <data name="Candidate_Location" xml:space="preserve"><value>Location / Work City</value></data>
+  <data name="Candidate_ProfileImageUrl" xml:space="preserve"><value>Profile Avatar URL</value></data>
+  <data name="Candidate_SocialPresence" xml:space="preserve"><value>Social &amp; Professional Profiles</value></data>
+  <data name="Candidate_SavePersonalDetails" xml:space="preserve"><value>Save Personal Details</value></data>
+  <data name="Candidate_WhyMasterProfileTitle" xml:space="preserve"><value>Why a Master Profile?</value></data>
+  <data name="Candidate_WhyMasterProfileDesc" xml:space="preserve"><value>You enter your qualifications and portfolio projects once. When applying to positions, your credentials are automatically mapped into tailored CV applications.</value></data>
+  <data name="Candidate_InfoTitle" xml:space="preserve"><value>Standardized Qualification Attributes</value></data>
+  <data name="Candidate_InfoSubtitle" xml:space="preserve"><value>Provide values for the standardized attributes defined in the platform's Attribute Library.</value></data>
+  <data name="Candidate_SaveAllAttributes" xml:space="preserve"><value>Save Qualifications</value></data>
+  <data name="Candidate_BoolYes" xml:space="preserve"><value>Yes</value></data>
+  <data name="Candidate_BoolNo" xml:space="preserve"><value>No</value></data>
+  <data name="Candidate_SelectOption" xml:space="preserve"><value>Select an option</value></data>
+  <data name="Candidate_ProjectsCount" xml:space="preserve"><value>Projects</value></data>
+  <data name="Candidate_AddProject" xml:space="preserve"><value>Add Project</value></data>
+  <data name="Candidate_EditProject" xml:space="preserve"><value>Edit Project</value></data>
+  <data name="Candidate_PreviewMarkdown" xml:space="preserve"><value>Preview Markdown</value></data>
+  <data name="Candidate_NoProjectsTitle" xml:space="preserve"><value>No Portfolio Projects Yet</value></data>
+  <data name="Candidate_NoProjectsDesc" xml:space="preserve"><value>Showcase your best engineering accomplishments, architectures, and open-source contributions.</value></data>
+  <data name="Candidate_AddFirstProject" xml:space="preserve"><value>Add First Project</value></data>
+  <data name="Candidate_ProjectTitle" xml:space="preserve"><value>Project Title</value></data>
+  <data name="Candidate_DisplayOrder" xml:space="preserve"><value>Display Order</value></data>
+  <data name="Candidate_ShortSummary" xml:space="preserve"><value>Elevator Pitch / Summary</value></data>
+  <data name="Candidate_Technologies" xml:space="preserve"><value>Technologies (comma-separated)</value></data>
+  <data name="Candidate_GitHubUrl" xml:space="preserve"><value>GitHub Repository URL</value></data>
+  <data name="Candidate_ProjectUrl" xml:space="preserve"><value>Live Project / Demo URL</value></data>
+  <data name="Candidate_ProjectMarkdown" xml:space="preserve"><value>Detailed Description (Markdown)</value></data>
+  <data name="Candidate_ProjectTitleRequired" xml:space="preserve"><value>Project title is required.</value></data>
+  <data name="Candidate_ProjectDescRequired" xml:space="preserve"><value>Short summary is required.</value></data>
+  <data name="Candidate_PersonalSavedSuccess" xml:space="preserve"><value>Personal details saved successfully.</value></data>
+  <data name="Candidate_AttributesSavedSuccess" xml:space="preserve"><value>Standardized qualifications saved successfully.</value></data>
+  <data name="Candidate_ProjectSavedSuccess" xml:space="preserve"><value>Project saved successfully.</value></data>
+  <data name="Candidate_ProjectDeletedSuccess" xml:space="preserve"><value>Project deleted successfully.</value></data>
+  <data name="Candidate_ApplyToPosition" xml:space="preserve"><value>Apply to Position</value></data>
+  <data name="Candidate_EditMasterProfile" xml:space="preserve"><value>Edit Master Profile</value></data>
 </root>
