@@ -158,4 +158,5 @@
   <data name="Auth_ErrorEmailTaken" xml:space="preserve"><value>An account with this email address already exists.</value></data>
   <data name="Auth_ErrorDemoNotSeeded" xml:space="preserve"><value>Demo accounts have not yet been seeded in the database.</value></data>
   <data name="Auth_ErrorGeneric" xml:space="preserve"><value>An error occurred during authentication. Please try again.</value></data>
+  <data name="Auth_ErrorDatabaseOffline" xml:space="preserve"><value>Database is currently unreachable (127.0.0.1:5432). Please ensure PostgreSQL is running, or use the One-Click Evaluation Demo buttons on the right.</value></data>
 </root>
