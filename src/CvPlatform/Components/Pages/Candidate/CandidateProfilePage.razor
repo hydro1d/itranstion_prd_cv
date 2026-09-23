@@ -701,6 +701,11 @@
                                 </div>
 
                                 <div class="d-flex flex-wrap gap-2">
+                                    <button type="button" class="btn btn-outline-primary btn-sm"
+                                            disabled="@(!selectedCvId.HasValue)"
+                                            @onclick="OpenSelectedCv">
+                                        <i class="bi bi-pencil-square me-1"></i> Edit Tailored CV
+                                    </button>
                                     <a href="positions" class="btn btn-primary btn-sm">
                                         <i class="bi bi-plus-lg me-1"></i> @Loc["Candidate_ApplyToPosition"]
                                     </a>
@@ -1057,5 +1062,13 @@
         if (string.IsNullOrWhiteSpace(markdown)) return new MarkupString("");
         var html = Markdown.ToHtml(markdown, _pipeline);
         return new MarkupString(html);
+    }
+
+    private void OpenSelectedCv()
+    {
+        if (selectedCvId.HasValue)
+        {
+            Navigation.NavigateTo($"/cv/{selectedCvId.Value}");
+        }
     }
 }

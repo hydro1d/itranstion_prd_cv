@@ -244,4 +244,15 @@
   <data name="Candidate_ProjectDeletedSuccess" xml:space="preserve"><value>প্রজেক্ট সফলভাবে মুছে ফেলা হয়েছে।</value></data>
   <data name="Candidate_ApplyToPosition" xml:space="preserve"><value>আবেদন করুন</value></data>
   <data name="Candidate_EditMasterProfile" xml:space="preserve"><value>মাস্টার প্রোফাইল সম্পাদনা</value></data>
+
+  <!-- Automatic CV Generation & Editor (Killer Feature #3) -->
+  <data name="Cv_DocumentEditor" xml:space="preserve"><value>উপযোগী সিভি সম্পাদক</value></data>
+  <data name="Cv_CustomizedFor" xml:space="preserve"><value>কাস্টমাইজড</value></data>
+  <data name="Cv_ReadinessMeter" xml:space="preserve"><value>প্রয়োজনীয় যোগ্যতার পরিমাপক</value></data>
+  <data name="Cv_ReadyForEvaluation" xml:space="preserve"><value>মূল্যায়নের জন্য প্রস্তুত</value></data>
+  <data name="Cv_IncompleteRequirements" xml:space="preserve"><value>অসম্পূর্ণ যোগ্যতা</value></data>
+  <data name="Cv_MissingFields" xml:space="preserve"><value>অনুপস্থিত বাধ্যতামূলক ক্ষেত্রসমূহ</value></data>
+  <data name="Cv_PrintCv" xml:space="preserve"><value>প্রিন্ট / পিডিএফ সংরক্ষণ</value></data>
+  <data name="Cv_SaveSuccess" xml:space="preserve"><value>উপযোগী সিভি সফলভাবে সংরক্ষিত হয়েছে।</value></data>
+  <data name="Cv_ConcurrencyConflict" xml:space="preserve"><value>কনকারেন্সি দ্বন্দ্ব শনাক্ত হয়েছে! এই নথিটি অন্য সেশনে পরিবর্তিত হয়েছে।</value></data>
 </root>

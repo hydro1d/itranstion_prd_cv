@@ -244,4 +244,15 @@
   <data name="Candidate_ProjectDeletedSuccess" xml:space="preserve"><value>Project deleted successfully.</value></data>
   <data name="Candidate_ApplyToPosition" xml:space="preserve"><value>Apply to Position</value></data>
   <data name="Candidate_EditMasterProfile" xml:space="preserve"><value>Edit Master Profile</value></data>
+
+  <!-- Automatic CV Generation & Editor (Killer Feature #3) -->
+  <data name="Cv_DocumentEditor" xml:space="preserve"><value>Tailored Document Editor</value></data>
+  <data name="Cv_CustomizedFor" xml:space="preserve"><value>Customized for</value></data>
+  <data name="Cv_ReadinessMeter" xml:space="preserve"><value>Requirement Readiness Meter</value></data>
+  <data name="Cv_ReadyForEvaluation" xml:space="preserve"><value>Ready for Evaluation</value></data>
+  <data name="Cv_IncompleteRequirements" xml:space="preserve"><value>Incomplete Requirements</value></data>
+  <data name="Cv_MissingFields" xml:space="preserve"><value>Missing Mandatory Fields</value></data>
+  <data name="Cv_PrintCv" xml:space="preserve"><value>Print / Save PDF</value></data>
+  <data name="Cv_SaveSuccess" xml:space="preserve"><value>Tailored CV document saved successfully.</value></data>
+  <data name="Cv_ConcurrencyConflict" xml:space="preserve"><value>Optimistic Concurrency Conflict Detected! This document was modified in another session.</value></data>
 </root>
