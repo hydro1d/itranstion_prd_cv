@@ -1,0 +1,198 @@
+@inject IAttributeService AttributeService
+@inject IStringLocalizer<SharedResource> Loc
+
+@if (IsOpen)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5); z-index: 1050;">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border shadow">
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold d-flex align-items-center">
+                        <i class="bi bi-folder-symlink text-primary me-2"></i>
+                        @Loc["Attr_ManageCategories"]
+                    </h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger py-2 small mb-3">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i> @errorMessage
+                        </div>
+                    }
+
+                    <!-- New / Edit Category Inline Form -->
+                    <div class="card border p-3 mb-4 bg-surface-subtle">
+                        <h6 class="fw-bold mb-2 text-primary">
+                            <i class="bi @(editingCategory.Id == 0 ? "bi-plus-circle" : "bi-pencil") me-1"></i>
+                            @(editingCategory.Id == 0 ? Loc["Attr_NewCategory"] : Loc["Attr_EditCategory"])
+                        </h6>
+                        <div class="row g-2">
+                            <div class="col-md-5">
+                                <label class="form-label small fw-semibold">@Loc["Attr_CategoryName"] *</label>
+                                <input type="text" class="form-control form-control-sm" placeholder="e.g. Cloud & DevOps" @bind="editingCategory.Name" />
+                            </div>
+                            <div class="col-md-5">
+                                <label class="form-label small fw-semibold">@Loc["Attr_CategoryDescription"]</label>
+                                <input type="text" class="form-control form-control-sm" placeholder="Optional description..." @bind="editingCategory.Description" />
+                            </div>
+                            <div class="col-md-2">
+                                <label class="form-label small fw-semibold">@Loc["Attr_DisplayOrder"]</label>
+                                <input type="number" class="form-control form-control-sm" @bind="editingCategory.DisplayOrder" />
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            @if (editingCategory.Id != 0)
+                            {
+                                <button type="button" class="btn btn-outline-secondary btn-sm" @onclick="ResetForm">
+                                    @Loc["Btn_Cancel"]
+                                </button>
+                            }
+                            <button type="button" class="btn btn-primary btn-sm" @onclick="SaveCategory">
+                                <i class="bi bi-check-lg me-1"></i> @Loc["Btn_SaveCategory"]
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Existing Categories Table -->
+                    <h6 class="fw-bold mb-2">@Loc["Attr_ExistingCategories"]</h6>
+                    <div class="table-responsive border rounded">
+                        <table class="table table-sm table-hover align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 50px;">Order</th>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th style="width: 100px;">Attributes</th>
+                                    <th style="width: 100px;" class="text-end">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (categories.Count == 0)
+                                {
+                                    <tr>
+                                        <td colspan="5" class="text-center py-3 text-muted small">No categories found.</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    @foreach (var cat in categories)
+                                    {
+                                        <tr>
+                                            <td class="text-muted small text-center">@cat.DisplayOrder</td>
+                                            <td class="fw-semibold">@cat.Name</td>
+                                            <td class="text-muted small">@(string.IsNullOrEmpty(cat.Description) ? "—" : cat.Description)</td>
+                                            <td>
+                                                <span class="badge bg-secondary-subtle text-secondary">
+                                                    @(cat.Attributes?.Count ?? 0) attributes
+                                                </span>
+                                            </td>
+                                            <td class="text-end">
+                                                <div class="btn-group btn-group-sm">
+                                                    <button type="button" class="btn btn-ghost p-1" title="Edit" @onclick="() => Edit(cat)">
+                                                        <i class="bi bi-pencil text-primary"></i>
+                                                    </button>
+                                                    <button type="button" class="btn btn-ghost p-1 text-danger" title="Delete" 
+                                                            disabled="@((cat.Attributes?.Count ?? 0) > 0)"
+                                                            @onclick="() => Delete(cat.Id)">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-top py-2">
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="Close">
+                        @Loc["Btn_Close"]
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+    [Parameter] public EventCallback OnCategoriesUpdated { get; set; }
+
+    private List<AttributeCategory> categories = new();
+    private AttributeCategory editingCategory = new() { DisplayOrder = 1 };
+    private string? errorMessage;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (IsOpen)
+        {
+            await LoadCategories();
+            ResetForm();
+        }
+    }
+
+    private async Task LoadCategories()
+    {
+        categories = await AttributeService.GetCategoriesAsync();
+    }
+
+    private void Edit(AttributeCategory cat)
+    {
+        editingCategory = new AttributeCategory
+        {
+            Id = cat.Id,
+            Name = cat.Name,
+            Description = cat.Description,
+            DisplayOrder = cat.DisplayOrder
+        };
+        errorMessage = null;
+    }
+
+    private void ResetForm()
+    {
+        editingCategory = new AttributeCategory
+        {
+            DisplayOrder = categories.Count > 0 ? categories.Max(c => c.DisplayOrder) + 1 : 1
+        };
+        errorMessage = null;
+    }
+
+    private async Task SaveCategory()
+    {
+        if (string.IsNullOrWhiteSpace(editingCategory.Name))
+        {
+            errorMessage = "Category name is required.";
+            return;
+        }
+
+        await AttributeService.SaveCategoryAsync(editingCategory);
+        await LoadCategories();
+        ResetForm();
+        await OnCategoriesUpdated.InvokeAsync();
+    }
+
+    private async Task Delete(int id)
+    {
+        var deleted = await AttributeService.DeleteCategoryAsync(id);
+        if (deleted)
+        {
+            await LoadCategories();
+            await OnCategoriesUpdated.InvokeAsync();
+        }
+        else
+        {
+            errorMessage = "Cannot delete a category that still contains attributes.";
+        }
+    }
+
+    private async Task Close()
+    {
+        IsOpen = false;
+        await IsOpenChanged.InvokeAsync(false);
+    }
+}

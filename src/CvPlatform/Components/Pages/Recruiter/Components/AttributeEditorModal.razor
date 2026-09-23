@@ -1,0 +1,294 @@
+@inject IAttributeService AttributeService
+@inject IStringLocalizer<SharedResource> Loc
+
+@if (IsOpen)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5); z-index: 1050;">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border shadow">
+                <div class="modal-header border-bottom py-3">
+                    <h5 class="modal-title fw-bold d-flex align-items-center">
+                        <i class="bi @(attributeModel.Id == 0 ? "bi-plus-circle" : "bi-pencil-square") text-primary me-2"></i>
+                        @(attributeModel.Id == 0 ? Loc["Attr_NewAttribute"] : Loc["Attr_EditAttribute"])
+                    </h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="Close"></button>
+                </div>
+
+                <div class="modal-body p-4">
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger py-2 small mb-3">
+                            <i class="bi bi-exclamation-triangle-fill me-1"></i> @errorMessage
+                        </div>
+                    }
+
+                    <div class="row g-3">
+                        <!-- Attribute Name -->
+                        <div class="col-md-7">
+                            <label class="form-label small fw-semibold">@Loc["Attr_NameLabel"] *</label>
+                            <input type="text" class="form-control" placeholder="e.g. Years of Experience, Primary Language" @bind="attributeModel.Name" required />
+                        </div>
+
+                        <!-- Category -->
+                        <div class="col-md-5">
+                            <label class="form-label small fw-semibold">@Loc["Attr_CategoryLabel"] *</label>
+                            <select class="form-select" @bind="attributeModel.CategoryId">
+                                @foreach (var cat in Categories)
+                                {
+                                    <option value="@cat.Id">@cat.Name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <!-- Data Type -->
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">@Loc["Attr_DataTypeLabel"] *</label>
+                            <select class="form-select" @bind="attributeModel.DataType">
+                                <option value="@AttributeDataType.Text">Text (Single-line)</option>
+                                <option value="@AttributeDataType.LongText">LongText (Multi-line)</option>
+                                <option value="@AttributeDataType.Number">Number (Numeric values)</option>
+                                <option value="@AttributeDataType.Date">Date (Calendar picker)</option>
+                                <option value="@AttributeDataType.Boolean">Boolean (Yes / No toggle)</option>
+                                <option value="@AttributeDataType.Dropdown">Dropdown (Single choice list)</option>
+                                <option value="@AttributeDataType.MultiSelect">MultiSelect (Multiple choices)</option>
+                                <option value="@AttributeDataType.Url">URL (Web address link)</option>
+                            </select>
+                        </div>
+
+                        <!-- Help / Description -->
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">@Loc["Attr_DescriptionLabel"]</label>
+                            <input type="text" class="form-control" placeholder="Guidance for candidates when filling this field..." @bind="attributeModel.Description" />
+                        </div>
+
+                        <!-- Configuration Toggles -->
+                        <div class="col-12">
+                            <div class="card p-3 border bg-surface-subtle">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="reqDefault" @bind="attributeModel.IsRequiredDefault" />
+                                            <label class="form-check-label small fw-semibold" for="reqDefault">
+                                                @Loc["Attr_RequiredByDefault"]
+                                            </label>
+                                            <div class="text-muted" style="font-size: 0.72rem;">Pre-selected as required in new position templates</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="searchable" @bind="attributeModel.IsSearchable" />
+                                            <label class="form-check-label small fw-semibold" for="searchable">
+                                                @Loc["Attr_Searchable"]
+                                            </label>
+                                            <div class="text-muted" style="font-size: 0.72rem;">Indexed for candidate search filtering</div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" id="isActive" @bind="attributeModel.IsActive" />
+                                            <label class="form-check-label small fw-semibold" for="isActive">
+                                                @Loc["Attr_ActiveStatus"]
+                                            </label>
+                                            <div class="text-muted" style="font-size: 0.72rem;">Available for selection in positions & profile</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Options Builder (For Dropdown & MultiSelect) -->
+                        @if (attributeModel.DataType == AttributeDataType.Dropdown || attributeModel.DataType == AttributeDataType.MultiSelect)
+                        {
+                            <div class="col-12">
+                                <div class="card border p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <label class="form-label small fw-bold mb-0 text-primary">
+                                            <i class="bi bi-list-check me-1"></i>
+                                            @Loc["Attr_PredefinedOptions"] (@optionsList.Count)
+                                        </label>
+                                        <span class="text-muted" style="font-size: 0.72rem;">Candidates will select from these options</span>
+                                    </div>
+
+                                    <div class="input-group input-group-sm mb-3">
+                                        <input type="text" class="form-control" placeholder="Type an option and press Add..." 
+                                               @bind="newOptionText" @bind:event="oninput" @onkeydown="HandleOptionKeyDown" />
+                                        <button class="btn btn-outline-primary" type="button" @onclick="AddOption">
+                                            <i class="bi bi-plus-lg me-1"></i> Add Option
+                                        </button>
+                                    </div>
+
+                                    @if (optionsList.Count == 0)
+                                    {
+                                        <div class="text-center py-3 text-muted small border rounded bg-surface-subtle">
+                                            <i class="bi bi-info-circle me-1"></i> No options added yet. Add at least one option for dropdown/multi-select fields.
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="d-flex flex-wrap gap-1 border rounded p-2 bg-surface-subtle" style="max-height: 160px; overflow-y: auto;">
+                                            @for (int i = 0; i < optionsList.Count; i++)
+                                            {
+                                                var index = i;
+                                                var opt = optionsList[i];
+                                                <span class="option-chip">
+                                                    <span class="text-muted me-1 fw-bold" style="font-size: 0.65rem;">@(index + 1).</span>
+                                                    <span class="fw-semibold">@opt</span>
+                                                    <button type="button" class="btn-remove ms-1" @onclick="() => RemoveOption(index)" title="Remove">
+                                                        <i class="bi bi-x-circle-fill"></i>
+                                                    </button>
+                                                </span>
+                                            }
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="modal-footer border-top py-2 d-flex justify-content-between">
+                    <div>
+                        <span class="badge @GetBadgeClass(attributeModel.DataType)">
+                            @attributeModel.DataType
+                        </span>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm" @onclick="Close">
+                            @Loc["Btn_Cancel"]
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" @onclick="SaveAttribute">
+                            <i class="bi bi-check-lg me-1"></i> @Loc["Btn_SaveAttribute"]
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsOpen { get; set; }
+    [Parameter] public EventCallback<bool> IsOpenChanged { get; set; }
+    [Parameter] public CvAttribute? AttributeToEdit { get; set; }
+    [Parameter] public List<AttributeCategory> Categories { get; set; } = new();
+    [Parameter] public EventCallback OnSaved { get; set; }
+
+    private CvAttribute attributeModel = new();
+    private List<string> optionsList = new();
+    private string newOptionText = string.Empty;
+    private string? errorMessage;
+
+    protected override void OnParametersSet()
+    {
+        if (IsOpen)
+        {
+            if (AttributeToEdit != null)
+            {
+                attributeModel = new CvAttribute
+                {
+                    Id = AttributeToEdit.Id,
+                    Name = AttributeToEdit.Name,
+                    Description = AttributeToEdit.Description,
+                    CategoryId = AttributeToEdit.CategoryId,
+                    DataType = AttributeToEdit.DataType,
+                    IsRequiredDefault = AttributeToEdit.IsRequiredDefault,
+                    IsSearchable = AttributeToEdit.IsSearchable,
+                    IsActive = AttributeToEdit.IsActive,
+                    ValidationRules = AttributeToEdit.ValidationRules
+                };
+                optionsList = AttributeToEdit.Options?.OrderBy(o => o.DisplayOrder).Select(o => o.Value).ToList() ?? new List<string>();
+            }
+            else
+            {
+                attributeModel = new CvAttribute
+                {
+                    CategoryId = Categories.FirstOrDefault()?.Id ?? 1,
+                    DataType = AttributeDataType.Text,
+                    IsActive = true,
+                    IsSearchable = true
+                };
+                optionsList = new List<string>();
+            }
+            newOptionText = string.Empty;
+            errorMessage = null;
+        }
+    }
+
+    private void AddOption()
+    {
+        if (!string.IsNullOrWhiteSpace(newOptionText))
+        {
+            var val = newOptionText.Trim();
+            if (!optionsList.Contains(val, StringComparer.OrdinalIgnoreCase))
+            {
+                optionsList.Add(val);
+                newOptionText = string.Empty;
+                errorMessage = null;
+            }
+            else
+            {
+                errorMessage = "Option already exists in the list.";
+            }
+        }
+    }
+
+    private void HandleOptionKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            AddOption();
+        }
+    }
+
+    private void RemoveOption(int index)
+    {
+        if (index >= 0 && index < optionsList.Count)
+        {
+            optionsList.RemoveAt(index);
+        }
+    }
+
+    private async Task SaveAttribute()
+    {
+        if (string.IsNullOrWhiteSpace(attributeModel.Name))
+        {
+            errorMessage = "Attribute name is required.";
+            return;
+        }
+
+        if (attributeModel.CategoryId <= 0)
+        {
+            errorMessage = "Please select a valid category.";
+            return;
+        }
+
+        if ((attributeModel.DataType == AttributeDataType.Dropdown || attributeModel.DataType == AttributeDataType.MultiSelect) && optionsList.Count == 0)
+        {
+            errorMessage = "Dropdown and Multi-select attributes require at least one option.";
+            return;
+        }
+
+        await AttributeService.SaveAttributeAsync(attributeModel, optionsList);
+        await OnSaved.InvokeAsync();
+        await Close();
+    }
+
+    private async Task Close()
+    {
+        IsOpen = false;
+        await IsOpenChanged.InvokeAsync(false);
+    }
+
+    private string GetBadgeClass(AttributeDataType type) => type switch
+    {
+        AttributeDataType.Text => "badge-type-text",
+        AttributeDataType.LongText => "badge-type-longtext",
+        AttributeDataType.Number => "badge-type-number",
+        AttributeDataType.Date => "badge-type-date",
+        AttributeDataType.Boolean => "badge-type-boolean",
+        AttributeDataType.Dropdown => "badge-type-dropdown",
+        AttributeDataType.MultiSelect => "badge-type-multiselect",
+        AttributeDataType.Url => "badge-type-url",
+        _ => "badge-type-text"
+    };
+}
