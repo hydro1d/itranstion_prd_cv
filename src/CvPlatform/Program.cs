@@ -54,6 +54,9 @@ builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStat
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication();
 
+// Domain Services
+builder.Services.AddScoped<CvPlatform.Services.IAttributeService, CvPlatform.Services.AttributeService>();
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
