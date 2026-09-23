@@ -118,4 +118,44 @@
   <!-- Tags -->
   <data name="Popular_Tags" xml:space="preserve"><value>Popular Opportunity Tags</value></data>
   <data name="Click_To_Filter" xml:space="preserve"><value>Click to filter</value></data>
+
+  <!-- Authentication & Roles -->
+  <data name="Btn_Register" xml:space="preserve"><value>Register</value></data>
+  <data name="Btn_SignOut" xml:space="preserve"><value>Sign Out</value></data>
+  <data name="Btn_BackHome" xml:space="preserve"><value>Back to Home</value></data>
+  <data name="Btn_SwitchAccount" xml:space="preserve"><value>Switch Account</value></data>
+  <data name="Btn_CreateAccount" xml:space="preserve"><value>Create Account</value></data>
+  <data name="Role_Administrator" xml:space="preserve"><value>Administrator</value></data>
+  <data name="Role_Recruiter" xml:space="preserve"><value>Recruiter</value></data>
+  <data name="Role_Candidate" xml:space="preserve"><value>Candidate</value></data>
+  <data name="Role_CandidateDesc" xml:space="preserve"><value>Build master profile and generate tailored CVs</value></data>
+  <data name="Role_RecruiterDesc" xml:space="preserve"><value>Post openings, compose attribute templates, review CVs</value></data>
+  <data name="Auth_PortalTitle" xml:space="preserve"><value>Authentication &amp; Security</value></data>
+  <data name="Auth_SignInHeader" xml:space="preserve"><value>Sign in to your account</value></data>
+  <data name="Auth_SignInSubheader" xml:space="preserve"><value>Access your candidate profile, recruiter desk, or administrative dashboard</value></data>
+  <data name="Auth_RegisterHeader" xml:space="preserve"><value>Create a new account</value></data>
+  <data name="Auth_RegisterSubheader" xml:space="preserve"><value>Join the structured CV platform as a candidate or recruiter</value></data>
+  <data name="Auth_CredentialSignIn" xml:space="preserve"><value>Account Credentials</value></data>
+  <data name="Auth_EmailLabel" xml:space="preserve"><value>Email Address</value></data>
+  <data name="Auth_PasswordLabel" xml:space="preserve"><value>Password</value></data>
+  <data name="Auth_ConfirmPasswordLabel" xml:space="preserve"><value>Confirm Password</value></data>
+  <data name="Auth_FullNameLabel" xml:space="preserve"><value>Full Name</value></data>
+  <data name="Auth_RememberMe" xml:space="preserve"><value>Remember my session</value></data>
+  <data name="Auth_OrSocial" xml:space="preserve"><value>Or continue with</value></data>
+  <data name="Auth_QuickDemoAccess" xml:space="preserve"><value>Evaluation Quick Access</value></data>
+  <data name="Auth_QuickDemoNotice" xml:space="preserve"><value>One-click instant login for project evaluation &amp; defense review:</value></data>
+  <data name="Auth_NoAccountPrompt" xml:space="preserve"><value>Don't have an account?</value></data>
+  <data name="Auth_AlreadyHaveAccountPrompt" xml:space="preserve"><value>Already have an account?</value></data>
+  <data name="Auth_SelectRoleLabel" xml:space="preserve"><value>Account Type &amp; Role</value></data>
+  <data name="Auth_AccessRestricted" xml:space="preserve"><value>Access Restricted</value></data>
+  <data name="Auth_AccessRestrictedDesc" xml:space="preserve"><value>You must be signed in with appropriate credentials to view this area.</value></data>
+  <data name="Auth_AccessDenied" xml:space="preserve"><value>Access Denied (403)</value></data>
+  <data name="Auth_AccessDeniedExplanation" xml:space="preserve"><value>Your current account role does not have authorization to access this page.</value></data>
+  <data name="Auth_ErrorInvalidCredentials" xml:space="preserve"><value>Invalid email or password. Please try again.</value></data>
+  <data name="Auth_ErrorMissingCredentials" xml:space="preserve"><value>Please enter both email and password.</value></data>
+  <data name="Auth_ErrorMissingFields" xml:space="preserve"><value>Please fill in all required fields.</value></data>
+  <data name="Auth_ErrorPasswordMismatch" xml:space="preserve"><value>Passwords do not match.</value></data>
+  <data name="Auth_ErrorEmailTaken" xml:space="preserve"><value>An account with this email address already exists.</value></data>
+  <data name="Auth_ErrorDemoNotSeeded" xml:space="preserve"><value>Demo accounts have not yet been seeded in the database.</value></data>
+  <data name="Auth_ErrorGeneric" xml:space="preserve"><value>An error occurred during authentication. Please try again.</value></data>
 </root>

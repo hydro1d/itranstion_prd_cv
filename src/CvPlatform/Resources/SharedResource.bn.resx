@@ -118,4 +118,44 @@
   <!-- Tags -->
   <data name="Popular_Tags" xml:space="preserve"><value>জনপ্রিয় কাজের ট্যাগসমূহ</value></data>
   <data name="Click_To_Filter" xml:space="preserve"><value>ফিল্টার করতে ক্লিক করুন</value></data>
+
+  <!-- Authentication & Roles -->
+  <data name="Btn_Register" xml:space="preserve"><value>নিবন্ধন করুন</value></data>
+  <data name="Btn_SignOut" xml:space="preserve"><value>লগআউট</value></data>
+  <data name="Btn_BackHome" xml:space="preserve"><value>হোমে ফিরে যান</value></data>
+  <data name="Btn_SwitchAccount" xml:space="preserve"><value>অ্যাকাউন্ট পরিবর্তন করুন</value></data>
+  <data name="Btn_CreateAccount" xml:space="preserve"><value>অ্যাকাউন্ট তৈরি করুন</value></data>
+  <data name="Role_Administrator" xml:space="preserve"><value>অ্যাডমিনিস্ট্রেটর</value></data>
+  <data name="Role_Recruiter" xml:space="preserve"><value>নিয়োগকারী</value></data>
+  <data name="Role_Candidate" xml:space="preserve"><value>প্রার্থী</value></data>
+  <data name="Role_CandidateDesc" xml:space="preserve"><value>মূল প্রোফাইল তৈরি করুন এবং কাস্টম সিভি বানান</value></data>
+  <data name="Role_RecruiterDesc" xml:space="preserve"><value>পদ প্রকাশ করুন, টেমপ্লেট সাজান ও সিভি পর্যালোচনা করুন</value></data>
+  <data name="Auth_PortalTitle" xml:space="preserve"><value>প্রমাণীকরণ ও নিরাপত্তা</value></data>
+  <data name="Auth_SignInHeader" xml:space="preserve"><value>আপনার অ্যাকাউন্টে প্রবেশ করুন</value></data>
+  <data name="Auth_SignInSubheader" xml:space="preserve"><value>প্রার্থী প্রোফাইল, নিয়োগ ডেস্ক অথবা অ্যাডমিন ড্যাশবোর্ডে প্রবেশ করুন</value></data>
+  <data name="Auth_RegisterHeader" xml:space="preserve"><value>নতুন অ্যাকাউন্ট তৈরি করুন</value></data>
+  <data name="Auth_RegisterSubheader" xml:space="preserve"><value>প্রার্থী বা নিয়োগকারী হিসেবে যুক্ত হোন</value></data>
+  <data name="Auth_CredentialSignIn" xml:space="preserve"><value>অ্যাকাউন্ট তথ্য</value></data>
+  <data name="Auth_EmailLabel" xml:space="preserve"><value>ইমেইল ঠিকানা</value></data>
+  <data name="Auth_PasswordLabel" xml:space="preserve"><value>পাসওয়ার্ড</value></data>
+  <data name="Auth_ConfirmPasswordLabel" xml:space="preserve"><value>পাসওয়ার্ড নিশ্চিত করুন</value></data>
+  <data name="Auth_FullNameLabel" xml:space="preserve"><value>সম্পূর্ণ নাম</value></data>
+  <data name="Auth_RememberMe" xml:space="preserve"><value>লগইন মনে রাখুন</value></data>
+  <data name="Auth_OrSocial" xml:space="preserve"><value>অথবা চালিয়ে যান</value></data>
+  <data name="Auth_QuickDemoAccess" xml:space="preserve"><value>মূল্যায়ন দ্রুত অ্যাক্সেস</value></data>
+  <data name="Auth_QuickDemoNotice" xml:space="preserve"><value>মূল্যায়ন ও পর্যালোচনার জন্য এক ক্লিকে সরাসরি প্রবেশ করুন:</value></data>
+  <data name="Auth_NoAccountPrompt" xml:space="preserve"><value>অ্যাকাউন্ট নেই?</value></data>
+  <data name="Auth_AlreadyHaveAccountPrompt" xml:space="preserve"><value>ইতিমধ্যেই একটি অ্যাকাউন্ট আছে?</value></data>
+  <data name="Auth_SelectRoleLabel" xml:space="preserve"><value>অ্যাকাউন্টের ধরন ও ভূমিকা</value></data>
+  <data name="Auth_AccessRestricted" xml:space="preserve"><value>প্রবেশাধিকার সীমাবদ্ধ</value></data>
+  <data name="Auth_AccessRestrictedDesc" xml:space="preserve"><value>এই অংশটি দেখতে আপনাকে সঠিক অ্যাকাউন্টে প্রবেশ করতে হবে।</value></data>
+  <data name="Auth_AccessDenied" xml:space="preserve"><value>অনুমতি নেই (৪০৩)</value></data>
+  <data name="Auth_AccessDeniedExplanation" xml:space="preserve"><value>আপনার বর্তমান অ্যাকাউন্টের এই পেজে প্রবেশের অনুমতি নেই।</value></data>
+  <data name="Auth_ErrorInvalidCredentials" xml:space="preserve"><value>ভুল ইমেইল বা পাসওয়ার্ড। আবার চেষ্টা করুন।</value></data>
+  <data name="Auth_ErrorMissingCredentials" xml:space="preserve"><value>অনুগ্রহ করে ইমেইল ও পাসওয়ার্ড দুটোই লিখুন।</value></data>
+  <data name="Auth_ErrorMissingFields" xml:space="preserve"><value>অনুগ্রহ করে প্রয়োজনীয় সকল তথ্য দিন।</value></data>
+  <data name="Auth_ErrorPasswordMismatch" xml:space="preserve"><value>পাসওয়ার্ড মিলছে না।</value></data>
+  <data name="Auth_ErrorEmailTaken" xml:space="preserve"><value>এই ইমেইলে ইতিমধ্যে একটি অ্যাকাউন্ট বিদ্যমান।</value></data>
+  <data name="Auth_ErrorDemoNotSeeded" xml:space="preserve"><value>ডেমো অ্যাকাউন্ট এখনো ডেটাবেজে যুক্ত হয়নি।</value></data>
+  <data name="Auth_ErrorGeneric" xml:space="preserve"><value>লগইনে একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।</value></data>
 </root>
