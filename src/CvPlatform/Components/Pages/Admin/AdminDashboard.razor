@@ -1,0 +1,117 @@
+@page "/admin/dashboard"
+@attribute [Authorize(Roles = ApplicationRole.Administrator)]
+@inject IStringLocalizer<SharedResource> Loc
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>@Loc["Nav_AdminDashboard"] - @Loc["App_Title"]</PageTitle>
+
+<div class="container-fluid px-4 py-3">
+    <!-- Welcome Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-danger-subtle text-danger">
+                    <i class="bi bi-shield-lock-fill me-1"></i> System Administration
+                </span>
+                <span class="text-muted small">• Administrator Privileges Active</span>
+            </div>
+            <h2 class="fw-bold mb-1">System Control Center</h2>
+            <p class="text-muted small mb-0">Platform governance, user management, and security policy overview.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="admin/users" class="btn btn-danger btn-sm">
+                <i class="bi bi-people-fill me-1"></i> Manage Users & Roles
+            </a>
+        </div>
+    </div>
+
+    <!-- Governance Metrics -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-3">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold">Total Accounts</span>
+                    <i class="bi bi-people text-danger fs-5"></i>
+                </div>
+                <h3 class="fw-bold mb-0">3</h3>
+                <div class="text-muted mt-2" style="font-size: 0.75rem;">
+                    Admin, Recruiter, Candidate
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold">System Roles</span>
+                    <i class="bi bi-shield-check text-primary fs-5"></i>
+                </div>
+                <h3 class="fw-bold mb-0">3</h3>
+                <div class="text-muted mt-2" style="font-size: 0.75rem;">
+                    Administrator, Recruiter, Candidate
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold">Database Schema</span>
+                    <i class="bi bi-database-check text-success fs-5"></i>
+                </div>
+                <h3 class="fw-bold mb-0">14</h3>
+                <div class="text-muted mt-2" style="font-size: 0.75rem;">
+                    PostgreSQL relational tables
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold">Security Model</span>
+                    <span class="badge bg-success-subtle text-success">Compliant</span>
+                </div>
+                <h3 class="fw-bold mb-0">RBAC</h3>
+                <div class="text-muted mt-2" style="font-size: 0.75rem;">
+                    ASP.NET Core Identity
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Governance Cards -->
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <div class="card border shadow-sm p-4 h-100">
+                <h5 class="fw-bold mb-3 d-flex align-items-center">
+                    <i class="bi bi-person-gear text-danger me-2"></i>
+                    User Directory & Role Assignments
+                </h5>
+                <p class="text-muted small mb-3">
+                    View registered accounts, verify role boundaries, and inspect account timestamps. Administrator accounts possess full oversight across all positions, attributes, and candidate CV submissions.
+                </p>
+                <a href="admin/users" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-arrow-right me-1"></i> Open User Directory
+                </a>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border shadow-sm p-4 h-100">
+                <h5 class="fw-bold mb-3 d-flex align-items-center">
+                    <i class="bi bi-shield-shaded text-primary me-2"></i>
+                    Security & Authorization Defense Standards
+                </h5>
+                <p class="text-muted small mb-3">
+                    Key evaluation defense principles configured:
+                </p>
+                <ul class="small text-muted ps-3 mb-0">
+                    <li class="mb-1"><strong>Cookie Isolation:</strong> HTTP-Only, Lax SameSite cookie with sliding expiration.</li>
+                    <li class="mb-1"><strong>Cascading State:</strong> <code>&lt;CascadingAuthenticationState&gt;</code> prevents unauthorized route access over Blazor Interactive Server.</li>
+                    <li class="mb-1"><strong>Relational Integrity:</strong> Strict unique indexes guard against duplicate likes and multi-CV creation for the same position.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>

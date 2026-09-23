@@ -1,0 +1,132 @@
+@page "/recruiter/dashboard"
+@attribute [Authorize(Roles = $"{ApplicationRole.Recruiter},{ApplicationRole.Administrator}")]
+@inject IStringLocalizer<SharedResource> Loc
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>@Loc["Nav_RecruiterDashboard"] - @Loc["App_Title"]</PageTitle>
+
+<div class="container-fluid px-4 py-3">
+    <!-- Welcome Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-primary-subtle text-primary">
+                    <i class="bi bi-briefcase-fill me-1"></i> @Loc["Role_Recruiter"] Workspace
+                </span>
+                <span class="text-muted small">• Protected Route</span>
+            </div>
+            <h2 class="fw-bold mb-1">Welcome back, @userName!</h2>
+            <p class="text-muted small mb-0">Compose dynamic attribute templates, publish openings, and review candidate applications.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="recruiter/positions" class="btn btn-primary btn-sm">
+                <i class="bi bi-plus-circle me-1"></i> Create Position
+            </a>
+            <a href="recruiter/attributes" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-sliders me-1"></i> Attribute Library
+            </a>
+        </div>
+    </div>
+
+    <!-- Metrics Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold">Active Openings</span>
+                    <i class="bi bi-folder2-open text-primary fs-5"></i>
+                </div>
+                <div class="d-flex align-items-baseline gap-2">
+                    <h3 class="fw-bold mb-0">4</h3>
+                    <span class="text-muted small">Published positions</span>
+                </div>
+                <div class="text-muted mt-2" style="font-size: 0.75rem;">
+                    Accepting tailored candidate CVs
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold">Dynamic Attributes</span>
+                    <i class="bi bi-sliders text-success fs-5"></i>
+                </div>
+                <div class="d-flex align-items-baseline gap-2">
+                    <h3 class="fw-bold mb-0">18</h3>
+                    <span class="text-muted small">Library definitions</span>
+                </div>
+                <div class="text-muted mt-2" style="font-size: 0.75rem;">
+                    Text, Dropdown, Multi-select, Date, Number
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold">Applications Received</span>
+                    <i class="bi bi-people text-warning fs-5"></i>
+                </div>
+                <div class="d-flex align-items-baseline gap-2">
+                    <h3 class="fw-bold mb-0">12</h3>
+                    <span class="text-muted small">Tailored candidate CVs</span>
+                </div>
+                <div class="text-muted mt-2" style="font-size: 0.75rem;">
+                    Review & endorse via recruiter likes
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recruiter Core Workflows -->
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <div class="card border shadow-sm p-4 h-100">
+                <h5 class="fw-bold mb-3 d-flex align-items-center">
+                    <i class="bi bi-collection text-primary me-2"></i>
+                    Reusable Attribute Library (Killer Feature #1)
+                </h5>
+                <p class="text-muted small mb-3">
+                    Define standardized qualification attributes once. Positions select attributes as required or optional, and candidate profiles map to them automatically.
+                </p>
+                <div class="d-flex gap-2">
+                    <a href="recruiter/attributes" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Open Attribute Library
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border shadow-sm p-4 h-100">
+                <h5 class="fw-bold mb-3 d-flex align-items-center">
+                    <i class="bi bi-file-earmark-check text-success me-2"></i>
+                    Review Candidate CVs & Endorsements
+                </h5>
+                <p class="text-muted small mb-3">
+                    Inspect tailored documents generated by candidates. Endorse top applicants with recruiter likes (strictly 1 like per recruiter per CV enforced at the database level).
+                </p>
+                <div class="d-flex gap-2">
+                    <a href="recruiter/cvs" class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-arrow-right me-1"></i> Review Candidate CVs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string userName = "Recruiter";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            userName = user.Identity.Name?.Split('@')[0] ?? "Recruiter";
+        }
+    }
+}

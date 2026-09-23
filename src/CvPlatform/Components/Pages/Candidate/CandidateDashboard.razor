@@ -1,0 +1,149 @@
+@page "/candidate/dashboard"
+@attribute [Authorize(Roles = $"{ApplicationRole.Candidate},{ApplicationRole.Administrator}")]
+@inject IStringLocalizer<SharedResource> Loc
+@inject AuthenticationStateProvider AuthStateProvider
+
+<PageTitle>@Loc["Nav_CandidateDashboard"] - @Loc["App_Title"]</PageTitle>
+
+<div class="container-fluid px-4 py-3">
+    <!-- Welcome Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-success-subtle text-success">
+                    <i class="bi bi-person-badge-fill me-1"></i> @Loc["Role_Candidate"] Workspace
+                </span>
+                <span class="text-muted small">• Protected Route</span>
+            </div>
+            <h2 class="fw-bold mb-1">Welcome back, @userName!</h2>
+            <p class="text-muted small mb-0">Manage your reusable profile, showcase portfolio projects, and generate tailored CVs.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="candidate/profile" class="btn btn-primary btn-sm">
+                <i class="bi bi-person-gear me-1"></i> Edit Master Profile
+            </a>
+            <a href="" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-briefcase me-1"></i> Browse Positions
+            </a>
+        </div>
+    </div>
+
+    <!-- Quick Stats Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold">Master Profile Readiness</span>
+                    <span class="badge bg-success-subtle text-success">Active</span>
+                </div>
+                <div class="d-flex align-items-baseline gap-2">
+                    <h3 class="fw-bold mb-0">85%</h3>
+                    <span class="text-muted small">Complete</span>
+                </div>
+                <div class="progress mt-2" style="height: 6px;">
+                    <div class="progress-bar bg-success" style="width: 85%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold">Tailored CVs</span>
+                    <i class="bi bi-file-earmark-person text-primary fs-5"></i>
+                </div>
+                <div class="d-flex align-items-baseline gap-2">
+                    <h3 class="fw-bold mb-0">3</h3>
+                    <span class="text-muted small">Generated documents</span>
+                </div>
+                <div class="text-muted mt-2" style="font-size: 0.75rem;">
+                    1 CV per position constraint enforced
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border shadow-sm p-3">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="text-muted small fw-semibold">Recruiter Endorsements</span>
+                    <i class="bi bi-heart text-danger fs-5"></i>
+                </div>
+                <div class="d-flex align-items-baseline gap-2">
+                    <h3 class="fw-bold mb-0">5</h3>
+                    <span class="text-muted small">Likes received</span>
+                </div>
+                <div class="text-muted mt-2" style="font-size: 0.75rem;">
+                    Across submitted tailored applications
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Action Shortcuts -->
+    <div class="row g-3">
+        <div class="col-lg-6">
+            <div class="card border shadow-sm p-4 h-100">
+                <h5 class="fw-bold mb-3 d-flex align-items-center">
+                    <i class="bi bi-person-lines-fill text-primary me-2"></i>
+                    Master Profile Sections
+                </h5>
+                <p class="text-muted small mb-3">
+                    Your candidate profile is composed of 4 standardized sections that auto-populate tailored CV applications:
+                </p>
+                <div class="list-group list-group-flush small">
+                    <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span><strong>1. "Me"</strong> — Personal details, bio, links</span>
+                        <span class="badge bg-success-subtle text-success">Ready</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span><strong>2. "Info"</strong> — Reusable attribute library qualifications</span>
+                        <span class="badge bg-success-subtle text-success">Configured</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span><strong>3. "Projects"</strong> — Portfolio with Markdown & tag taxonomy</span>
+                        <span class="badge bg-primary-subtle text-primary">2 Projects</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center px-0">
+                        <span><strong>4. "CVs"</strong> — Position-specific auto-mapped applications</span>
+                        <span class="badge bg-secondary-subtle text-secondary">Auto-Managed</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border shadow-sm p-4 h-100">
+                <h5 class="fw-bold mb-3 d-flex align-items-center">
+                    <i class="bi bi-stars text-warning me-2"></i>
+                    Auto-Generation Workflow
+                </h5>
+                <p class="text-muted small mb-3">
+                    When applying to an open position, the platform executes real-time requirement mapping:
+                </p>
+                <ol class="small text-muted ps-3 mb-4">
+                    <li class="mb-1">Position required & optional attributes are inspected.</li>
+                    <li class="mb-1">Your master profile values are automatically populated.</li>
+                    <li class="mb-1">Missing required fields are highlighted before submission.</li>
+                    <li class="mb-1">Optimistic concurrency (RowVersion) prevents data loss during editing.</li>
+                </ol>
+                <a href="" class="btn btn-outline-primary btn-sm align-self-start">
+                    <i class="bi bi-arrow-right me-1"></i> Explore Open Openings
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    private string userName = "Candidate";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            userName = user.Identity.Name?.Split('@')[0] ?? "Candidate";
+        }
+    }
+}
