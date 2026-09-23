@@ -159,4 +159,30 @@
   <data name="Auth_ErrorDemoNotSeeded" xml:space="preserve"><value>Demo accounts have not yet been seeded in the database.</value></data>
   <data name="Auth_ErrorGeneric" xml:space="preserve"><value>An error occurred during authentication. Please try again.</value></data>
   <data name="Auth_ErrorDatabaseOffline" xml:space="preserve"><value>Database is currently unreachable (127.0.0.1:5432). Please ensure PostgreSQL is running, or use the One-Click Evaluation Demo buttons on the right.</value></data>
+
+  <!-- Reusable Attribute Library (Killer Feature #1) -->
+  <data name="Attr_LibraryTitle" xml:space="preserve"><value>Reusable Attribute Library</value></data>
+  <data name="Attr_ManageCategories" xml:space="preserve"><value>Manage Categories</value></data>
+  <data name="Attr_NewAttribute" xml:space="preserve"><value>New Attribute</value></data>
+  <data name="Attr_EditAttribute" xml:space="preserve"><value>Edit Attribute</value></data>
+  <data name="Attr_NewCategory" xml:space="preserve"><value>New Category</value></data>
+  <data name="Attr_EditCategory" xml:space="preserve"><value>Edit Category</value></data>
+  <data name="Attr_CategoryName" xml:space="preserve"><value>Category Name</value></data>
+  <data name="Attr_CategoryDescription" xml:space="preserve"><value>Category Description</value></data>
+  <data name="Attr_DisplayOrder" xml:space="preserve"><value>Display Order</value></data>
+  <data name="Attr_ExistingCategories" xml:space="preserve"><value>Existing Categories</value></data>
+  <data name="Attr_NameLabel" xml:space="preserve"><value>Attribute Name</value></data>
+  <data name="Attr_CategoryLabel" xml:space="preserve"><value>Category</value></data>
+  <data name="Attr_DataTypeLabel" xml:space="preserve"><value>Data Type</value></data>
+  <data name="Attr_DescriptionLabel" xml:space="preserve"><value>Description / Guidance</value></data>
+  <data name="Attr_RequiredByDefault" xml:space="preserve"><value>Required by Default</value></data>
+  <data name="Attr_Searchable" xml:space="preserve"><value>Searchable Filter</value></data>
+  <data name="Attr_ActiveStatus" xml:space="preserve"><value>Active in Platform</value></data>
+  <data name="Attr_PredefinedOptions" xml:space="preserve"><value>Predefined Selection Options</value></data>
+  <data name="Btn_SaveCategory" xml:space="preserve"><value>Save Category</value></data>
+  <data name="Btn_SaveAttribute" xml:space="preserve"><value>Save Attribute</value></data>
+  <data name="Btn_Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Btn_Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Btn_Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Btn_Delete" xml:space="preserve"><value>Delete</value></data>
 </root>

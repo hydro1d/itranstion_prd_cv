@@ -159,4 +159,30 @@
   <data name="Auth_ErrorDemoNotSeeded" xml:space="preserve"><value>ডেমো অ্যাকাউন্ট এখনো ডেটাবেজে যুক্ত হয়নি।</value></data>
   <data name="Auth_ErrorGeneric" xml:space="preserve"><value>লগইনে একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।</value></data>
   <data name="Auth_ErrorDatabaseOffline" xml:space="preserve"><value>ডেটাবেজ সক্রিয় নেই (127.0.0.1:5432)। পোস্টগ্রেস চালান অথবা ডানের ডেমো লগইন ব্যবহার করুন।</value></data>
+
+  <!-- Reusable Attribute Library (Killer Feature #1) -->
+  <data name="Attr_LibraryTitle" xml:space="preserve"><value>পুনর্ব্যবহারযোগ্য অ্যাট্রিবিউট লাইব্রেরি</value></data>
+  <data name="Attr_ManageCategories" xml:space="preserve"><value>ক্যাটাগরি পরিচালনা</value></data>
+  <data name="Attr_NewAttribute" xml:space="preserve"><value>নতুন অ্যাট্রিবিউট</value></data>
+  <data name="Attr_EditAttribute" xml:space="preserve"><value>অ্যাট্রিবিউট সম্পাদনা</value></data>
+  <data name="Attr_NewCategory" xml:space="preserve"><value>নতুন ক্যাটাগরি</value></data>
+  <data name="Attr_EditCategory" xml:space="preserve"><value>ক্যাটাগরি সম্পাদনা</value></data>
+  <data name="Attr_CategoryName" xml:space="preserve"><value>ক্যাটাগরির নাম</value></data>
+  <data name="Attr_CategoryDescription" xml:space="preserve"><value>ক্যাটাগরি বিবরণ</value></data>
+  <data name="Attr_DisplayOrder" xml:space="preserve"><value>প্রদর্শনের ক্রম</value></data>
+  <data name="Attr_ExistingCategories" xml:space="preserve"><value>বিদ্যমান ক্যাটাগরিসমূহ</value></data>
+  <data name="Attr_NameLabel" xml:space="preserve"><value>অ্যাট্রিবিউট নাম</value></data>
+  <data name="Attr_CategoryLabel" xml:space="preserve"><value>ক্যাটাগরি</value></data>
+  <data name="Attr_DataTypeLabel" xml:space="preserve"><value>ডেটার ধরন</value></data>
+  <data name="Attr_DescriptionLabel" xml:space="preserve"><value>বিবরণ / নির্দেশনা</value></data>
+  <data name="Attr_RequiredByDefault" xml:space="preserve"><value>ডিফল্টভাবে বাধ্যতামূলক</value></data>
+  <data name="Attr_Searchable" xml:space="preserve"><value>অনুসন্ধানযোগ্য ফিল্টার</value></data>
+  <data name="Attr_ActiveStatus" xml:space="preserve"><value>প্ল্যাটফর্মে সক্রিয়</value></data>
+  <data name="Attr_PredefinedOptions" xml:space="preserve"><value>পূর্বনির্ধারিত বিকল্পসমূহ</value></data>
+  <data name="Btn_SaveCategory" xml:space="preserve"><value>ক্যাটাগরি সংরক্ষণ করুন</value></data>
+  <data name="Btn_SaveAttribute" xml:space="preserve"><value>অ্যাট্রিবিউট সংরক্ষণ করুন</value></data>
+  <data name="Btn_Cancel" xml:space="preserve"><value>বাতিল</value></data>
+  <data name="Btn_Close" xml:space="preserve"><value>বন্ধ করুন</value></data>
+  <data name="Btn_Edit" xml:space="preserve"><value>সম্পাদনা</value></data>
+  <data name="Btn_Delete" xml:space="preserve"><value>মুছুন</value></data>
 </root>
