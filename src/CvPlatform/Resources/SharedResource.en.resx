@@ -263,4 +263,12 @@
   <data name="Recruiter_BtnInspect" xml:space="preserve"><value>Review Application</value></data>
   <data name="Th_Candidate" xml:space="preserve"><value>Candidate</value></data>
   <data name="Th_TargetPosition" xml:space="preserve"><value>Target Opening</value></data>
+
+  <!-- Real-Time Discussions (Phase 10) -->
+  <data name="Discussions_PageTitle" xml:space="preserve"><value>Position Q&amp;A Discussions</value></data>
+  <data name="Discussions_PageSubtitle" xml:space="preserve"><value>Real-time interactive communication between candidates and recruitment teams powered by SignalR.</value></data>
+  <data name="Discussions_PositionThreads" xml:space="preserve"><value>Position Discussion Channels</value></data>
+  <data name="Discussions_InputPlaceholder" xml:space="preserve"><value>Ask a question about this opening (requirements, interview process, culture)...</value></data>
+  <data name="Discussions_BtnSend" xml:space="preserve"><value>Send Question</value></data>
+  <data name="Discussions_NoMessagesYet" xml:space="preserve"><value>No questions in this thread yet. Be the first to ask!</value></data>
 </root>

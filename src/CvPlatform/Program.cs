@@ -59,8 +59,10 @@ builder.Services.AddScoped<CvPlatform.Services.IAttributeService, CvPlatform.Ser
 builder.Services.AddScoped<CvPlatform.Services.IPositionService, CvPlatform.Services.PositionService>();
 builder.Services.AddScoped<CvPlatform.Services.ICandidateProfileService, CvPlatform.Services.CandidateProfileService>();
 builder.Services.AddScoped<CvPlatform.Services.ICvService, CvPlatform.Services.CvService>();
+builder.Services.AddScoped<CvPlatform.Services.IDiscussionService, CvPlatform.Services.DiscussionService>();
 
-// Add services to the container.
+// Add SignalR & Razor Components
+builder.Services.AddSignalR();
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
@@ -128,6 +130,8 @@ app.MapGet("/api/culture/set", (string culture, string? redirectUri, HttpContext
 
     return Results.LocalRedirect(target);
 });
+
+app.MapHub<CvPlatform.Hubs.DiscussionHub>("/hubs/discussion");
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
