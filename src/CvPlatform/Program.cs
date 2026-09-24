@@ -164,7 +164,15 @@ static string ResolveConnectionString(string? raw)
             var host = uri.Host;
             var port = uri.Port > 0 ? uri.Port : 5432;
             var db = uri.AbsolutePath.TrimStart('/');
-            return $"Host={host};Port={port};Database={db};Username={user};Password={password};Ssl Mode=Prefer;Trust Server Certificate=true;Include Error Detail=true;";
+
+            // If it's a Render internal host without domain (e.g. dpg-daqg7r8jo6nc73ebabg0-a),
+            // automatically append .oregon-postgres.render.com so cross-region and external access works!
+            if (host.StartsWith("dpg-") && !host.Contains('.'))
+            {
+                host = $"{host}.oregon-postgres.render.com";
+            }
+
+            return $"Host={host};Port={port};Database={db};Username={user};Password={password};Ssl Mode=Require;Trust Server Certificate=true;Include Error Detail=true;";
         }
         catch
         {
