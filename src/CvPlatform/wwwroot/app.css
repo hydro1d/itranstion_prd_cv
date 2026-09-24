@@ -835,4 +835,42 @@ a:hover {
     background-color: var(--app-surface-hover);
     color: var(--app-text-main);
 }
+
+/* --- Mobile Responsive Drawer & Overlay (Phase 13) --- */
+@media (max-width: 991.98px) {
+    .app-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        left: -270px !important;
+        width: 270px !important;
+        z-index: 1050 !important;
+        transition: transform 0.25s ease-in-out !important;
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.45) !important;
+    }
+    
+    .app-sidebar.show {
+        transform: translateX(270px) !important;
+    }
+    
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(15, 23, 42, 0.65);
+        z-index: 1040;
+        backdrop-filter: blur(3px);
+    }
+
+    .app-header {
+        padding: 0 1rem;
+    }
+    
+    .app-body {
+        padding: 1rem;
+    }
+}
+
 
