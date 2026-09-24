@@ -756,4 +756,83 @@ a:hover {
         border: 1px solid #ccc !important;
         background: none !important;
     }
-}
+}
+
+/* --- High-Contrast Dark Mode Enhancements (Phase 12) --- */
+[data-bs-theme="dark"] .card,
+[data-theme="dark"] .card {
+    background-color: var(--app-surface);
+    border-color: var(--app-border);
+    color: var(--app-text-main);
+}
+
+[data-bs-theme="dark"] .card-header,
+[data-theme="dark"] .card-header,
+[data-bs-theme="dark"] .card-footer,
+[data-theme="dark"] .card-footer {
+    background-color: var(--app-surface-subtle);
+    border-color: var(--app-border);
+}
+
+[data-bs-theme="dark"] .bg-light,
+[data-theme="dark"] .bg-light {
+    background-color: var(--app-surface-subtle) !important;
+    color: var(--app-text-main) !important;
+}
+
+[data-bs-theme="dark"] .table-light,
+[data-theme="dark"] .table-light {
+    background-color: var(--app-surface-subtle) !important;
+    color: var(--app-text-main) !important;
+}
+
+[data-bs-theme="dark"] .list-group-item,
+[data-theme="dark"] .list-group-item {
+    background-color: var(--app-surface);
+    border-color: var(--app-border);
+    color: var(--app-text-main);
+}
+
+[data-bs-theme="dark"] .modal-content,
+[data-theme="dark"] .modal-content {
+    background-color: var(--app-surface);
+    border-color: var(--app-border-strong);
+    color: var(--app-text-main);
+}
+
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select,
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .form-select {
+    background-color: var(--app-surface-subtle);
+    border-color: var(--app-border);
+    color: var(--app-text-main);
+}
+
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus,
+[data-theme="dark"] .form-control:focus,
+[data-theme="dark"] .form-select:focus {
+    background-color: var(--app-surface);
+    border-color: var(--app-primary);
+    color: var(--app-text-main);
+}
+
+[data-bs-theme="dark"] .dropdown-menu,
+[data-theme="dark"] .dropdown-menu {
+    background-color: var(--app-surface);
+    border-color: var(--app-border);
+    color: var(--app-text-main);
+}
+
+[data-bs-theme="dark"] .dropdown-item,
+[data-theme="dark"] .dropdown-item {
+    color: var(--app-text-main);
+}
+
+[data-bs-theme="dark"] .dropdown-item:hover,
+[data-theme="dark"] .dropdown-item:hover {
+    background-color: var(--app-surface-hover);
+    color: var(--app-text-main);
+}
+
