@@ -20,3 +20,7 @@ desktop.ini
 ## JetBrains Rider
 .idea/
 *.sln.iml
+
+## Project defense guides & scripts (Local only)
+*.pdf
+generate_defense_guides.py
