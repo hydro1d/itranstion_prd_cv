@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Localization;
+using Microsoft.AspNetCore.HttpOverrides;
 using CvPlatform.Components;
 using CvPlatform.Data;
 using CvPlatform.Data.Entities;
@@ -16,9 +17,13 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure ASP.NET Core Localization
 builder.Services.AddLocalization();
 
-// Configure PostgreSQL with EF Core
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+// Configure PostgreSQL with EF Core (supports standard connection strings and cloud DATABASE_URL URIs)
+var rawConn = builder.Configuration["DATABASE_URL"]
+    ?? builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? builder.Configuration["DefaultConnection"]
+    ?? "Host=127.0.0.1;Port=5432;Database=cv_platform_db;Username=postgres;Password=postgres;Timeout=2;Command Timeout=3";
+
+var connectionString = ResolveConnectionString(rawConn);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
@@ -80,12 +85,16 @@ var localizationOptions = new RequestLocalizationOptions()
 
 app.UseRequestLocalization(localizationOptions);
 
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
-    app.UseHttpsRedirection();
 }
 
 app.UseAuthentication();
@@ -137,3 +146,29 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+
+// Converts postgres:// or postgresql:// URI into Npgsql connection string if provided
+static string ResolveConnectionString(string? raw)
+{
+    if (string.IsNullOrWhiteSpace(raw)) return string.Empty;
+    if (raw.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) || 
+        raw.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+    {
+        try
+        {
+            var uri = new Uri(raw);
+            var userInfo = uri.UserInfo.Split(':');
+            var user = userInfo.Length > 0 ? Uri.UnescapeDataString(userInfo[0]) : "postgres";
+            var password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : "";
+            var host = uri.Host;
+            var port = uri.Port > 0 ? uri.Port : 5432;
+            var db = uri.AbsolutePath.TrimStart('/');
+            return $"Host={host};Port={port};Database={db};Username={user};Password={password};Ssl Mode=Require;Trust Server Certificate=true;";
+        }
+        catch
+        {
+            return raw;
+        }
+    }
+    return raw;
+}
