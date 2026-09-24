@@ -1,5 +1,6 @@
 @inherits LayoutComponentBase
 @inject IStringLocalizer<SharedResource> Loc
+@inject NavigationManager Navigation
 @using System.Security.Claims
 
 <div class="app-container">
@@ -29,7 +30,8 @@
                 </button>
                 <div class="app-search-input d-none d-sm-block">
                     <i class="bi bi-search"></i>
-                    <input type="text" class="form-control form-control-sm" placeholder="@Loc["Search_Placeholder"]" />
+                    <input type="text" class="form-control form-control-sm" placeholder="@Loc["Search_Placeholder"]" 
+                           @bind="headerSearch" @onkeydown="HandleHeaderSearchKeyDown" />
                 </div>
             </div>
 
@@ -89,10 +91,31 @@
 
 @code {
     private bool sidebarOpen = false;
+    private string headerSearch = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        Navigation.LocationChanged += (s, e) =>
+        {
+            if (sidebarOpen)
+            {
+                sidebarOpen = false;
+                InvokeAsync(StateHasChanged);
+            }
+        };
+    }
 
     private void ToggleSidebar()
     {
         sidebarOpen = !sidebarOpen;
+    }
+
+    private void HandleHeaderSearchKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            Navigation.NavigateTo("search");
+        }
     }
 
     private string GetInitials(string? name)
