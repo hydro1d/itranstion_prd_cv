@@ -140,7 +140,7 @@
     {
         try
         {
-            if (await DbContext.Database.CanConnectAsync())
+            if (await DatabaseAvailability.IsAvailableAsync(DbContext))
             {
                 var dbUsers = await DbContext.Users.ToListAsync();
                 var list = new List<UserViewModel>();

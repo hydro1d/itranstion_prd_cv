@@ -20,7 +20,7 @@ public static class IdentityDataSeeder
             var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
             // Ensure database is created/migrated if database is reachable
-            if (await context.Database.CanConnectAsync())
+            if (await DatabaseAvailability.IsAvailableAsync(context))
             {
                 await context.Database.MigrateAsync();
 

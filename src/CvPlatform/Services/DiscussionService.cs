@@ -35,14 +35,7 @@ public class DiscussionService : IDiscussionService
 
     private async Task<bool> IsDbAvailableAsync()
     {
-        try
-        {
-            return await _context.Database.CanConnectAsync();
-        }
-        catch
-        {
-            return false;
-        }
+        return await DatabaseAvailability.IsAvailableAsync(_context);
     }
 
     public async Task<Discussion> GetOrCreateDiscussionForPositionAsync(int positionId)
