@@ -18,7 +18,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLocalization();
 
 // Configure PostgreSQL with EF Core (supports standard connection strings and cloud DATABASE_URL URIs)
-var rawConn = builder.Configuration["DATABASE_URL"]
+var rawConn = Environment.GetEnvironmentVariable("DATABASE_URL")
+    ?? builder.Configuration["DATABASE_URL"]
+    ?? Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection")
     ?? builder.Configuration.GetConnectionString("DefaultConnection")
     ?? builder.Configuration["DefaultConnection"]
     ?? "Host=127.0.0.1;Port=5432;Database=cv_platform_db;Username=postgres;Password=postgres;Timeout=2;Command Timeout=3";
@@ -166,10 +168,10 @@ static string ResolveConnectionString(string? raw)
             var db = uri.AbsolutePath.TrimStart('/');
 
             // If it's a Render internal host without domain (e.g. dpg-daqg7r8jo6nc73ebabg0-a),
-            // automatically append .oregon-postgres.render.com so cross-region and external access works!
+            // automatically append .singapore-postgres.render.com so cross-region and external access works!
             if (host.StartsWith("dpg-") && !host.Contains('.'))
             {
-                host = $"{host}.oregon-postgres.render.com";
+                host = $"{host}.singapore-postgres.render.com";
             }
 
             return $"Host={host};Port={port};Database={db};Username={user};Password={password};Ssl Mode=Require;Trust Server Certificate=true;Include Error Detail=true;";
