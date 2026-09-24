@@ -255,4 +255,12 @@
   <data name="Cv_PrintCv" xml:space="preserve"><value>প্রিন্ট / পিডিএফ সংরক্ষণ</value></data>
   <data name="Cv_SaveSuccess" xml:space="preserve"><value>উপযোগী সিভি সফলভাবে সংরক্ষিত হয়েছে।</value></data>
   <data name="Cv_ConcurrencyConflict" xml:space="preserve"><value>কনকারেন্সি দ্বন্দ্ব শনাক্ত হয়েছে! এই নথিটি অন্য সেশনে পরিবর্তিত হয়েছে।</value></data>
+
+  <!-- Recruiter CV Management & Review Desk (Phase 9) -->
+  <data name="Recruiter_ReviewDeskTitle" xml:space="preserve"><value>প্রার্থী আবেদন পর্যালোচনা ডেস্ক</value></data>
+  <data name="Recruiter_ReviewDeskSubtitle" xml:space="preserve"><value>প্রার্থীদের উপযোগী আবেদন পর্যালোচনা করুন, যোগ্যতার স্কোর দেখুন এবং শীর্ষ প্রার্থীদের পছন্দ করুন।</value></data>
+  <data name="Recruiter_SearchApplicationsPlaceholder" xml:space="preserve"><value>প্রার্থীর নাম, পদ বা দক্ষতা দিয়ে খুঁজুন...</value></data>
+  <data name="Recruiter_BtnInspect" xml:space="preserve"><value>আবেদন পর্যালোচনা</value></data>
+  <data name="Th_Candidate" xml:space="preserve"><value>প্রার্থী</value></data>
+  <data name="Th_TargetPosition" xml:space="preserve"><value>লক্ষ্য পদ</value></data>
 </root>

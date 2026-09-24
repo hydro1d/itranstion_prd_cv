@@ -255,4 +255,12 @@
   <data name="Cv_PrintCv" xml:space="preserve"><value>Print / Save PDF</value></data>
   <data name="Cv_SaveSuccess" xml:space="preserve"><value>Tailored CV document saved successfully.</value></data>
   <data name="Cv_ConcurrencyConflict" xml:space="preserve"><value>Optimistic Concurrency Conflict Detected! This document was modified in another session.</value></data>
+
+  <!-- Recruiter CV Management & Review Desk (Phase 9) -->
+  <data name="Recruiter_ReviewDeskTitle" xml:space="preserve"><value>Candidate Application Review Desk</value></data>
+  <data name="Recruiter_ReviewDeskSubtitle" xml:space="preserve"><value>Review tailored candidate applications, evaluate match scores, and endorse top talent.</value></data>
+  <data name="Recruiter_SearchApplicationsPlaceholder" xml:space="preserve"><value>Search by candidate name, opening, or skill...</value></data>
+  <data name="Recruiter_BtnInspect" xml:space="preserve"><value>Review Application</value></data>
+  <data name="Th_Candidate" xml:space="preserve"><value>Candidate</value></data>
+  <data name="Th_TargetPosition" xml:space="preserve"><value>Target Opening</value></data>
 </root>
