@@ -1,0 +1,327 @@
+@page "/recruiter/cvs"
+@attribute [Authorize(Roles = $"{ApplicationRole.Recruiter},{ApplicationRole.Administrator}")]
+@using System.Security.Claims
+@using CvPlatform.Data.Entities
+@using CvPlatform.Data.Enums
+@using CvPlatform.Services
+@using CvPlatform.Components.Pages.Recruiter.Components
+@inject ICvService CvService
+@inject IPositionService PositionService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IStringLocalizer<SharedResource> Loc
+@inject NavigationManager Navigation
+
+<PageTitle>@Loc["Recruiter_ReviewDeskTitle"] - @Loc["App_Title"]</PageTitle>
+
+<div class="container-fluid px-4 py-3">
+    <!-- Breadcrumb & Top Bar -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 small">
+                    <li class="breadcrumb-item"><a href="recruiter/dashboard" class="text-decoration-none">@Loc["Nav_RecruiterDashboard"]</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@Loc["Nav_ReviewCvs"]</li>
+                </ol>
+            </nav>
+            <div class="d-flex align-items-center gap-2">
+                <h2 class="fw-bold mb-0">@Loc["Recruiter_ReviewDeskTitle"]</h2>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                    <i class="bi bi-people-fill me-1"></i> Talent Pipeline
+                </span>
+            </div>
+            <p class="text-muted small mb-0 mt-1">
+                @Loc["Recruiter_ReviewDeskSubtitle"]
+            </p>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-secondary-subtle text-secondary border py-2 px-3">
+                <i class="bi bi-file-earmark-check me-1"></i> @filteredCvs.Count Applications
+            </span>
+            <a href="recruiter/positions" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-folder2-open me-1"></i> Manage Positions
+            </a>
+        </div>
+    </div>
+
+    <!-- Filters Bar -->
+    <div class="card border shadow-sm mb-3">
+        <div class="card-body py-2 px-3">
+            <div class="row g-2 align-items-center">
+                <div class="col-md-5">
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control border-start-0"
+                               placeholder="@Loc["Recruiter_SearchApplicationsPlaceholder"]"
+                               @bind="searchQuery" @bind:event="oninput" />
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <select class="form-select form-select-sm" @bind="selectedPositionFilter">
+                        <option value="0">All Target Openings (@positionsList.Count)</option>
+                        @foreach (var pos in positionsList)
+                        {
+                            <option value="@pos.Id">@pos.Title (@pos.Company)</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <select class="form-select form-select-sm" @bind="selectedScoreFilter">
+                        <option value="0">All Match Scores</option>
+                        <option value="100">100% Fully Qualified</option>
+                        <option value="85">≥ 85% High Match</option>
+                        <option value="70">≥ 70% Acceptable Match</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table-Centric Action Toolbar (Strict Evaluation Defense Requirement) -->
+    <div class="card border bg-light mb-3">
+        <div class="card-body py-2 px-3">
+            <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    @if (selectedCvId.HasValue)
+                    {
+                        <span class="badge bg-primary text-white">
+                            <i class="bi bi-check2-circle me-1"></i> 1 Application Selected
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="text-muted small">
+                            <i class="bi bi-info-circle me-1"></i> Select an application row to activate actions
+                        </span>
+                    }
+                </div>
+
+                <!-- Contextual Action Toolbar Buttons -->
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="button" class="btn btn-primary btn-sm"
+                            disabled="@(!selectedCvId.HasValue)"
+                            @onclick="OpenPreviewModal">
+                        <i class="bi bi-eye me-1"></i> @Loc["Recruiter_BtnInspect"]
+                    </button>
+
+                    <button type="button" class="btn @(isSelectedCvLiked ? "btn-danger" : "btn-outline-danger") btn-sm"
+                            disabled="@(!selectedCvId.HasValue)"
+                            @onclick="ToggleLikeSelectedAsync">
+                        <i class="bi @(isSelectedCvLiked ? "bi-heart-fill" : "bi-heart") me-1"></i>
+                        @(isSelectedCvLiked ? "Endorsed (Liked)" : "Endorse (Like)")
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                            disabled="@(!selectedCvId.HasValue)"
+                            @onclick="OpenDocumentView">
+                        <i class="bi bi-box-arrow-up-right me-1"></i> Full Document View
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Applications Table (No Repeating Action Buttons Inside Rows) -->
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <div class="text-muted small mt-2">Loading candidate applications...</div>
+        </div>
+    }
+    else if (!filteredCvs.Any())
+    {
+        <div class="text-center py-5 border rounded bg-body-tertiary">
+            <i class="bi bi-people fs-1 text-muted d-block mb-3"></i>
+            <h5 class="fw-bold">No Applications Match Filter</h5>
+            <p class="text-muted small mb-0">Try clearing or adjusting your search filters above.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive border rounded bg-body">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 40px;" class="text-center">#</th>
+                        <th>@Loc["Th_Candidate"]</th>
+                        <th>@Loc["Th_TargetPosition"]</th>
+                        <th>Application Document</th>
+                        <th style="width: 150px;">Match Score</th>
+                        <th style="width: 110px;" class="text-center">Endorsements</th>
+                        <th style="width: 130px;">Applied Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var cv in filteredCvs)
+                    {
+                        var isSelected = selectedCvId == cv.Id;
+                        var isLikedByMe = cv.Likes?.Any(l => l.RecruiterId == currentRecruiterId) == true;
+
+                        <tr class="@(isSelected ? "table-active" : "")" style="cursor: pointer;"
+                            @onclick="() => SelectCv(cv.Id)">
+                            <td class="text-center" @onclick:stopPropagation="true">
+                                <input type="radio" name="cvRadio" checked="@isSelected"
+                                       @onchange="() => SelectCv(cv.Id)" />
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold small border" style="width: 36px; height: 36px; min-width: 36px;">
+                                        @GetInitials(cv.CandidateProfile?.FullName)
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-body">@(cv.CandidateProfile?.FullName ?? "Candidate")</div>
+                                        <div class="text-muted small" style="font-size: 0.72rem;">@(cv.CandidateProfile?.Location ?? "Remote")</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="fw-semibold text-primary">@(cv.Position?.Title ?? "Position Opening")</div>
+                                <div class="text-muted small" style="font-size: 0.72rem;">@(cv.Position?.Company ?? "Company") • @(cv.Position?.EmploymentType)</div>
+                            </td>
+                            <td>
+                                <div class="fw-semibold text-body">@cv.Title</div>
+                                <div class="text-muted small text-truncate" style="max-width: 280px; font-size: 0.75rem;">
+                                    @(cv.ProfessionalSummary ?? "Auto-mapped tailored application")
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="progress flex-grow-1" style="height: 6px;">
+                                        <div class="progress-bar @(cv.CompletionPercentage == 100 ? "bg-success" : (cv.CompletionPercentage >= 80 ? "bg-primary" : "bg-warning"))"
+                                             style="width: @(cv.CompletionPercentage)%;"></div>
+                                    </div>
+                                    <span class="small fw-bold">@cv.CompletionPercentage%</span>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <span class="badge @(isLikedByMe ? "bg-danger text-white" : "bg-danger-subtle text-danger") border border-danger-subtle">
+                                    <i class="bi @(isLikedByMe ? "bi-heart-fill" : "bi-heart") me-1"></i>
+                                    @(cv.Likes?.Count ?? 0)
+                                </span>
+                            </td>
+                            <td class="text-muted small">
+                                @cv.CreatedAt.ToString("MMM dd, yyyy")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<!-- Read-Only Application Inspector Modal -->
+<CvPreviewModal IsOpen="@isPreviewModalOpen"
+                Cv="@previewCv"
+                HasLiked="@previewCvHasLiked"
+                OnToggleLike="ToggleLikeFromModalAsync"
+                OnClose="() => isPreviewModalOpen = false" />
+
+@code {
+    private bool isLoading = true;
+    private List<CV> allCvs = new();
+    private List<Position> positionsList = new();
+    private string currentRecruiterId = "";
+
+    private string searchQuery = "";
+    private int selectedPositionFilter = 0;
+    private int selectedScoreFilter = 0;
+
+    private int? selectedCvId;
+    private bool isPreviewModalOpen = false;
+    private CV? previewCv;
+    private bool previewCvHasLiked = false;
+
+    private bool isSelectedCvLiked =>
+        selectedCvId.HasValue &&
+        allCvs.FirstOrDefault(c => c.Id == selectedCvId.Value)?.Likes?.Any(l => l.RecruiterId == currentRecruiterId) == true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        currentRecruiterId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "recruiter-demo-id";
+
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        isLoading = true;
+        try
+        {
+            positionsList = await PositionService.GetPositionsAsync();
+            allCvs = await CvService.GetRecruiterCvsAsync();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private List<CV> filteredCvs => allCvs
+        .Where(c => selectedPositionFilter == 0 || c.PositionId == selectedPositionFilter)
+        .Where(c => selectedScoreFilter == 0 || c.CompletionPercentage >= selectedScoreFilter)
+        .Where(c => string.IsNullOrWhiteSpace(searchQuery) ||
+                    c.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) ||
+                    (c.CandidateProfile != null && c.CandidateProfile.FullName.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)) ||
+                    (c.Position != null && c.Position.Title.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)) ||
+                    (c.ProfessionalSummary != null && c.ProfessionalSummary.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)))
+        .ToList();
+
+    private void SelectCv(int id)
+    {
+        selectedCvId = id;
+    }
+
+    private async Task OpenPreviewModal()
+    {
+        if (!selectedCvId.HasValue) return;
+        previewCv = await CvService.GetCvByIdAsync(selectedCvId.Value);
+        if (previewCv != null)
+        {
+            previewCvHasLiked = previewCv.Likes?.Any(l => l.RecruiterId == currentRecruiterId) == true;
+            isPreviewModalOpen = true;
+        }
+    }
+
+    private async Task ToggleLikeSelectedAsync()
+    {
+        if (!selectedCvId.HasValue) return;
+        await CvService.ToggleLikeAsync(selectedCvId.Value, currentRecruiterId);
+        // Refresh local CV state
+        allCvs = await CvService.GetRecruiterCvsAsync();
+    }
+
+    private async Task ToggleLikeFromModalAsync(int cvId)
+    {
+        await CvService.ToggleLikeAsync(cvId, currentRecruiterId);
+        previewCv = await CvService.GetCvByIdAsync(cvId);
+        if (previewCv != null)
+        {
+            previewCvHasLiked = previewCv.Likes?.Any(l => l.RecruiterId == currentRecruiterId) == true;
+        }
+        allCvs = await CvService.GetRecruiterCvsAsync();
+    }
+
+    private void OpenDocumentView()
+    {
+        if (selectedCvId.HasValue)
+        {
+            Navigation.NavigateTo($"/cv/{selectedCvId.Value}");
+        }
+    }
+
+    private string GetInitials(string? fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName)) return "CP";
+        var parts = fullName.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 1) return parts[0][0].ToString().ToUpper();
+        return $"{parts[0][0]}{parts[^1][0]}".ToUpper();
+    }
+}
