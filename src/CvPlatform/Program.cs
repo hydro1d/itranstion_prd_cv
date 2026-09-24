@@ -164,7 +164,7 @@ static string ResolveConnectionString(string? raw)
             var host = uri.Host;
             var port = uri.Port > 0 ? uri.Port : 5432;
             var db = uri.AbsolutePath.TrimStart('/');
-            return $"Host={host};Port={port};Database={db};Username={user};Password={password};Ssl Mode=Require;Trust Server Certificate=true;";
+            return $"Host={host};Port={port};Database={db};Username={user};Password={password};Ssl Mode=Prefer;Trust Server Certificate=true;Include Error Detail=true;";
         }
         catch
         {
