@@ -6,15 +6,15 @@
 
 <PageTitle>@Loc["Pos_ManageTitle"] - @Loc["App_Title"]</PageTitle>
 
-<div class="container-fluid px-4 py-3">
+<div class="mb-4">
     <!-- Header Section -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
         <div>
             <div class="d-flex align-items-center gap-2 mb-1">
                 <span class="badge bg-primary-subtle text-primary">
-                    <i class="bi bi-briefcase-fill me-1"></i> Killer Feature #2
+                    <i class="bi bi-briefcase me-1"></i> Job Templates
                 </span>
-                <span class="text-muted small">• Position Templates & Openings</span>
+                <span class="text-muted small">• Position Openings & Qualifications</span>
             </div>
             <h2 class="fw-bold mb-1">@Loc["Pos_ManageTitle"]</h2>
             <p class="text-muted small mb-0">
@@ -30,12 +30,12 @@
     </div>
 
     <!-- Metrics Cards -->
-    <div class="row g-3 mb-3">
+    <div class="row g-3 mb-4">
         <div class="col-sm-6 col-lg-3">
-            <div class="card border shadow-sm p-3">
+            <div class="app-surface p-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <span class="text-muted small fw-semibold">Total Openings</span>
-                    <i class="bi bi-folder2-open text-primary fs-5"></i>
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Total Openings</span>
+                    <i class="bi bi-folder2-open text-primary"></i>
                 </div>
                 <h3 class="fw-bold mb-0 mt-1">@positions.Count</h3>
                 <div class="text-muted mt-1" style="font-size: 0.72rem;">All recorded position templates</div>
@@ -43,10 +43,10 @@
         </div>
 
         <div class="col-sm-6 col-lg-3">
-            <div class="card border shadow-sm p-3">
+            <div class="app-surface p-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <span class="text-muted small fw-semibold">Published & Live</span>
-                    <i class="bi bi-globe2 text-success fs-5"></i>
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Published & Live</span>
+                    <i class="bi bi-globe text-success"></i>
                 </div>
                 <h3 class="fw-bold mb-0 mt-1">@positions.Count(p => p.Visibility == PositionVisibility.Public)</h3>
                 <div class="text-muted mt-1" style="font-size: 0.72rem;">Accepting tailored candidate CVs</div>
@@ -54,10 +54,10 @@
         </div>
 
         <div class="col-sm-6 col-lg-3">
-            <div class="card border shadow-sm p-3">
+            <div class="app-surface p-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <span class="text-muted small fw-semibold">Draft Templates</span>
-                    <i class="bi bi-file-earmark-diff text-warning fs-5"></i>
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Draft Templates</span>
+                    <i class="bi bi-file-earmark text-warning"></i>
                 </div>
                 <h3 class="fw-bold mb-0 mt-1">@positions.Count(p => p.Visibility == PositionVisibility.Draft)</h3>
                 <div class="text-muted mt-1" style="font-size: 0.72rem;">In preparation / unpublished</div>
@@ -65,10 +65,10 @@
         </div>
 
         <div class="col-sm-6 col-lg-3">
-            <div class="card border shadow-sm p-3">
+            <div class="app-surface p-3">
                 <div class="d-flex justify-content-between align-items-center">
-                    <span class="text-muted small fw-semibold">Structured Attributes</span>
-                    <i class="bi bi-sliders text-info fs-5"></i>
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Structured Attributes</span>
+                    <i class="bi bi-sliders2 text-info"></i>
                 </div>
                 <h3 class="fw-bold mb-0 mt-1">@positions.Sum(p => p.PositionAttributes.Count)</h3>
                 <div class="text-muted mt-1" style="font-size: 0.72rem;">Mapped qualifications across openings</div>
@@ -76,101 +76,93 @@
         </div>
     </div>
 
-    <!-- Table Action Toolbar (Strict Evaluation Defense Requirement: No repeating row buttons) -->
-    <div class="card border shadow-sm mb-3">
-        <div class="card-body p-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <!-- Table Action Toolbar & Responsive Table -->
+    <div class="table-responsive-wrapper mb-4">
+        <div class="table-toolbar">
             <!-- Left: Search and Filters -->
-            <div class="d-flex flex-wrap align-items-center gap-2 flex-grow-1">
-                <div class="input-group input-group-sm" style="max-width: 250px;">
-                    <span class="input-group-text"><i class="bi bi-search"></i></span>
-                    <input type="text" class="form-control" placeholder="Search openings..." 
+            <div class="table-toolbar-left">
+                <div class="app-search-input">
+                    <i class="bi bi-search"></i>
+                    <input type="text" class="form-control form-control-sm" placeholder="Search openings..." 
                            @bind="searchTerm" @bind:event="oninput" @bind:after="ApplyFilters" />
                 </div>
 
-                <div style="min-width: 150px;">
-                    <select class="form-select form-select-sm" @bind="selectedEmploymentType" @bind:after="ApplyFilters">
-                        <option value="">All Employment</option>
-                        <option value="@EmploymentType.FullTime">Full-time</option>
-                        <option value="@EmploymentType.PartTime">Part-time</option>
-                        <option value="@EmploymentType.Contract">Contract</option>
-                        <option value="@EmploymentType.Remote">Remote</option>
-                        <option value="@EmploymentType.Internship">Internship</option>
-                    </select>
-                </div>
+                <select class="form-select form-select-sm" style="max-width: 150px;" @bind="selectedEmploymentType" @bind:after="ApplyFilters">
+                    <option value="">All Employment</option>
+                    <option value="@EmploymentType.FullTime">Full-time</option>
+                    <option value="@EmploymentType.PartTime">Part-time</option>
+                    <option value="@EmploymentType.Contract">Contract</option>
+                    <option value="@EmploymentType.Remote">Remote</option>
+                    <option value="@EmploymentType.Internship">Internship</option>
+                </select>
 
-                <div style="min-width: 140px;">
-                    <select class="form-select form-select-sm" @bind="selectedVisibility" @bind:after="ApplyFilters">
-                        <option value="">All Statuses</option>
-                        <option value="@PositionVisibility.Public">Public</option>
-                        <option value="@PositionVisibility.Draft">Draft</option>
-                        <option value="@PositionVisibility.Closed">Closed</option>
-                    </select>
-                </div>
+                <select class="form-select form-select-sm" style="max-width: 140px;" @bind="selectedVisibility" @bind:after="ApplyFilters">
+                    <option value="">All Statuses</option>
+                    <option value="@PositionVisibility.Public">Public</option>
+                    <option value="@PositionVisibility.Draft">Draft</option>
+                    <option value="@PositionVisibility.Closed">Closed</option>
+                </select>
 
                 @if (!string.IsNullOrWhiteSpace(searchTerm) || selectedEmploymentType.HasValue || selectedVisibility.HasValue)
                 {
-                    <button class="btn btn-outline-secondary btn-sm" @onclick="ResetFilters">
+                    <button class="btn btn-outline-custom btn-sm" @onclick="ResetFilters">
                         <i class="bi bi-arrow-counterclockwise me-1"></i> Reset
                     </button>
                 }
             </div>
 
             <!-- Right: Row-Contextual Actions (Visible when a row is selected) -->
-            <div class="d-flex align-items-center gap-2">
+            <div class="table-toolbar-right">
                 @if (selectedPosition != null)
                 {
                     <span class="badge bg-primary-subtle text-primary py-2 px-2 d-none d-lg-inline-block">
-                        <i class="bi bi-check-circle me-1"></i> Selected: <strong>@selectedPosition.Title</strong>
+                        <i class="bi bi-check2 me-1"></i> Selected: <strong>@selectedPosition.Title</strong>
                     </span>
 
                     <a href="positions/@selectedPosition.Id" class="btn btn-outline-custom btn-sm" target="_blank" title="View Public Page">
                         <i class="bi bi-box-arrow-up-right me-1"></i> Preview
                     </a>
 
-                    <a href="recruiter/positions/edit/@selectedPosition.Id" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-pencil-square me-1"></i> @Loc["Btn_Edit"]
+                    <a href="recruiter/positions/edit/@selectedPosition.Id" class="btn btn-outline-custom btn-sm">
+                        <i class="bi bi-pencil me-1"></i> @Loc["Btn_Edit"]
                     </a>
 
-                    <div class="btn-group btn-group-sm">
-                        @if (selectedPosition.Visibility != PositionVisibility.Public)
-                        {
-                            <button class="btn btn-outline-success" @onclick="() => SetVisibility(PositionVisibility.Public)">
-                                <i class="bi bi-check-circle me-1"></i> Publish
-                            </button>
-                        }
-                        else
-                        {
-                            <button class="btn btn-outline-secondary" @onclick="() => SetVisibility(PositionVisibility.Draft)">
-                                <i class="bi bi-pause-circle me-1"></i> Unpublish
-                            </button>
-                        }
-                    </div>
+                    @if (selectedPosition.Visibility != PositionVisibility.Public)
+                    {
+                        <button class="btn btn-outline-success btn-sm" @onclick="() => SetVisibility(PositionVisibility.Public)">
+                            <i class="bi bi-check2-circle me-1"></i> Publish
+                        </button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-outline-secondary btn-sm" @onclick="() => SetVisibility(PositionVisibility.Draft)">
+                            <i class="bi bi-pause-circle me-1"></i> Unpublish
+                        </button>
+                    }
 
                     <button class="btn btn-outline-danger btn-sm" @onclick="DeleteSelected">
-                        <i class="bi bi-trash me-1"></i> @Loc["Btn_Delete"]
+                        <i class="bi bi-trash3 me-1"></i> @Loc["Btn_Delete"]
                     </button>
 
                     <button class="btn btn-ghost btn-sm p-1 text-muted" @onclick="ClearSelection" title="Clear selection">
-                        <i class="bi bi-x-circle fs-6"></i>
+                        <i class="bi bi-x-lg" style="font-size: 0.8rem;"></i>
                     </button>
                 }
                 else
                 {
                     <span class="text-muted small d-none d-md-inline">
-                        <i class="bi bi-cursor-fill me-1"></i> @Loc["Select_Row_Hint"]
+                        <i class="bi bi-info-circle me-1"></i> @Loc["Select_Row_Hint"]
                     </span>
                 }
             </div>
         </div>
-    </div>
 
-    <!-- Positions Table -->
-    <div class="card border shadow-sm">
+        <!-- Positions Table -->
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+            <table class="app-table">
+                <thead>
                     <tr>
-                        <th style="width: 40px;" class="text-center"></th>
+                        <th style="width: 40px;" class="text-center">#</th>
                         <th>@Loc["Th_PositionTitle"]</th>
                         <th>@Loc["Th_Company"]</th>
                         <th>@Loc["Th_Location"]</th>
@@ -199,18 +191,18 @@
                             var requiredCount = pos.PositionAttributes.Count(pa => pa.IsRequired);
                             var optionalCount = pos.PositionAttributes.Count(pa => !pa.IsRequired);
 
-                            <tr class="@(isSelected ? "table-active" : "")" style="cursor: pointer;" @onclick="() => SelectPosition(pos)">
-                                <td class="text-center">
-                                    <input type="radio" name="selectedPositionRadio" checked="@isSelected" />
+                            <tr class="@(isSelected ? "is-selected" : "")" style="cursor: pointer;" @onclick="() => SelectPosition(pos)">
+                                <td class="text-center" @onclick:stopPropagation="true">
+                                    <input type="radio" name="selectedPositionRadio" checked="@isSelected" class="table-selection-checkbox" @onchange="() => SelectPosition(pos)" />
                                 </td>
                                 <td>
-                                    <div class="fw-bold text-body">@pos.Title</div>
+                                    <div class="fw-semibold text-body">@pos.Title</div>
                                     @if (!string.IsNullOrEmpty(pos.Tags))
                                     {
                                         <div class="text-muted" style="font-size: 0.72rem;">@pos.Tags</div>
                                     }
                                 </td>
-                                <td class="fw-semibold text-secondary">@pos.Company</td>
+                                <td class="fw-semibold text-body">@pos.Company</td>
                                 <td class="text-muted small">
                                     <i class="bi bi-geo-alt me-1"></i>@pos.Location
                                 </td>

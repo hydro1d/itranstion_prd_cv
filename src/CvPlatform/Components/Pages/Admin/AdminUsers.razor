@@ -6,7 +6,7 @@
 
 <PageTitle>@Loc["Nav_AdminUsers"] - @Loc["App_Title"]</PageTitle>
 
-<div class="container-fluid px-4 py-3">
+<div class="mb-4">
     <!-- Header -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
         <div>
@@ -19,24 +19,24 @@
         </div>
     </div>
 
-    <!-- Table Action Toolbar (Evaluation Requirement: Toolbar at top, no repeating row buttons) -->
-    <div class="card border shadow-sm mb-3">
-        <div class="card-body p-2 d-flex flex-wrap align-items-center justify-content-between gap-2">
-            <div class="d-flex align-items-center gap-2 flex-grow-1" style="max-width: 380px;">
-                <div class="input-group input-group-sm">
-                    <span class="input-group-text"><i class="bi bi-search"></i></span>
-                    <input type="text" class="form-control" placeholder="Search by name or email..." @bind="searchQuery" @bind:event="oninput" />
+    <!-- Table Action Toolbar & Responsive Table -->
+    <div class="table-responsive-wrapper mb-4">
+        <div class="table-toolbar">
+            <div class="table-toolbar-left">
+                <div class="app-search-input">
+                    <i class="bi bi-search"></i>
+                    <input type="text" class="form-control form-control-sm" placeholder="Search by name or email..." @bind="searchQuery" @bind:event="oninput" />
                 </div>
             </div>
 
-            <div class="d-flex align-items-center gap-2">
+            <div class="table-toolbar-right">
                 @if (selectedUser != null)
                 {
-                    <span class="badge bg-primary-subtle text-primary py-2 px-3">
-                        <i class="bi bi-check-circle me-1"></i> Selected: @selectedUser.Email
+                    <span class="badge bg-primary-subtle text-primary py-2 px-2">
+                        <i class="bi bi-check2 me-1"></i> Selected: @selectedUser.Email
                     </span>
-                    <button class="btn btn-outline-secondary btn-sm" @onclick="ClearSelection">
-                        <i class="bi bi-x-circle me-1"></i> Clear
+                    <button class="btn btn-outline-custom btn-sm" @onclick="ClearSelection">
+                        <i class="bi bi-x-lg me-1" style="font-size: 0.75rem;"></i> Clear
                     </button>
                 }
                 else
@@ -47,15 +47,13 @@
                 }
             </div>
         </div>
-    </div>
 
-    <!-- Users Table -->
-    <div class="card border shadow-sm">
+        <!-- Users Table -->
         <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
+            <table class="app-table">
+                <thead>
                     <tr>
-                        <th style="width: 40px;"></th>
+                        <th style="width: 40px;" class="text-center">#</th>
                         <th>User</th>
                         <th>Email</th>
                         <th>Role</th>
@@ -79,9 +77,9 @@
                         @foreach (var user in filteredUsers)
                         {
                             var isSelected = selectedUser?.Id == user.Id;
-                            <tr class="@(isSelected ? "table-active" : "")" style="cursor: pointer;" @onclick="() => SelectUser(user)">
-                                <td class="text-center">
-                                    <input type="radio" name="selectedUserRadio" checked="@isSelected" />
+                            <tr class="@(isSelected ? "is-selected" : "")" style="cursor: pointer;" @onclick="() => SelectUser(user)">
+                                <td class="text-center" @onclick:stopPropagation="true">
+                                    <input type="radio" name="selectedUserRadio" checked="@isSelected" class="table-selection-checkbox" @onchange="() => SelectUser(user)" />
                                 </td>
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
@@ -101,7 +99,7 @@
                                     @if (user.EmailConfirmed)
                                     {
                                         <span class="badge bg-success-subtle text-success">
-                                            <i class="bi bi-check-lg me-1"></i> Verified
+                                            <i class="bi bi-check2 me-1"></i> Verified
                                         </span>
                                     }
                                     else

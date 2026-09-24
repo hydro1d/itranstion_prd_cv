@@ -10,25 +10,25 @@
 
 <PageTitle>@Loc["Nav_RecruiterDashboard"] - @Loc["App_Title"]</PageTitle>
 
-<div class="container-fluid px-4 py-3">
+<div class="mb-4">
     <!-- Welcome Header -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
         <div>
             <div class="d-flex align-items-center gap-2 mb-1">
                 <span class="badge bg-primary-subtle text-primary">
-                    <i class="bi bi-briefcase-fill me-1"></i> @Loc["Role_Recruiter"] Workspace
+                    <i class="bi bi-briefcase me-1"></i> @Loc["Role_Recruiter"] Workspace
                 </span>
-                <span class="text-muted small">• Protected Route</span>
+                <span class="text-muted small">• Hiring Desk</span>
             </div>
             <h2 class="fw-bold mb-1">Welcome back, @userName!</h2>
             <p class="text-muted small mb-0">Compose dynamic attribute templates, publish openings, and review candidate applications.</p>
         </div>
         <div class="d-flex gap-2">
             <a href="recruiter/positions" class="btn btn-primary btn-sm">
-                <i class="bi bi-plus-circle me-1"></i> Create Position
+                <i class="bi bi-plus-lg me-1"></i> Create Position
             </a>
-            <a href="recruiter/attributes" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-sliders me-1"></i> Attribute Library
+            <a href="recruiter/attributes" class="btn btn-outline-custom btn-sm">
+                <i class="bi bi-sliders2 me-1"></i> Attribute Library
             </a>
         </div>
     </div>
@@ -36,10 +36,10 @@
     <!-- Metrics Cards -->
     <div class="row g-3 mb-4">
         <div class="col-md-4">
-            <div class="card border shadow-sm p-3">
+            <div class="app-surface p-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-semibold">Active Openings</span>
-                    <i class="bi bi-folder2-open text-primary fs-5"></i>
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Active Openings</span>
+                    <i class="bi bi-folder2-open text-primary"></i>
                 </div>
                 <div class="d-flex align-items-baseline gap-2">
                     <h3 class="fw-bold mb-0">@activePositionsCount</h3>
@@ -52,10 +52,10 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card border shadow-sm p-3">
+            <div class="app-surface p-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-semibold">Dynamic Attributes</span>
-                    <i class="bi bi-sliders text-success fs-5"></i>
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Dynamic Attributes</span>
+                    <i class="bi bi-sliders2 text-success"></i>
                 </div>
                 <div class="d-flex align-items-baseline gap-2">
                     <h3 class="fw-bold mb-0">@attributesCount</h3>
@@ -68,10 +68,10 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card border shadow-sm p-3">
+            <div class="app-surface p-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-semibold">Applications Received</span>
-                    <i class="bi bi-people text-warning fs-5"></i>
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Applications Received</span>
+                    <i class="bi bi-people text-warning"></i>
                 </div>
                 <div class="d-flex align-items-baseline gap-2">
                     <h3 class="fw-bold mb-0">@cvsCount</h3>
@@ -87,16 +87,16 @@
     <!-- Recruiter Core Workflows -->
     <div class="row g-3">
         <div class="col-lg-6">
-            <div class="card border shadow-sm p-4 h-100">
-                <h5 class="fw-bold mb-3 d-flex align-items-center">
+            <div class="app-surface p-4 h-100">
+                <h5 class="fw-semibold mb-3 d-flex align-items-center text-body">
                     <i class="bi bi-collection text-primary me-2"></i>
-                    Reusable Attribute Library (Killer Feature #1)
+                    Reusable Attribute Library
                 </h5>
                 <p class="text-muted small mb-3">
                     Define standardized qualification attributes once. Positions select attributes as required or optional, and candidate profiles map to them automatically.
                 </p>
                 <div class="d-flex gap-2">
-                    <a href="recruiter/attributes" class="btn btn-outline-primary btn-sm">
+                    <a href="recruiter/attributes" class="btn btn-outline-custom btn-sm">
                         <i class="bi bi-arrow-right me-1"></i> Open Attribute Library
                     </a>
                 </div>
@@ -104,8 +104,8 @@
         </div>
 
         <div class="col-lg-6">
-            <div class="card border shadow-sm p-4 h-100">
-                <h5 class="fw-bold mb-3 d-flex align-items-center">
+            <div class="app-surface p-4 h-100">
+                <h5 class="fw-semibold mb-3 d-flex align-items-center text-body">
                     <i class="bi bi-file-earmark-check text-success me-2"></i>
                     Review Candidate CVs & Endorsements
                 </h5>
@@ -113,7 +113,7 @@
                     Inspect tailored documents generated by candidates. Endorse top applicants with recruiter likes (strictly 1 like per recruiter per CV enforced at the database level).
                 </p>
                 <div class="d-flex gap-2">
-                    <a href="recruiter/cvs" class="btn btn-outline-success btn-sm">
+                    <a href="recruiter/cvs" class="btn btn-outline-custom btn-sm">
                         <i class="bi bi-arrow-right me-1"></i> Review Candidate CVs
                     </a>
                 </div>

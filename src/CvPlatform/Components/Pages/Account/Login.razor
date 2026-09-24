@@ -4,13 +4,13 @@
 
 <PageTitle>@Loc["Btn_SignIn"] - @Loc["App_Title"]</PageTitle>
 
-<div class="container py-4">
+<div class="py-4">
     <div class="row justify-content-center">
         <div class="col-lg-10 col-xl-9">
             <!-- Header Section -->
             <div class="text-center mb-4">
                 <span class="badge bg-primary-subtle text-primary mb-2 px-3 py-1">
-                    <i class="bi bi-shield-lock-fill me-1"></i> @Loc["Auth_PortalTitle"]
+                    <i class="bi bi-shield-check me-1"></i> @Loc["Auth_PortalTitle"]
                 </span>
                 <h2 class="fw-bold mb-1">@Loc["Auth_SignInHeader"]</h2>
                 <p class="text-muted small">@Loc["Auth_SignInSubheader"]</p>
@@ -19,7 +19,7 @@
             @if (!string.IsNullOrEmpty(error))
             {
                 <div class="alert alert-danger d-flex align-items-center mb-4" role="alert">
-                    <i class="bi bi-exclamation-octagon-fill me-2 fs-5"></i>
+                    <i class="bi bi-exclamation-triangle me-2 fs-5"></i>
                     <div>
                         @GetErrorMessage(error)
                     </div>
@@ -29,9 +29,9 @@
             <div class="row g-4">
                 <!-- Left: Standard Email & Password Form -->
                 <div class="col-md-6">
-                    <div class="card h-100 border shadow-sm p-4">
-                        <h5 class="fw-bold mb-3 d-flex align-items-center">
-                            <i class="bi bi-person-circle text-primary me-2"></i>
+                    <div class="app-surface h-100 p-4">
+                        <h5 class="fw-semibold mb-3 d-flex align-items-center text-body">
+                            <i class="bi bi-person text-primary me-2"></i>
                             @Loc["Auth_CredentialSignIn"]
                         </h5>
 
@@ -76,12 +76,12 @@
                         <!-- Social Login Fast-Track (Mocked for evaluation) -->
                         <div class="row g-2 mt-1">
                             <div class="col-6">
-                                <a href="/account/external-login?provider=github" class="btn btn-outline-secondary w-100 btn-sm">
+                                <a href="/account/external-login?provider=github" class="btn btn-outline-custom w-100 btn-sm">
                                     <i class="bi bi-github me-1"></i> GitHub
                                 </a>
                             </div>
                             <div class="col-6">
-                                <a href="/account/external-login?provider=google" class="btn btn-outline-secondary w-100 btn-sm">
+                                <a href="/account/external-login?provider=google" class="btn btn-outline-custom w-100 btn-sm">
                                     <i class="bi bi-google me-1"></i> Google
                                 </a>
                             </div>
@@ -96,13 +96,13 @@
 
                 <!-- Right: Evaluation Fast-Track (One-Click Demo Roles) -->
                 <div class="col-md-6">
-                    <div class="card h-100 border shadow-sm p-4 bg-surface-subtle">
+                    <div class="app-surface h-100 p-4">
                         <div class="d-flex align-items-center justify-content-between mb-3">
-                            <h5 class="fw-bold mb-0 d-flex align-items-center">
-                                <i class="bi bi-lightning-charge-fill text-warning me-2"></i>
+                            <h5 class="fw-semibold mb-0 d-flex align-items-center text-body">
+                                <i class="bi bi-lightning-charge text-primary me-2"></i>
                                 @Loc["Auth_QuickDemoAccess"]
                             </h5>
-                            <span class="badge bg-warning-subtle text-warning">Evaluator Mode</span>
+                            <span class="badge bg-primary-subtle text-primary">Demo Profiles</span>
                         </div>
                         <p class="text-muted small mb-3">
                             @Loc["Auth_QuickDemoNotice"]
@@ -112,9 +112,9 @@
                             <!-- 1. Administrator -->
                             <form method="post" action="/account/demo-login">
                                 <input type="hidden" name="role" value="admin" />
-                                <button type="submit" class="btn btn-outline-primary w-100 text-start p-2 d-flex align-items-center justify-content-between">
+                                <button type="submit" class="btn btn-outline-custom w-100 text-start p-2 d-flex align-items-center justify-content-between">
                                     <div>
-                                        <div class="fw-bold small text-body">
+                                        <div class="fw-semibold small text-body">
                                             <i class="bi bi-shield-check text-danger me-1"></i>
                                             @Loc["Role_Administrator"]
                                         </div>
@@ -127,9 +127,9 @@
                             <!-- 2. Recruiter -->
                             <form method="post" action="/account/demo-login">
                                 <input type="hidden" name="role" value="recruiter" />
-                                <button type="submit" class="btn btn-outline-primary w-100 text-start p-2 d-flex align-items-center justify-content-between">
+                                <button type="submit" class="btn btn-outline-custom w-100 text-start p-2 d-flex align-items-center justify-content-between">
                                     <div>
-                                        <div class="fw-bold small text-body">
+                                        <div class="fw-semibold small text-body">
                                             <i class="bi bi-briefcase text-primary me-1"></i>
                                             @Loc["Role_Recruiter"]
                                         </div>
@@ -142,10 +142,10 @@
                             <!-- 3. Candidate -->
                             <form method="post" action="/account/demo-login">
                                 <input type="hidden" name="role" value="candidate" />
-                                <button type="submit" class="btn btn-outline-primary w-100 text-start p-2 d-flex align-items-center justify-content-between">
+                                <button type="submit" class="btn btn-outline-custom w-100 text-start p-2 d-flex align-items-center justify-content-between">
                                     <div>
-                                        <div class="fw-bold small text-body">
-                                            <i class="bi bi-person-badge text-success me-1"></i>
+                                        <div class="fw-semibold small text-body">
+                                            <i class="bi bi-person-vcard text-success me-1"></i>
                                             @Loc["Role_Candidate"]
                                         </div>
                                         <div class="text-muted" style="font-size: 0.75rem;">candidate@cvplatform.com</div>
@@ -155,7 +155,7 @@
                             </form>
                         </div>
 
-                        <div class="mt-auto pt-3 border-top">
+                        <div class="mt-auto pt-3 border-top mt-3">
                             <div class="d-flex align-items-center text-muted" style="font-size: 0.75rem;">
                                 <i class="bi bi-info-circle me-1"></i>
                                 <span>Demo passwords for manual entry: <code>Admin@123</code>, <code>Recruiter@123</code>, <code>Candidate@123</code></span>

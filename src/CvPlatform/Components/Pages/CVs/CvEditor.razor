@@ -17,7 +17,7 @@
 
 <PageTitle>@(cv != null ? cv.Title : "Tailored CV Editor") - @Loc["App_Title"]</PageTitle>
 
-<div class="container-fluid px-4 py-3">
+<div class="mb-4">
     <!-- Breadcrumb & Action Toolbar -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4 no-print">
         <div>
@@ -33,8 +33,8 @@
                     <i class="bi bi-file-earmark-person text-primary me-2"></i>
                     Tailored Document Editor
                 </h3>
-                <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
-                    Killer Feature #3
+                <span class="badge bg-primary-subtle text-primary">
+                    Live Document Canvas
                 </span>
             </div>
             @if (cv?.Position != null)
@@ -48,22 +48,22 @@
         <div class="d-flex flex-wrap align-items-center gap-2">
             <!-- Save Status Indicator -->
             <span class="badge @(isSaving ? "bg-warning-subtle text-warning" : (hasUnsavedChanges ? "bg-info-subtle text-info" : "bg-success-subtle text-success")) border py-2 px-3">
-                <i class="bi @(isSaving ? "bi-arrow-repeat spin" : (hasUnsavedChanges ? "bi-pencil" : "bi-check-circle-fill")) me-1"></i>
+                <i class="bi @(isSaving ? "bi-arrow-repeat spin" : (hasUnsavedChanges ? "bi-pencil" : "bi-check2-circle")) me-1"></i>
                 @(isSaving ? "Saving..." : (hasUnsavedChanges ? "Unsaved changes" : "All changes saved"))
             </span>
 
             @if (!isReadOnly)
             {
                 <button type="button" class="btn btn-primary btn-sm" @onclick="SaveCvAsync" disabled="@isSaving">
-                    <i class="bi bi-save me-1"></i> @Loc["Btn_Save"] Changes
+                    <i class="bi bi-check2 me-1"></i> @Loc["Btn_Save"] Changes
                 </button>
             }
 
-            <button type="button" class="btn btn-outline-secondary btn-sm" @onclick="PrintCv">
+            <button type="button" class="btn btn-outline-custom btn-sm" @onclick="PrintCv">
                 <i class="bi bi-printer me-1"></i> Print / Save PDF
             </button>
 
-            <a href="candidate/profile" class="btn btn-outline-secondary btn-sm">
+            <a href="candidate/profile" class="btn btn-outline-custom btn-sm">
                 <i class="bi bi-arrow-left me-1"></i> Return to Profile
             </a>
         </div>

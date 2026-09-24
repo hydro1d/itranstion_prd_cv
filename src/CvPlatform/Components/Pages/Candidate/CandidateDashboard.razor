@@ -7,15 +7,15 @@
 
 <PageTitle>@Loc["Nav_CandidateDashboard"] - @Loc["App_Title"]</PageTitle>
 
-<div class="container-fluid px-4 py-3">
+<div class="mb-4">
     <!-- Welcome Header -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
         <div>
             <div class="d-flex align-items-center gap-2 mb-1">
                 <span class="badge bg-success-subtle text-success">
-                    <i class="bi bi-person-badge-fill me-1"></i> @Loc["Role_Candidate"] Workspace
+                    <i class="bi bi-person-vcard me-1"></i> @Loc["Role_Candidate"] Workspace
                 </span>
-                <span class="text-muted small">• Protected Route</span>
+                <span class="text-muted small">• Candidate Space</span>
             </div>
             <h2 class="fw-bold mb-1">Welcome back, @displayName!</h2>
             <p class="text-muted small mb-0">Manage your reusable profile, showcase portfolio projects, and generate tailored CVs.</p>
@@ -24,7 +24,7 @@
             <a href="candidate/profile" class="btn btn-primary btn-sm">
                 <i class="bi bi-person-gear me-1"></i> @Loc["Candidate_EditMasterProfile"]
             </a>
-            <a href="positions" class="btn btn-outline-secondary btn-sm">
+            <a href="positions" class="btn btn-outline-custom btn-sm">
                 <i class="bi bi-briefcase me-1"></i> @Loc["Candidate_ExploreOpenings"]
             </a>
         </div>
@@ -33,48 +33,48 @@
     <!-- Quick Stats Cards -->
     <div class="row g-3 mb-4">
         <div class="col-md-4">
-            <div class="card border shadow-sm p-3">
+            <div class="app-surface p-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-semibold">@Loc["Candidate_ReadinessScore"]</span>
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">@Loc["Candidate_ReadinessScore"]</span>
                     <span class="badge @(readiness.Percentage >= 80 ? "bg-success-subtle text-success" : "bg-warning-subtle text-warning")">
-                        @(readiness.Percentage >= 80 ? "Active" : "In Progress")
+                        @(readiness.Percentage >= 80 ? "Ready" : "In Progress")
                     </span>
                 </div>
                 <div class="d-flex align-items-baseline gap-2">
                     <h3 class="fw-bold mb-0">@readiness.Percentage%</h3>
                     <span class="text-muted small">Complete</span>
                 </div>
-                <div class="progress mt-2" style="height: 6px;">
+                <div class="progress mt-2" style="height: 5px; border-radius: 3px; background-color: var(--app-border);">
                     <div class="progress-bar @(readiness.Percentage >= 80 ? "bg-success" : "bg-warning")" 
                          style="width: @(readiness.Percentage)%;"></div>
                 </div>
                 <div class="text-muted mt-2" style="font-size: 0.75rem;">
-                    Me: @readiness.PersonalDetailsScore/40 • Info: @readiness.AttributesScore/40 • Projects: @readiness.ProjectsScore/20
+                    Profile: @readiness.PersonalDetailsScore/40 • Qualifications: @readiness.AttributesScore/40 • Portfolio: @readiness.ProjectsScore/20
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card border shadow-sm p-3">
+            <div class="app-surface p-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-semibold">Tailored CVs</span>
-                    <i class="bi bi-file-earmark-person text-primary fs-5"></i>
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Tailored CVs</span>
+                    <i class="bi bi-file-earmark-person text-primary"></i>
                 </div>
                 <div class="d-flex align-items-baseline gap-2">
                     <h3 class="fw-bold mb-0">@cvsCount</h3>
                     <span class="text-muted small">Generated documents</span>
                 </div>
                 <div class="text-muted mt-2" style="font-size: 0.75rem;">
-                    1 CV per position constraint enforced
+                    1 tailored CV per position opening
                 </div>
             </div>
         </div>
 
         <div class="col-md-4">
-            <div class="card border shadow-sm p-3">
+            <div class="app-surface p-3">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="text-muted small fw-semibold">Recruiter Endorsements</span>
-                    <i class="bi bi-heart text-danger fs-5"></i>
+                    <span class="text-muted small fw-semibold text-uppercase" style="font-size: 0.7rem; letter-spacing: 0.05em;">Recruiter Endorsements</span>
+                    <i class="bi bi-heart text-danger"></i>
                 </div>
                 <div class="d-flex align-items-baseline gap-2">
                     <h3 class="fw-bold mb-0">@totalLikes</h3>
@@ -90,9 +90,9 @@
     <!-- Action Shortcuts -->
     <div class="row g-3">
         <div class="col-lg-6">
-            <div class="card border shadow-sm p-4 h-100">
-                <h5 class="fw-bold mb-3 d-flex align-items-center">
-                    <i class="bi bi-person-lines-fill text-primary me-2"></i>
+            <div class="app-surface p-4 h-100">
+                <h5 class="fw-semibold mb-3 d-flex align-items-center text-body">
+                    <i class="bi bi-person-vcard text-primary me-2"></i>
                     Master Profile Sections
                 </h5>
                 <p class="text-muted small mb-3">
@@ -124,9 +124,9 @@
         </div>
 
         <div class="col-lg-6">
-            <div class="card border shadow-sm p-4 h-100">
-                <h5 class="fw-bold mb-3 d-flex align-items-center">
-                    <i class="bi bi-stars text-warning me-2"></i>
+            <div class="app-surface p-4 h-100">
+                <h5 class="fw-semibold mb-3 d-flex align-items-center text-body">
+                    <i class="bi bi-cpu text-primary me-2"></i>
                     Auto-Generation Workflow
                 </h5>
                 <p class="text-muted small mb-3">
@@ -138,7 +138,7 @@
                     <li class="mb-1">Missing required fields are highlighted before submission.</li>
                     <li class="mb-1">Optimistic concurrency (RowVersion) prevents data loss during editing.</li>
                 </ol>
-                <a href="positions" class="btn btn-outline-primary btn-sm align-self-start">
+                <a href="positions" class="btn btn-outline-custom btn-sm align-self-start">
                     <i class="bi bi-arrow-right me-1"></i> @Loc["Candidate_ExploreOpenings"]
                 </a>
             </div>

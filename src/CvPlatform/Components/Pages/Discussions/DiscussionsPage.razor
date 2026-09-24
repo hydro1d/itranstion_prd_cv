@@ -14,12 +14,12 @@
 
 <PageTitle>@Loc["Discussions_PageTitle"] - @Loc["App_Title"]</PageTitle>
 
-<div class="container-fluid px-4 py-3">
+<div class="mb-4">
     <!-- Top Header -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
         <div>
             <div class="d-flex align-items-center gap-2 mb-1">
-                <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                <span class="badge bg-primary-subtle text-primary">
                     <i class="bi bi-broadcast me-1"></i> Real-Time SignalR
                 </span>
                 <span class="text-muted small">• Interactive Q&A</span>
@@ -32,9 +32,9 @@
 
         <div class="d-flex align-items-center gap-2">
             <span class="badge bg-success-subtle text-success border py-2 px-3">
-                <i class="bi bi-dot text-success me-1 fs-5 align-middle"></i> Live Channel Connected
+                <i class="bi bi-circle-fill text-success me-1" style="font-size: 0.45rem;"></i> Live Channel Connected
             </span>
-            <a href="positions" class="btn btn-outline-secondary btn-sm">
+            <a href="positions" class="btn btn-outline-custom btn-sm">
                 <i class="bi bi-briefcase me-1"></i> Browse Positions
             </a>
         </div>
@@ -44,14 +44,12 @@
     <div class="row g-4">
         <!-- Left: Openings Thread Selector -->
         <div class="col-lg-4">
-            <div class="card border shadow-sm">
-                <div class="card-header bg-transparent py-3">
-                    <h6 class="fw-bold mb-2">@Loc["Discussions_PositionThreads"]</h6>
-                    <div class="input-group input-group-sm">
-                        <span class="input-group-text bg-light border-end-0">
-                            <i class="bi bi-search text-muted"></i>
-                        </span>
-                        <input type="text" class="form-control border-start-0"
+            <div class="app-surface">
+                <div class="p-3 border-bottom">
+                    <h6 class="fw-semibold mb-2 text-body">@Loc["Discussions_PositionThreads"]</h6>
+                    <div class="app-search-input">
+                        <i class="bi bi-search"></i>
+                        <input type="text" class="form-control form-control-sm"
                                placeholder="Filter position threads..."
                                @bind="searchFilter" @bind:event="oninput" />
                     </div>
@@ -79,13 +77,13 @@
                             var msgCount = messageCounts.TryGetValue(pos.Id, out var count) ? count : 0;
 
                             <button type="button" 
-                                    class="list-group-item list-group-item-action p-3 @(isSelected ? "bg-light border-primary" : "")"
+                                    class="list-group-item list-group-item-action p-3 @(isSelected ? "bg-surface-subtle border-primary" : "")"
                                     @onclick="() => SelectPositionThread(pos.Id)">
                                 <div class="d-flex justify-content-between align-items-start mb-1">
-                                    <h6 class="fw-bold mb-0 @(isSelected ? "text-primary" : "text-body")">
+                                    <h6 class="fw-semibold mb-0 @(isSelected ? "text-primary" : "text-body")">
                                         @pos.Title
                                     </h6>
-                                    <span class="badge @(msgCount > 0 ? "bg-primary-subtle text-primary border border-primary-subtle" : "bg-light text-muted border")" style="font-size: 0.7rem;">
+                                    <span class="badge @(msgCount > 0 ? "bg-primary-subtle text-primary" : "bg-light text-muted border")" style="font-size: 0.7rem;">
                                         @msgCount msgs
                                     </span>
                                 </div>
@@ -106,22 +104,22 @@
 
         <!-- Right: Active Discussion Stream -->
         <div class="col-lg-8">
-            <div class="card border shadow-sm h-100 d-flex flex-column" style="min-height: 600px;">
+            <div class="app-surface h-100 d-flex flex-column" style="min-height: 600px;">
                 @if (activePosition == null)
                 {
-                    <div class="d-flex flex-column align-items-center justify-content-center flex-grow-1 p-5 text-center text-muted">
-                        <i class="bi bi-chat-square-dots fs-1 mb-3 text-secondary"></i>
-                        <h5 class="fw-bold">Select a Discussion Channel</h5>
-                        <p class="small mb-0">Choose an opening from the left pane to join the live Q&A thread.</p>
+                    <div class="app-empty-state flex-grow-1 d-flex flex-column align-items-center justify-content-center p-5">
+                        <i class="bi bi-chat-square-dots app-empty-state-icon"></i>
+                        <h5 class="app-empty-state-title">Select a Discussion Channel</h5>
+                        <p class="app-empty-state-description">Choose an opening from the left pane to join the live Q&A thread.</p>
                     </div>
                 }
                 else
                 {
                     <!-- Thread Header -->
-                    <div class="card-header bg-light border-bottom p-3 d-flex justify-content-between align-items-center">
+                    <div class="p-3 border-bottom d-flex justify-content-between align-items-center">
                         <div>
                             <div class="d-flex align-items-center gap-2">
-                                <h5 class="fw-bold mb-0">@activePosition.Title</h5>
+                                <h5 class="fw-semibold mb-0 text-body">@activePosition.Title</h5>
                                 <span class="badge bg-secondary-subtle text-secondary small">
                                     @activePosition.Company
                                 </span>
@@ -130,13 +128,13 @@
                                 Recruiter / Hiring Contact: <strong>@(activePosition.Recruiter?.FullName ?? "Hiring Lead")</strong>
                             </span>
                         </div>
-                        <a href="positions/@activePosition.Id" class="btn btn-outline-secondary btn-sm">
+                        <a href="positions/@activePosition.Id" class="btn btn-outline-custom btn-sm">
                             <i class="bi bi-box-arrow-up-right me-1"></i> Opening Spec
                         </a>
                     </div>
 
                     <!-- Messages Stream Container -->
-                    <div class="card-body p-4 flex-grow-1" style="overflow-y: auto; max-height: 440px; background-color: var(--app-surface-subtle);">
+                    <div class="p-4 flex-grow-1" style="overflow-y: auto; max-height: 440px; background-color: var(--app-surface-subtle);">
                         @if (isLoadingMessages)
                         {
                             <div class="text-center py-4 text-muted small">
@@ -146,10 +144,10 @@
                         }
                         else if (!activeMessages.Any())
                         {
-                            <div class="text-center py-5 text-muted">
-                                <i class="bi bi-chat-text fs-2 d-block mb-2 text-secondary"></i>
-                                <h6 class="fw-bold">No Questions Posted Yet</h6>
-                                <p class="small mb-0">Be the first to ask about this role, requirements, or the team culture!</p>
+                            <div class="app-empty-state py-5">
+                                <i class="bi bi-chat-text app-empty-state-icon"></i>
+                                <h6 class="app-empty-state-title">No Questions Posted Yet</h6>
+                                <p class="app-empty-state-description">Be the first to ask about this role, requirements, or the team culture!</p>
                             </div>
                         }
                         else
@@ -163,16 +161,16 @@
                                     <div class="d-flex gap-2 @(isMine ? "justify-content-end" : "justify-content-start")">
                                         @if (!isMine)
                                         {
-                                            <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold small border" style="width: 38px; height: 38px; min-width: 38px;">
+                                            <div class="avatar-circle">
                                                 @GetInitials(msg.AuthorName)
                                             </div>
                                         }
 
-                                        <div class="card border shadow-sm p-3" style="max-width: 75%; background-color: @(isMine ? "var(--app-surface)" : (isRecruiter ? "rgba(37,99,235,0.04)" : "var(--app-surface)")); border-left: @(isRecruiter ? "3px solid var(--app-primary) !important" : "");">
+                                        <div class="app-surface p-3" style="max-width: 75%; border-left: @(isRecruiter ? "3px solid var(--app-primary) !important" : "");">
                                             <div class="d-flex align-items-center justify-content-between gap-2 mb-1">
                                                 <div class="d-flex align-items-center gap-2">
-                                                    <span class="fw-bold small">@msg.AuthorName</span>
-                                                    <span class="badge @(isRecruiter ? "bg-primary-subtle text-primary border border-primary-subtle" : (isMine ? "bg-success-subtle text-success" : "bg-light text-muted border"))" style="font-size: 0.65rem;">
+                                                    <span class="fw-semibold small text-body">@msg.AuthorName</span>
+                                                    <span class="badge @(isRecruiter ? "bg-primary-subtle text-primary" : (isMine ? "bg-success-subtle text-success" : "bg-light text-muted border"))" style="font-size: 0.65rem;">
                                                         @(isRecruiter ? "Recruiter" : (isMine ? "You" : "Candidate"))
                                                     </span>
                                                 </div>
@@ -187,7 +185,7 @@
 
                                         @if (isMine)
                                         {
-                                            <div class="rounded-circle bg-success-subtle text-success d-flex align-items-center justify-content-center fw-bold small border" style="width: 38px; height: 38px; min-width: 38px;">
+                                            <div class="avatar-circle" style="background-color: var(--app-success);">
                                                 @GetInitials(msg.AuthorName)
                                             </div>
                                         }
@@ -198,7 +196,7 @@
                     </div>
 
                     <!-- Message Input Bar -->
-                    <div class="card-footer bg-light border-top p-3">
+                    <div class="p-3 border-top bg-surface">
                         <div class="input-group">
                             <input type="text" class="form-control"
                                    placeholder="@Loc["Discussions_InputPlaceholder"]"
@@ -215,7 +213,7 @@
                                 }
                                 else
                                 {
-                                    <i class="bi bi-send-fill me-1"></i>
+                                    <i class="bi bi-send me-1"></i>
                                 }
                                 @Loc["Discussions_BtnSend"]
                             </button>

@@ -9,7 +9,7 @@
 
 <PageTitle>@(position != null ? position.Title : "Position Details") - @Loc["App_Title"]</PageTitle>
 
-<div class="container py-4">
+<div class="mb-4">
     @if (isLoading)
     {
         <div class="text-center py-5">
@@ -19,20 +19,20 @@
     }
     else if (position == null)
     {
-        <div class="text-center py-5">
-            <i class="bi bi-folder-x fs-1 text-muted d-block mb-3"></i>
-            <h3 class="fw-bold">Opening Not Found</h3>
-            <p class="text-muted small mb-4">This position opening may have been closed, deleted, or set to draft.</p>
+        <div class="app-empty-state">
+            <i class="bi bi-folder-x app-empty-state-icon"></i>
+            <h3 class="app-empty-state-title">Opening Not Found</h3>
+            <p class="app-empty-state-description">This position opening may have been closed, deleted, or set to draft.</p>
             <a href="" class="btn btn-primary btn-sm">
-                <i class="bi bi-house me-1"></i> Return to Openings
+                <i class="bi bi-arrow-left me-1"></i> Return to Openings
             </a>
         </div>
     }
     else
     {
-        <!-- Breadcrumb -->
+        <!-- Breadcrumb / Header Navigation -->
         <div class="mb-3">
-            <a href="" class="text-muted small text-decoration-none">
+            <a href="" class="text-muted small text-decoration-none d-inline-flex align-items-center">
                 <i class="bi bi-arrow-left me-1"></i> Back to all positions
             </a>
         </div>
@@ -41,7 +41,7 @@
             <!-- Left: Main Job Specifications & Requirements -->
             <div class="col-lg-8">
                 <!-- Header Card -->
-                <div class="card border shadow-sm p-4 mb-4">
+                <div class="app-surface p-4 mb-4">
                     <div class="d-flex flex-wrap align-items-start justify-content-between gap-2 mb-2">
                         <div>
                             <span class="badge @GetEmploymentBadgeClass(position.EmploymentType) mb-2">
@@ -80,9 +80,9 @@
                 </div>
 
                 <!-- Job Description -->
-                <div class="card border shadow-sm p-4 mb-4">
-                    <h5 class="fw-bold mb-3 d-flex align-items-center text-primary">
-                        <i class="bi bi-file-text me-2"></i>
+                <div class="app-surface p-4 mb-4">
+                    <h5 class="fw-semibold mb-3 d-flex align-items-center text-body">
+                        <i class="bi bi-card-text text-primary me-2"></i>
                         Role Overview & Mission
                     </h5>
                     <div class="text-body" style="white-space: pre-line; line-height: 1.6;">
@@ -90,22 +90,22 @@
                     </div>
                 </div>
 
-                <!-- Structured Dynamic Requirements (Killer Feature #2) -->
-                <div class="card border shadow-sm p-4">
+                <!-- Structured Dynamic Requirements -->
+                <div class="app-surface p-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h5 class="fw-bold mb-0 d-flex align-items-center text-primary">
-                            <i class="bi bi-sliders me-2"></i>
+                        <h5 class="fw-semibold mb-0 d-flex align-items-center text-body">
+                            <i class="bi bi-sliders2 text-primary me-2"></i>
                             Position Qualification Template
                         </h5>
-                        <span class="badge bg-primary-subtle text-primary">Killer Feature #2</span>
+                        <span class="badge bg-primary-subtle text-primary">Standardized Matrix</span>
                     </div>
                     <p class="text-muted small mb-4">
-                        This opening utilizes standardized qualifications from the platform's reusable attribute library.
+                        This opening utilizes standardized qualifications mapped from the platform's reusable attribute library.
                     </p>
 
                     <!-- Mandatory Requirements -->
                     <div class="mb-4">
-                        <h6 class="fw-bold text-danger mb-2 d-flex align-items-center">
+                        <h6 class="fw-semibold text-danger mb-2 d-flex align-items-center">
                             <i class="bi bi-asterisk me-1"></i>
                             Mandatory Requirements (@position.PositionAttributes.Count(pa => pa.IsRequired))
                         </h6>
@@ -114,7 +114,7 @@
                             {
                                 <div class="list-group-item d-flex justify-content-between align-items-center p-3">
                                     <div>
-                                        <div class="fw-bold text-body">@pa.Attribute.Name</div>
+                                        <div class="fw-semibold text-body">@pa.Attribute.Name</div>
                                         <div class="text-muted small">@(pa.Attribute.Category?.Name ?? "General")</div>
                                         @if (!string.IsNullOrEmpty(pa.Attribute.Description))
                                         {
@@ -136,7 +136,7 @@
                     @if (position.PositionAttributes.Any(pa => !pa.IsRequired))
                     {
                         <div>
-                            <h6 class="fw-bold text-primary mb-2 d-flex align-items-center">
+                            <h6 class="fw-semibold text-primary mb-2 d-flex align-items-center">
                                 <i class="bi bi-plus-circle me-1"></i>
                                 Preferred / Optional Qualifications (@position.PositionAttributes.Count(pa => !pa.IsRequired))
                             </h6>
@@ -145,7 +145,7 @@
                                 {
                                     <div class="list-group-item d-flex justify-content-between align-items-center p-3">
                                         <div>
-                                            <div class="fw-bold text-body">@pa.Attribute.Name</div>
+                                            <div class="fw-semibold text-body">@pa.Attribute.Name</div>
                                             <div class="text-muted small">@(pa.Attribute.Category?.Name ?? "General")</div>
                                             @if (!string.IsNullOrEmpty(pa.Attribute.Description))
                                             {
@@ -168,15 +168,15 @@
 
             <!-- Right: Action & Application Card -->
             <div class="col-lg-4">
-                <div class="card border shadow-sm p-4 sticky-top" style="top: 1rem; z-index: 10;">
-                    <h5 class="fw-bold mb-2">Ready to Apply?</h5>
+                <div class="app-surface p-4 sticky-top" style="top: 5rem; z-index: 10;">
+                    <h5 class="fw-semibold mb-2">Ready to Apply?</h5>
                     <p class="text-muted small mb-3">
                         The platform auto-generates a tailored CV for this opening by mapping your reusable profile attributes to these exact requirements.
                     </p>
 
-                    <div class="alert alert-info py-2 small mb-3">
-                        <i class="bi bi-lightning-charge-fill me-1"></i>
-                        <strong>Killer Feature #3 Preview:</strong> Auto-populates 1 CV per position with zero manual copy-pasting.
+                    <div class="p-2 mb-3 rounded border bg-surface-subtle small">
+                        <i class="bi bi-lightning-charge text-primary me-1"></i>
+                        <span class="fw-medium">Automated Tailoring:</span> Auto-populates 1 CV per opening with zero manual copy-pasting.
                     </div>
 
                     <AuthorizeView Roles="@($"{ApplicationRole.Candidate},{ApplicationRole.Administrator}")">
@@ -215,21 +215,21 @@
                 </div>
 
                 <!-- Position Q&A Discussion Card -->
-                <div class="card border shadow-sm p-4 mt-3">
+                <div class="app-surface p-4 mt-3">
                     <div class="d-flex align-items-center justify-content-between mb-2">
-                        <h6 class="fw-bold mb-0 d-flex align-items-center">
-                            <i class="bi bi-chat-dots-fill text-primary me-2"></i>
+                        <h6 class="fw-semibold mb-0 d-flex align-items-center">
+                            <i class="bi bi-chat-dots text-primary me-2"></i>
                             Position Q&amp;A
                         </h6>
                         <span class="badge bg-success-subtle text-success border" style="font-size: 0.68rem;">
-                            <i class="bi bi-dot"></i> Live SignalR
+                            <i class="bi bi-broadcast me-1"></i> Live
                         </span>
                     </div>
                     <p class="text-muted small mb-3">
                         Have questions regarding tech stack, interview format, or team dynamics? Ask the hiring team in real-time.
                     </p>
-                    <a href="discussions/@position.Id" class="btn btn-outline-primary btn-sm w-100">
-                        <i class="bi bi-chat-left-text me-1"></i> Open Live Discussion
+                    <a href="discussions/@position.Id" class="btn btn-outline-custom btn-sm w-100">
+                        <i class="bi bi-chat-dots me-1"></i> Open Live Discussion
                     </a>
                 </div>
             </div>
