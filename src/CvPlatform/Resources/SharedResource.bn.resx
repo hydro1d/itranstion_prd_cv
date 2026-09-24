@@ -271,4 +271,27 @@
   <data name="Discussions_InputPlaceholder" xml:space="preserve"><value>এই পদ সম্পর্কিত প্রশ্ন করুন (প্রয়োজনীয়তা, ইন্টারভিউ প্রক্রিয়া, কর্মপরিবেশ)...</value></data>
   <data name="Discussions_BtnSend" xml:space="preserve"><value>প্রশ্ন পাঠান</value></data>
   <data name="Discussions_NoMessagesYet" xml:space="preserve"><value>এই চ্যানেলে এখনও কোনো প্রশ্ন নেই। প্রথম প্রশ্নটি আপনি করুন!</value></data>
+
+  <!-- Multi-Criteria Search & Filtering (Phase 11) -->
+  <data name="Search_HeroTitle" xml:space="preserve"><value>সুযোগ ও অ্যাট্রিবিউট লাইব্রেরি অন্বেষণ</value></data>
+  <data name="Search_HeroSubtitle" xml:space="preserve"><value>পদের বিবরণ, আবশ্যক যোগ্যতা টেমপ্লেট এবং টেক স্কিল বিস্তারিত অনুসন্ধান।</value></data>
+  <data name="Search_MainInputPlaceholder" xml:space="preserve"><value>পদের নাম, প্রতিষ্ঠান, দক্ষতা বা অবস্থান দিয়ে খুঁজুন...</value></data>
+  <data name="Search_ClearFilters" xml:space="preserve"><value>ফিল্টার মুছুন</value></data>
+  <data name="Search_ResultsCount" xml:space="preserve"><value>{0} টি পদের সুযোগ পাওয়া গেছে</value></data>
+  <data name="Search_Tab_Positions" xml:space="preserve"><value>চাকরির সুযোগ</value></data>
+  <data name="Search_Tab_Attributes" xml:space="preserve"><value>পুনর্ব্যবহারযোগ্য অ্যাট্রিবিউট</value></data>
+  <data name="Search_ViewTable" xml:space="preserve"><value>তালিকা ভিউ</value></data>
+  <data name="Search_ViewGrid" xml:space="preserve"><value>কার্ড গ্রিড</value></data>
+  <data name="Search_NoResults" xml:space="preserve"><value>কোনো মিলযুক্ত সুযোগ পাওয়া যায়নি</value></data>
+  <data name="Search_NoResultsDesc" xml:space="preserve"><value>আপনার অনুসন্ধানের কীওয়ার্ড পরিবর্তন করুন বা সক্রিয় ফিল্টার সাফ করুন।</value></data>
+  <data name="Search_LocationFilter" xml:space="preserve"><value>অবস্থান / ধরণ</value></data>
+  <data name="Search_AllLocations" xml:space="preserve"><value>সকল অবস্থান</value></data>
+  <data name="Search_CategoryFilter" xml:space="preserve"><value>দক্ষতার বিভাগ</value></data>
+  <data name="Search_AllCategories" xml:space="preserve"><value>সকল বিভাগ</value></data>
+  <data name="Search_SortBy" xml:space="preserve"><value>সাজানোর ধরণ</value></data>
+  <data name="Search_SortNewest" xml:space="preserve"><value>নতুনগুলো আগে</value></data>
+  <data name="Search_SortTitle" xml:space="preserve"><value>শিরোনাম অনুযায়ী (A-Z)</value></data>
+  <data name="Search_BtnViewSpecs" xml:space="preserve"><value>বিবরণ দেখুন</value></data>
+  <data name="Search_BtnGenerateCv" xml:space="preserve"><value>উপযোগী সিভি তৈরি</value></data>
+  <data name="Search_BtnDiscussions" xml:space="preserve"><value>প্রশ্নোত্তর / আলোচনা</value></data>
 </root>

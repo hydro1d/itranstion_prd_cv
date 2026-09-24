@@ -1,34 +1,691 @@
 @page "/search"
+@using System.Security.Claims
+@using CvPlatform.Data.Entities
+@using CvPlatform.Data.Enums
+@using CvPlatform.Services
+@inject IPositionService PositionService
+@inject IAttributeService AttributeService
+@inject ICvService CvService
+@inject ICandidateProfileService ProfileService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject NavigationManager Navigation
+@inject IStringLocalizer<SharedResource> Loc
+@inject IJSRuntime JS
 
-<PageTitle>Explore & Search | CvPlatform</PageTitle>
+<PageTitle>@Loc["Search_HeroTitle"] - @Loc["App_Title"]</PageTitle>
 
-<div class="mb-4">
-    <h1 class="fw-bold mb-1">Search & Directory</h1>
-    <p class="text-muted mb-0">Search across positions, candidate skill tags, and reusable attribute definitions.</p>
-</div>
-
-<div class="app-surface p-4 mb-4">
-    <div class="row g-3 align-items-center">
-        <div class="col-md-8">
-            <div class="app-search-input" style="max-width: 100%;">
-                <i class="bi bi-search"></i>
-                <input type="text" class="form-control" placeholder="Type keywords, skills, titles, or company names..." @bind="term" />
+<div class="container-fluid px-4 py-4">
+    <!-- Hero Banner & Search Bar -->
+    <div class="card border shadow-sm p-4 mb-4 bg-surface">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+            <div>
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle mb-2">
+                    <i class="bi bi-search me-1"></i> Multi-Criteria Search & Discovery
+                </span>
+                <h2 class="fw-bold mb-1">@Loc["Search_HeroTitle"]</h2>
+                <p class="text-muted small mb-0">@Loc["Search_HeroSubtitle"]</p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+                <span class="badge bg-light text-muted border px-3 py-2">
+                    <i class="bi bi-layers me-1 text-primary"></i> @filteredPositions.Count Openings • @filteredAttributes.Count Attributes
+                </span>
             </div>
         </div>
-        <div class="col-md-4 d-flex gap-2">
-            <button class="btn btn-primary w-100"><i class="bi bi-search"></i> Execute Search</button>
+
+        <!-- Main Search Input -->
+        <div class="row g-2 align-items-center">
+            <div class="col-lg-9 col-md-8">
+                <div class="input-group">
+                    <span class="input-group-text bg-transparent border-end-0">
+                        <i class="bi bi-search text-muted"></i>
+                    </span>
+                    <input type="text" class="form-control border-start-0 border-end-0 py-2" 
+                           placeholder="@Loc["Search_MainInputPlaceholder"]"
+                           @bind="searchTerm" @bind:event="oninput" />
+                    @if (!string.IsNullOrWhiteSpace(searchTerm))
+                    {
+                        <button class="btn btn-outline-secondary border-start-0" type="button" @onclick="() => searchTerm = string.Empty">
+                            <i class="bi bi-x-lg"></i>
+                        </button>
+                    }
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-4 d-flex gap-2">
+                <button type="button" class="btn btn-primary w-100 py-2" @onclick="RefreshSearch">
+                    <i class="bi bi-arrow-clockwise me-1"></i> Refresh
+                </button>
+                @if (HasActiveFilters)
+                {
+                    <button type="button" class="btn btn-outline-danger py-2" title="@Loc["Search_ClearFilters"]" @onclick="ClearAllFilters">
+                        <i class="bi bi-funnel-fill"></i>
+                    </button>
+                }
+            </div>
+        </div>
+
+        <!-- Popular Quick-Filter Tag Pills -->
+        <div class="d-flex flex-wrap align-items-center gap-2 mt-3 pt-3 border-top">
+            <span class="text-muted small fw-semibold me-1"><i class="bi bi-tags me-1"></i>Quick Tags:</span>
+            @foreach (var tag in popularTags)
+            {
+                var isTagActive = selectedTag.Equals(tag, StringComparison.OrdinalIgnoreCase);
+                <button type="button" 
+                        class="btn btn-sm py-0 px-2 rounded-pill @(isTagActive ? "btn-primary" : "btn-outline-secondary")"
+                        style="font-size: 0.75rem;"
+                        @onclick="() => ToggleTag(tag)">
+                    #@tag
+                </button>
+            }
         </div>
     </div>
-</div>
 
-<div class="app-surface">
-    <div class="app-empty-state">
-        <i class="bi bi-search app-empty-state-icon"></i>
-        <div class="app-empty-state-title">No search executed yet</div>
-        <div class="app-empty-state-description">Enter a search keyword above to query opportunities and profile attributes. Full PostgreSQL full-text search indexing is enabled in Phase 11.</div>
+    <!-- Sub-navigation Tabs: Openings vs Reusable Attribute Library -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3">
+        <ul class="nav nav-pills gap-2">
+            <li class="nav-item">
+                <button type="button" class="nav-link @(activeTab == "positions" ? "active" : "")" @onclick='() => activeTab = "positions"'>
+                    <i class="bi bi-briefcase me-1"></i> @Loc["Search_Tab_Positions"]
+                    <span class="badge @(activeTab == "positions" ? "bg-light text-primary" : "bg-secondary-subtle text-secondary") ms-1">
+                        @filteredPositions.Count
+                    </span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button type="button" class="nav-link @(activeTab == "attributes" ? "active" : "")" @onclick='() => activeTab = "attributes"'>
+                    <i class="bi bi-sliders me-1"></i> @Loc["Search_Tab_Attributes"]
+                    <span class="badge @(activeTab == "attributes" ? "bg-light text-primary" : "bg-secondary-subtle text-secondary") ms-1">
+                        @filteredAttributes.Count
+                    </span>
+                </button>
+            </li>
+        </ul>
+
+        @if (activeTab == "positions")
+        {
+            <div class="d-flex align-items-center gap-2">
+                <!-- Sort dropdown -->
+                <div class="d-flex align-items-center gap-1 text-muted small">
+                    <span>@Loc["Search_SortBy"]:</span>
+                    <select class="form-select form-select-sm" style="width: auto;" @bind="sortBy">
+                        <option value="newest">@Loc["Search_SortNewest"]</option>
+                        <option value="title">@Loc["Search_SortTitle"]</option>
+                        <option value="company">Company (A-Z)</option>
+                        <option value="requirements">Most Requirements</option>
+                    </select>
+                </div>
+
+                <!-- View Mode Toggle -->
+                <div class="btn-group btn-group-sm" role="group">
+                    <button type="button" class="btn @(viewMode == "table" ? "btn-primary" : "btn-outline-secondary")"
+                            @onclick='() => viewMode = "table"' title="@Loc["Search_ViewTable"]">
+                        <i class="bi bi-table"></i>
+                    </button>
+                    <button type="button" class="btn @(viewMode == "grid" ? "btn-primary" : "btn-outline-secondary")"
+                            @onclick='() => viewMode = "grid"' title="@Loc["Search_ViewGrid"]">
+                        <i class="bi bi-grid-3x3-gap-fill"></i>
+                    </button>
+                </div>
+            </div>
+        }
     </div>
+
+    <!-- Secondary Filters Bar -->
+    <div class="card border shadow-sm p-3 mb-4">
+        <div class="row g-3 align-items-center">
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-1">Employment Type</label>
+                <select class="form-select form-select-sm" @bind="selectedEmploymentType">
+                    <option value="">All Types</option>
+                    @foreach (EmploymentType type in Enum.GetValues<EmploymentType>())
+                    {
+                        <option value="@type">@type</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-1">Category / Discipline</label>
+                <select class="form-select form-select-sm" @bind="selectedCategoryId">
+                    <option value="0">All Categories</option>
+                    @foreach (var cat in categories)
+                    {
+                        <option value="@cat.Id">@cat.Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="col-md-3">
+                <label class="form-label small text-muted mb-1">Location Filter</label>
+                <input type="text" class="form-control form-control-sm" placeholder="Filter by city, remote..." 
+                       @bind="locationFilter" @bind:event="oninput" />
+            </div>
+
+            <div class="col-md-3 d-flex align-items-end justify-content-between">
+                <div>
+                    <label class="form-label small text-muted mb-1 d-block">Results Filtered</label>
+                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle py-2 px-3">
+                        @(activeTab == "positions" ? filteredPositions.Count : filteredAttributes.Count) matched
+                    </span>
+                </div>
+                @if (HasActiveFilters)
+                {
+                    <button type="button" class="btn btn-outline-danger btn-sm" @onclick="ClearAllFilters">
+                        <i class="bi bi-x-circle me-1"></i> Reset
+                    </button>
+                }
+            </div>
+        </div>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="text-center py-5">
+            <div class="spinner-border text-primary" role="status"></div>
+            <div class="text-muted small mt-2">Indexing and searching directory...</div>
+        </div>
+    }
+    else if (activeTab == "positions")
+    {
+        @if (!filteredPositions.Any())
+        {
+            <div class="card border shadow-sm p-5 text-center">
+                <i class="bi bi-search text-muted fs-1 mb-3 d-block"></i>
+                <h5 class="fw-bold">@Loc["Search_NoResults"]</h5>
+                <p class="text-muted small mb-3">@Loc["Search_NoResultsDesc"]</p>
+                <div>
+                    <button type="button" class="btn btn-outline-primary btn-sm" @onclick="ClearAllFilters">
+                        <i class="bi bi-arrow-counterclockwise me-1"></i> @Loc["Search_ClearFilters"]
+                    </button>
+                </div>
+            </div>
+        }
+        else if (viewMode == "table")
+        {
+            <!-- TABLE-CENTRIC ACTION TOOLBAR (Strict PRD Standard: NO repeating in-row action buttons) -->
+            <div class="card border shadow-sm mb-3">
+                <div class="card-body py-2 px-3 bg-light d-flex flex-wrap align-items-center justify-content-between gap-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge @(selectedPosition != null ? "bg-primary" : "bg-secondary-subtle text-secondary") border">
+                            <i class="bi @(selectedPosition != null ? "bi-check2-circle" : "bi-hand-index") me-1"></i>
+                            @(selectedPosition != null ? $"1 Selected: {selectedPosition.Title}" : "Select a position to activate actions")
+                        </span>
+                    </div>
+
+                    <div class="d-flex flex-wrap align-items-center gap-2">
+                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                disabled="@(selectedPosition == null)"
+                                @onclick="ViewSelectedSpecs">
+                            <i class="bi bi-eye me-1"></i> @Loc["Search_BtnViewSpecs"]
+                        </button>
+
+                        <button type="button" class="btn btn-sm btn-primary"
+                                disabled="@(selectedPosition == null || isGeneratingCv)"
+                                @onclick="GenerateCvForSelected">
+                            @if (isGeneratingCv)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                <span>Mapping...</span>
+                            }
+                            else
+                            {
+                                <i class="bi bi-file-earmark-person me-1"></i>
+                                <span>@Loc["Search_BtnGenerateCv"]</span>
+                            }
+                        </button>
+
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                disabled="@(selectedPosition == null)"
+                                @onclick="OpenDiscussionsForSelected">
+                            <i class="bi bi-chat-dots me-1"></i> @Loc["Search_BtnDiscussions"]
+                        </button>
+
+                        @if (selectedPosition != null)
+                        {
+                            <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="() => selectedPositionId = null">
+                                <i class="bi bi-x"></i> Deselect
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Openings Data Table -->
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th style="width: 44px;" class="text-center">#</th>
+                                <th>@Loc["Th_PositionTitle"]</th>
+                                <th>@Loc["Th_Company"]</th>
+                                <th>@Loc["Th_EmploymentType"]</th>
+                                <th>@Loc["Th_Location"]</th>
+                                <th>Mandatory Qualifications</th>
+                                <th>Tags</th>
+                                <th>@Loc["Th_Posted"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var pos in filteredPositions)
+                            {
+                                var isSelected = selectedPositionId == pos.Id;
+                                <tr class="@(isSelected ? "table-active" : "")" style="cursor: pointer;" @onclick="() => SelectPosition(pos.Id)">
+                                    <td class="text-center" @onclick:stopPropagation="true">
+                                        <input type="radio" name="selectedPositionRow" class="form-check-input"
+                                               checked="@isSelected"
+                                               @onchange="() => SelectPosition(pos.Id)" />
+                                    </td>
+                                    <td>
+                                        <a href="positions/@pos.Id" class="fw-bold text-decoration-none text-body">
+                                            @pos.Title
+                                        </a>
+                                        @if (pos.Visibility == PositionVisibility.Draft)
+                                        {
+                                            <span class="badge bg-warning-subtle text-warning ms-1" style="font-size: 0.65rem;">Draft</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="text-body fw-semibold">@pos.Company</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge @GetEmploymentBadgeClass(pos.EmploymentType)">
+                                            @pos.EmploymentType
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted small"><i class="bi bi-geo-alt me-1"></i>@pos.Location</span>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-1" style="max-width: 280px;">
+                                            @foreach (var pa in pos.PositionAttributes.Where(x => x.IsRequired).Take(3))
+                                            {
+                                                <span class="badge bg-danger-subtle text-danger" style="font-size: 0.68rem;">
+                                                    @pa.Attribute.Name
+                                                </span>
+                                            }
+                                            @if (pos.PositionAttributes.Count(x => x.IsRequired) > 3)
+                                            {
+                                                <span class="badge bg-light text-muted border" style="font-size: 0.68rem;">
+                                                    +@(pos.PositionAttributes.Count(x => x.IsRequired) - 3) more
+                                                </span>
+                                            }
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="d-flex flex-wrap gap-1" style="max-width: 180px;">
+                                            @if (!string.IsNullOrEmpty(pos.Tags))
+                                            {
+                                                @foreach (var tag in pos.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Take(2))
+                                                {
+                                                    <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.68rem;">
+                                                        #@tag
+                                                    </span>
+                                                }
+                                            }
+                                        </div>
+                                    </td>
+                                    <td class="text-muted small">
+                                        @pos.CreatedAt.ToString("MMM dd, yyyy")
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Card Grid View -->
+            <div class="row g-4">
+                @foreach (var pos in filteredPositions)
+                {
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card h-100 border shadow-sm hover-shadow transition">
+                            <div class="card-body p-4 d-flex flex-column">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <span class="badge @GetEmploymentBadgeClass(pos.EmploymentType)">
+                                        @pos.EmploymentType
+                                    </span>
+                                    <span class="text-muted small">
+                                        <i class="bi bi-clock me-1"></i>@pos.CreatedAt.ToString("MMM dd")
+                                    </span>
+                                </div>
+
+                                <h5 class="fw-bold mb-1">
+                                    <a href="positions/@pos.Id" class="text-decoration-none text-body">
+                                        @pos.Title
+                                    </a>
+                                </h5>
+                                <div class="text-primary fw-semibold small mb-2">
+                                    <i class="bi bi-building me-1"></i>@pos.Company
+                                </div>
+                                <div class="text-muted small mb-3">
+                                    <i class="bi bi-geo-alt me-1"></i>@pos.Location
+                                </div>
+
+                                <p class="text-muted small flex-grow-1 mb-3" style="line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                                    @pos.Description
+                                </p>
+
+                                <div class="mb-3 pt-2 border-top">
+                                    <div class="text-muted small fw-semibold mb-1" style="font-size: 0.72rem;">Required Qualifications:</div>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        @foreach (var pa in pos.PositionAttributes.Where(x => x.IsRequired).Take(4))
+                                        {
+                                            <span class="badge bg-danger-subtle text-danger" style="font-size: 0.68rem;">
+                                                @pa.Attribute.Name
+                                            </span>
+                                        }
+                                        @if (pos.PositionAttributes.Count(x => x.IsRequired) > 4)
+                                        {
+                                            <span class="badge bg-light text-muted border" style="font-size: 0.68rem;">
+                                                +@(pos.PositionAttributes.Count(x => x.IsRequired) - 4)
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+
+                                <div class="d-flex gap-2">
+                                    <a href="positions/@pos.Id" class="btn btn-outline-primary btn-sm flex-grow-1">
+                                        <i class="bi bi-file-earmark-text me-1"></i> Specs
+                                    </a>
+                                    <a href="discussions/@pos.Id" class="btn btn-outline-secondary btn-sm" title="Live Q&A">
+                                        <i class="bi bi-chat-dots"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    }
+    else if (activeTab == "attributes")
+    {
+        <!-- Reusable Attribute Library Search Tab (Killer Feature #1 Discovery) -->
+        <div class="card border shadow-sm">
+            <div class="card-header bg-transparent py-3 d-flex justify-content-between align-items-center">
+                <div>
+                    <h6 class="fw-bold mb-0">Platform Standardized Attributes</h6>
+                    <small class="text-muted">Explore standardized qualification building blocks used across all position templates</small>
+                </div>
+                <a href="recruiter/attributes" class="btn btn-outline-primary btn-sm">
+                    <i class="bi bi-sliders me-1"></i> Open Attribute Library
+                </a>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Attribute Name</th>
+                            <th>Category</th>
+                            <th>Data Type</th>
+                            <th>Description</th>
+                            <th>Used in Openings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!filteredAttributes.Any())
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">
+                                    No attribute definitions match your search terms.
+                                </td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var attr in filteredAttributes)
+                            {
+                                var usageCount = positions.Count(p => p.PositionAttributes.Any(pa => pa.AttributeId == attr.Id));
+                                <tr>
+                                    <td class="fw-bold text-body">
+                                        <i class="bi bi-tag-fill text-primary me-2"></i>@attr.Name
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-secondary-subtle text-secondary">
+                                            @(attr.Category?.Name ?? "General")
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge-type @GetBadgeClass(attr.DataType)">
+                                            @attr.DataType
+                                        </span>
+                                    </td>
+                                    <td class="text-muted small" style="max-width: 350px;">
+                                        @(string.IsNullOrEmpty(attr.Description) ? "No description provided." : attr.Description)
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                                            @usageCount positions
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
 </div>
 
 @code {
-    private string term = string.Empty;
+    private List<Position> positions = new();
+    private List<CvAttribute> attributes = new();
+    private List<AttributeCategory> categories = new();
+    private bool isLoading = true;
+    private bool isGeneratingCv = false;
+
+    // Filters State
+    private string searchTerm = string.Empty;
+    private string selectedTag = string.Empty;
+    private string locationFilter = string.Empty;
+    private string? selectedEmploymentType;
+    private int selectedCategoryId = 0;
+    private string sortBy = "newest";
+    private string viewMode = "table";
+    private string activeTab = "positions";
+
+    // Table Selection State
+    private int? selectedPositionId;
+    private Position? selectedPosition => positions.FirstOrDefault(p => p.Id == selectedPositionId);
+
+    // Popular tags
+    private readonly string[] popularTags = new[] { "csharp", "dotnet", "react", "postgresql", "docker", "aws", "architecture", "microservices" };
+
+    protected override async Task OnInitializedAsync()
+    {
+        isLoading = true;
+        await LoadDataAsync();
+        isLoading = false;
+    }
+
+    private async Task LoadDataAsync()
+    {
+        positions = await PositionService.GetPositionsAsync();
+        attributes = await AttributeService.GetAttributesAsync();
+        categories = await AttributeService.GetCategoriesAsync();
+    }
+
+    private void ToggleTag(string tag)
+    {
+        if (selectedTag.Equals(tag, StringComparison.OrdinalIgnoreCase))
+            selectedTag = string.Empty;
+        else
+            selectedTag = tag;
+    }
+
+    private bool HasActiveFilters =>
+        !string.IsNullOrWhiteSpace(searchTerm) ||
+        !string.IsNullOrWhiteSpace(selectedTag) ||
+        !string.IsNullOrWhiteSpace(locationFilter) ||
+        !string.IsNullOrWhiteSpace(selectedEmploymentType) ||
+        selectedCategoryId > 0;
+
+    private void ClearAllFilters()
+    {
+        searchTerm = string.Empty;
+        selectedTag = string.Empty;
+        locationFilter = string.Empty;
+        selectedEmploymentType = null;
+        selectedCategoryId = 0;
+        selectedPositionId = null;
+    }
+
+    private async Task RefreshSearch()
+    {
+        isLoading = true;
+        await LoadDataAsync();
+        isLoading = false;
+    }
+
+    private void SelectPosition(int id)
+    {
+        if (selectedPositionId == id)
+            selectedPositionId = null;
+        else
+            selectedPositionId = id;
+    }
+
+    private void ViewSelectedSpecs()
+    {
+        if (selectedPosition != null)
+        {
+            Navigation.NavigateTo($"positions/{selectedPosition.Id}");
+        }
+    }
+
+    private async Task GenerateCvForSelected()
+    {
+        if (selectedPosition == null) return;
+        isGeneratingCv = true;
+        try
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            if (user.Identity?.IsAuthenticated != true)
+            {
+                Navigation.NavigateTo($"account/login?returnUrl=/positions/{selectedPosition.Id}");
+                return;
+            }
+
+            var userId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "candidate-demo-user-id";
+            var profile = await ProfileService.GetProfileByUserIdAsync(userId);
+            if (profile != null)
+            {
+                var cv = await CvService.GetOrCreateCvForPositionAsync(profile.Id, selectedPosition.Id);
+                Navigation.NavigateTo($"/cv/{cv.Id}");
+            }
+        }
+        finally
+        {
+            isGeneratingCv = false;
+        }
+    }
+
+    private void OpenDiscussionsForSelected()
+    {
+        if (selectedPosition != null)
+        {
+            Navigation.NavigateTo($"discussions/{selectedPosition.Id}");
+        }
+    }
+
+    private List<Position> filteredPositions
+    {
+        get
+        {
+            var query = positions.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var term = searchTerm.Trim();
+                query = query.Where(p =>
+                    p.Title.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    p.Company.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    p.Location.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    p.Description.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    (p.Tags != null && p.Tags.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    p.PositionAttributes.Any(pa => pa.Attribute.Name.Contains(term, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(selectedTag))
+            {
+                query = query.Where(p => p.Tags != null && p.Tags.Contains(selectedTag, StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrWhiteSpace(locationFilter))
+            {
+                query = query.Where(p => p.Location.Contains(locationFilter.Trim(), StringComparison.OrdinalIgnoreCase));
+            }
+
+            if (!string.IsNullOrWhiteSpace(selectedEmploymentType) && Enum.TryParse<EmploymentType>(selectedEmploymentType, out var empType))
+            {
+                query = query.Where(p => p.EmploymentType == empType);
+            }
+
+            if (selectedCategoryId > 0)
+            {
+                query = query.Where(p => p.PositionAttributes.Any(pa => pa.Attribute.CategoryId == selectedCategoryId));
+            }
+
+            query = sortBy switch
+            {
+                "title" => query.OrderBy(p => p.Title),
+                "company" => query.OrderBy(p => p.Company),
+                "requirements" => query.OrderByDescending(p => p.PositionAttributes.Count),
+                _ => query.OrderByDescending(p => p.CreatedAt)
+            };
+
+            return query.ToList();
+        }
+    }
+
+    private List<CvAttribute> filteredAttributes
+    {
+        get
+        {
+            var query = attributes.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                var term = searchTerm.Trim();
+                query = query.Where(a =>
+                    a.Name.Contains(term, StringComparison.OrdinalIgnoreCase) ||
+                    (a.Description != null && a.Description.Contains(term, StringComparison.OrdinalIgnoreCase)) ||
+                    (a.Category != null && a.Category.Name.Contains(term, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            if (selectedCategoryId > 0)
+            {
+                query = query.Where(a => a.CategoryId == selectedCategoryId);
+            }
+
+            return query.OrderBy(a => a.Name).ToList();
+        }
+    }
+
+    private string GetEmploymentBadgeClass(EmploymentType type) => type switch
+    {
+        EmploymentType.FullTime => "bg-primary-subtle text-primary",
+        EmploymentType.PartTime => "bg-info-subtle text-info",
+        EmploymentType.Contract => "bg-warning-subtle text-warning",
+        EmploymentType.Remote => "bg-success-subtle text-success",
+        EmploymentType.Internship => "bg-secondary-subtle text-secondary",
+        _ => "bg-secondary-subtle text-secondary"
+    };
+
+    private string GetBadgeClass(AttributeDataType type) => type switch
+    {
+        AttributeDataType.Text => "badge-type-text",
+        AttributeDataType.LongText => "badge-type-longtext",
+        AttributeDataType.Number => "badge-type-number",
+        AttributeDataType.Date => "badge-type-date",
+        AttributeDataType.Boolean => "badge-type-boolean",
+        AttributeDataType.Dropdown => "badge-type-dropdown",
+        AttributeDataType.MultiSelect => "badge-type-multiselect",
+        AttributeDataType.Url => "badge-type-url",
+        _ => "badge-type-text"
+    };
 }

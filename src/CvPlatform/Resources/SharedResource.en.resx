@@ -271,4 +271,27 @@
   <data name="Discussions_InputPlaceholder" xml:space="preserve"><value>Ask a question about this opening (requirements, interview process, culture)...</value></data>
   <data name="Discussions_BtnSend" xml:space="preserve"><value>Send Question</value></data>
   <data name="Discussions_NoMessagesYet" xml:space="preserve"><value>No questions in this thread yet. Be the first to ask!</value></data>
+
+  <!-- Multi-Criteria Search & Filtering (Phase 11) -->
+  <data name="Search_HeroTitle" xml:space="preserve"><value>Explore Opportunities &amp; Attribute Library</value></data>
+  <data name="Search_HeroSubtitle" xml:space="preserve"><value>Multi-criteria deep search across openings, qualification templates, and technical skills.</value></data>
+  <data name="Search_MainInputPlaceholder" xml:space="preserve"><value>Search by title, company, skills, or location...</value></data>
+  <data name="Search_ClearFilters" xml:space="preserve"><value>Clear Filters</value></data>
+  <data name="Search_ResultsCount" xml:space="preserve"><value>{0} opportunities found</value></data>
+  <data name="Search_Tab_Positions" xml:space="preserve"><value>Job Openings</value></data>
+  <data name="Search_Tab_Attributes" xml:space="preserve"><value>Reusable Attributes</value></data>
+  <data name="Search_ViewTable" xml:space="preserve"><value>Table View</value></data>
+  <data name="Search_ViewGrid" xml:space="preserve"><value>Card Grid</value></data>
+  <data name="Search_NoResults" xml:space="preserve"><value>No matching opportunities found</value></data>
+  <data name="Search_NoResultsDesc" xml:space="preserve"><value>Try broadening your query, selecting different employment filters, or clearing active search terms.</value></data>
+  <data name="Search_LocationFilter" xml:space="preserve"><value>Location / Type</value></data>
+  <data name="Search_AllLocations" xml:space="preserve"><value>All Locations</value></data>
+  <data name="Search_CategoryFilter" xml:space="preserve"><value>Skill Category</value></data>
+  <data name="Search_AllCategories" xml:space="preserve"><value>All Categories</value></data>
+  <data name="Search_SortBy" xml:space="preserve"><value>Sort By</value></data>
+  <data name="Search_SortNewest" xml:space="preserve"><value>Newest First</value></data>
+  <data name="Search_SortTitle" xml:space="preserve"><value>Title (A-Z)</value></data>
+  <data name="Search_BtnViewSpecs" xml:space="preserve"><value>View Specifications</value></data>
+  <data name="Search_BtnGenerateCv" xml:space="preserve"><value>Generate Tailored CV</value></data>
+  <data name="Search_BtnDiscussions" xml:space="preserve"><value>Ask Question / Q&amp;A</value></data>
 </root>
