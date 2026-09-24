@@ -45,9 +45,9 @@
                 <!-- Role-Aware Authentication Header -->
                 <AuthorizeView>
                     <Authorized>
-                        <div class="d-flex align-items-center gap-2 ms-2 border-start ps-2">
+                        <div class="d-flex align-items-center gap-2 ms-2 border-start ps-3">
                             <div class="d-none d-md-flex flex-column text-end">
-                                <span class="fw-bold text-body small lh-1">@(context.User.Identity?.Name ?? "User")</span>
+                                <span class="fw-semibold text-body small lh-1">@(context.User.Identity?.Name ?? "User")</span>
                                 <span class="badge @GetRoleBadgeClass(context.User) mt-1 align-self-end" style="font-size: 0.65rem;">
                                     @GetRoleBadgeText(context.User)
                                 </span>
@@ -56,19 +56,20 @@
                                 @GetInitials(context.User.Identity?.Name)
                             </div>
                             <form action="/account/logout" method="post" class="m-0">
-                                <button type="submit" class="btn btn-outline-danger btn-sm p-1 px-2" title="@Loc["Btn_SignOut"]">
+                                <button type="submit" class="btn btn-outline-danger btn-sm p-1 px-2 d-inline-flex align-items-center justify-content-center" title="@Loc["Btn_SignOut"]">
                                     <i class="bi bi-box-arrow-right"></i>
                                 </button>
                             </form>
                         </div>
                     </Authorized>
                     <NotAuthorized>
-                        <div class="d-flex align-items-center gap-1 ms-1 border-start ps-2">
-                            <a href="account/login" class="btn btn-primary btn-sm">
+                        <div class="d-flex align-items-center gap-2 ms-2 border-start ps-3">
+                            <a href="account/login" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1.5">
                                 <i class="bi bi-box-arrow-in-right"></i>
-                                <span class="d-none d-sm-inline">@Loc["Btn_SignIn"]</span>
+                                <span>@Loc["Btn_SignIn"]</span>
                             </a>
-                            <a href="account/register" class="btn btn-outline-secondary btn-sm d-none d-md-inline">
+                            <a href="account/register" class="btn btn-outline-custom btn-sm d-none d-md-inline-flex align-items-center gap-1.5">
+                                <i class="bi bi-person-plus"></i>
                                 <span>@Loc["Btn_Register"]</span>
                             </a>
                         </div>

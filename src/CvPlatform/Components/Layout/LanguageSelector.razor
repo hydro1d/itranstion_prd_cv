@@ -1,9 +1,9 @@
 @inject NavigationManager Navigation
 
 <div class="dropdown @(isOpen ? "show" : "")">
-    <button class="btn btn-ghost btn-sm border dropdown-toggle" type="button" @onclick="ToggleDropdown" aria-expanded="@isOpen">
-        <i class="bi bi-translate text-secondary"></i>
-        <span class="ms-1 fw-semibold">@(currentCulture == "bn" ? "বাংলা" : "English")</span>
+    <button class="btn btn-outline-custom btn-sm dropdown-toggle d-inline-flex align-items-center gap-1.5" type="button" @onclick="ToggleDropdown" aria-expanded="@isOpen">
+        <i class="bi bi-translate text-primary"></i>
+        <span class="fw-semibold">@(currentCulture == "bn" ? "বাংলা" : "English")</span>
     </button>
     <ul class="dropdown-menu dropdown-menu-end shadow-sm @(isOpen ? "show" : "")">
         <li>

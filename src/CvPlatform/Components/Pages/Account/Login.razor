@@ -61,35 +61,35 @@
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-primary w-100 mb-3">
-                                <i class="bi bi-box-arrow-in-right me-1"></i> @Loc["Btn_SignIn"]
+                            <button type="submit" class="btn btn-primary w-100 mb-3" style="min-height: 38px;">
+                                <i class="bi bi-box-arrow-in-right me-1.5"></i> @Loc["Btn_SignIn"]
                             </button>
                         </form>
 
-                        <div class="position-relative my-2 text-center">
-                            <hr class="text-muted" />
-                            <span class="position-absolute top-50 start-50 translate-middle bg-surface px-2 text-muted small">
+                        <div class="position-relative my-3 text-center">
+                            <hr class="border-secondary-subtle my-0" />
+                            <span class="position-absolute top-50 start-50 translate-middle px-3 text-muted small fw-medium" style="background-color: var(--app-surface);">
                                 @Loc["Auth_OrSocial"]
                             </span>
                         </div>
 
                         <!-- Social Login Fast-Track (Mocked for evaluation) -->
-                        <div class="row g-2 mt-1">
+                        <div class="row g-2 mt-2">
                             <div class="col-6">
-                                <a href="/account/external-login?provider=github" class="btn btn-outline-custom w-100 btn-sm">
-                                    <i class="bi bi-github me-1"></i> GitHub
+                                <a href="/account/external-login?provider=github" class="btn btn-outline-custom w-100">
+                                    <i class="bi bi-github me-1"></i> <span>GitHub</span>
                                 </a>
                             </div>
                             <div class="col-6">
-                                <a href="/account/external-login?provider=google" class="btn btn-outline-custom w-100 btn-sm">
-                                    <i class="bi bi-google me-1"></i> Google
+                                <a href="/account/external-login?provider=google" class="btn btn-outline-custom w-100">
+                                    <i class="bi bi-google me-1"></i> <span>Google</span>
                                 </a>
                             </div>
                         </div>
 
-                        <div class="text-center mt-3">
-                            <span class="text-muted small">@Loc["Auth_NoAccountPrompt"] </span>
-                            <a href="account/register" class="fw-semibold small text-primary">@Loc["Btn_Register"]</a>
+                        <div class="text-center mt-3 pt-3 border-top">
+                            <span class="text-muted small">@Loc["Auth_NoAccountPrompt"]</span>
+                            <a href="account/register" class="fw-semibold small text-primary ms-1">@Loc["Btn_Register"]</a>
                         </div>
                     </div>
                 </div>
@@ -112,7 +112,7 @@
                             <!-- 1. Administrator -->
                             <form method="post" action="/account/demo-login">
                                 <input type="hidden" name="role" value="admin" />
-                                <button type="submit" class="btn btn-outline-custom w-100 text-start p-2 d-flex align-items-center justify-content-between">
+                                <button type="submit" class="btn btn-outline-custom role-demo-btn w-100 text-start d-flex align-items-center justify-content-between">
                                     <div>
                                         <div class="fw-semibold small text-body">
                                             <i class="bi bi-shield-check text-danger me-1"></i>
@@ -127,7 +127,7 @@
                             <!-- 2. Recruiter -->
                             <form method="post" action="/account/demo-login">
                                 <input type="hidden" name="role" value="recruiter" />
-                                <button type="submit" class="btn btn-outline-custom w-100 text-start p-2 d-flex align-items-center justify-content-between">
+                                <button type="submit" class="btn btn-outline-custom role-demo-btn w-100 text-start d-flex align-items-center justify-content-between">
                                     <div>
                                         <div class="fw-semibold small text-body">
                                             <i class="bi bi-briefcase text-primary me-1"></i>
@@ -142,7 +142,7 @@
                             <!-- 3. Candidate -->
                             <form method="post" action="/account/demo-login">
                                 <input type="hidden" name="role" value="candidate" />
-                                <button type="submit" class="btn btn-outline-custom w-100 text-start p-2 d-flex align-items-center justify-content-between">
+                                <button type="submit" class="btn btn-outline-custom role-demo-btn w-100 text-start d-flex align-items-center justify-content-between">
                                     <div>
                                         <div class="fw-semibold small text-body">
                                             <i class="bi bi-person-vcard text-success me-1"></i>

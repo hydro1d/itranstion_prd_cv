@@ -63,29 +63,29 @@
                     <!-- Role Selection -->
                     <div class="mb-4">
                         <label class="form-label small fw-semibold">@Loc["Auth_SelectRoleLabel"]</label>
-                        <div class="row g-2">
-                            <div class="col-6">
-                                <div class="p-3 rounded border role-select-card h-100 bg-surface">
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <div class="p-3 role-select-card h-100 position-relative">
                                     <div class="form-check m-0">
                                         <input class="form-check-input" type="radio" name="role" id="roleCandidate" value="Candidate" checked />
-                                        <label class="form-check-label fw-semibold small" for="roleCandidate">
+                                        <label class="form-check-label fw-semibold small stretched-link" for="roleCandidate">
                                             <i class="bi bi-person-vcard text-success me-1"></i> @Loc["Role_Candidate"]
                                         </label>
                                     </div>
-                                    <div class="text-muted ms-4 mt-1" style="font-size: 0.72rem;">
+                                    <div class="text-muted ms-4 mt-1" style="font-size: 0.75rem; line-height: 1.35;">
                                         @Loc["Role_CandidateDesc"]
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-6">
-                                <div class="p-3 rounded border role-select-card h-100 bg-surface">
+                            <div class="col-sm-6">
+                                <div class="p-3 role-select-card h-100 position-relative">
                                     <div class="form-check m-0">
                                         <input class="form-check-input" type="radio" name="role" id="roleRecruiter" value="Recruiter" />
-                                        <label class="form-check-label fw-semibold small" for="roleRecruiter">
+                                        <label class="form-check-label fw-semibold small stretched-link" for="roleRecruiter">
                                             <i class="bi bi-briefcase text-primary me-1"></i> @Loc["Role_Recruiter"]
                                         </label>
                                     </div>
-                                    <div class="text-muted ms-4 mt-1" style="font-size: 0.72rem;">
+                                    <div class="text-muted ms-4 mt-1" style="font-size: 0.75rem; line-height: 1.35;">
                                         @Loc["Role_RecruiterDesc"]
                                     </div>
                                 </div>
@@ -93,14 +93,14 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 mb-3">
-                        <i class="bi bi-person-plus me-1"></i> @Loc["Btn_CreateAccount"]
+                    <button type="submit" class="btn btn-primary w-100 mb-3" style="min-height: 38px;">
+                        <i class="bi bi-person-plus me-1.5"></i> @Loc["Btn_CreateAccount"]
                     </button>
                 </form>
 
-                <div class="text-center mt-2">
-                    <span class="text-muted small">@Loc["Auth_AlreadyHaveAccountPrompt"] </span>
-                    <a href="account/login" class="fw-semibold small text-primary">@Loc["Btn_SignIn"]</a>
+                <div class="text-center mt-3 pt-3 border-top">
+                    <span class="text-muted small">@Loc["Auth_AlreadyHaveAccountPrompt"]</span>
+                    <a href="account/login" class="fw-semibold small text-primary ms-1">@Loc["Btn_SignIn"]</a>
                 </div>
             </div>
         </div>

@@ -1,15 +1,15 @@
 @inject IJSRuntime JSRuntime
 
-<button class="btn btn-ghost btn-sm border" @onclick="ToggleTheme" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
+<button class="btn btn-outline-custom btn-sm d-inline-flex align-items-center gap-1.5" @onclick="ToggleTheme" title="Toggle Light/Dark Theme" aria-label="Toggle theme">
     @if (isDark)
     {
         <i class="bi bi-moon-stars-fill text-warning"></i>
-        <span class="d-none d-md-inline ms-1">Dark</span>
+        <span class="d-none d-md-inline">Dark</span>
     }
     else
     {
         <i class="bi bi-sun-fill text-secondary"></i>
-        <span class="d-none d-md-inline ms-1">Light</span>
+        <span class="d-none d-md-inline">Light</span>
     }
 </button>
 
