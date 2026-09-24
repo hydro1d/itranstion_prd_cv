@@ -1,33 +1,37 @@
 @inject NavigationManager Navigation
 
-<div class="dropdown">
-    <button class="btn btn-ghost btn-sm border dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+<div class="dropdown @(isOpen ? "show" : "")">
+    <button class="btn btn-ghost btn-sm border dropdown-toggle" type="button" @onclick="ToggleDropdown" aria-expanded="@isOpen">
         <i class="bi bi-translate text-secondary"></i>
-        <span class="ms-1">@(currentCulture == "bn" ? "বাংলা" : "English")</span>
+        <span class="ms-1 fw-semibold">@(currentCulture == "bn" ? "বাংলা" : "English")</span>
     </button>
-    <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+    <ul class="dropdown-menu dropdown-menu-end shadow-sm @(isOpen ? "show" : "")">
         <li>
             <button class="dropdown-item d-flex align-items-center justify-content-between @(currentCulture == "en" ? "active" : "")" 
                     @onclick="@(() => SelectLanguage("en"))">
                 <span>English</span>
-                <small class="text-muted ms-2">EN</small>
+                <span class="badge @(currentCulture == "en" ? "bg-light text-primary" : "bg-secondary-subtle text-secondary") ms-2">EN</span>
             </button>
         </li>
         <li>
             <button class="dropdown-item d-flex align-items-center justify-content-between @(currentCulture == "bn" ? "active" : "")" 
                     @onclick="@(() => SelectLanguage("bn"))">
                 <span>বাংলা</span>
-                <small class="text-muted ms-2">BN</small>
+                <span class="badge @(currentCulture == "bn" ? "bg-light text-primary" : "bg-secondary-subtle text-secondary") ms-2">BN</span>
             </button>
         </li>
     </ul>
 </div>
 
 @code {
+    private bool isOpen = false;
     private string currentCulture = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+
+    private void ToggleDropdown() => isOpen = !isOpen;
 
     private void SelectLanguage(string culture)
     {
+        isOpen = false;
         if (currentCulture != culture)
         {
             currentCulture = culture;
