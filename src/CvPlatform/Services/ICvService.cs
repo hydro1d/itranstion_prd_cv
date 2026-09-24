@@ -44,4 +44,6 @@ public interface ICvService
     Task<CvUpdateResult> UpdateCvAsync(int cvId, string? title, string? summary, Dictionary<int, string> attributeValues, string expectedRowVersion);
     Task<CvMappingStatus> GetCvMappingStatusAsync(int cvId);
     Task<bool> ToggleLikeAsync(int cvId, string recruiterId);
+    Task<bool> HasRecruiterLikedCvAsync(int cvId, string recruiterId);
+    Task<List<CV>> GetRecruiterCvsAsync(string? recruiterId = null, int? positionId = null, string? search = null, int? minCompletion = null);
 }

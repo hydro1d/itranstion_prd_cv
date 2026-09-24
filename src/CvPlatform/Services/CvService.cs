@@ -508,6 +508,110 @@ public class CvService : ICvService
         }
     }
 
+    public async Task<bool> HasRecruiterLikedCvAsync(int cvId, string recruiterId)
+    {
+        if (await IsDbAvailableAsync())
+        {
+            try
+            {
+                return await _context.CVLikes.AnyAsync(l => l.CVId == cvId && l.RecruiterId == recruiterId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to check recruiter like in database. Using fallback.");
+            }
+        }
+
+        lock (_lock)
+        {
+            return _fallbackLikes.Any(l => l.CVId == cvId && l.RecruiterId == recruiterId);
+        }
+    }
+
+    public async Task<List<CV>> GetRecruiterCvsAsync(
+        string? recruiterId = null,
+        int? positionId = null,
+        string? search = null,
+        int? minCompletion = null)
+    {
+        if (await IsDbAvailableAsync())
+        {
+            try
+            {
+                var query = _context.CVs
+                    .Include(c => c.CandidateProfile)
+                        .ThenInclude(cp => cp.User)
+                    .Include(c => c.Position)
+                        .ThenInclude(p => p.Recruiter)
+                    .Include(c => c.AttributeValues)
+                        .ThenInclude(av => av.Attribute)
+                    .Include(c => c.Likes)
+                    .AsNoTracking();
+
+                if (positionId.HasValue && positionId.Value > 0)
+                {
+                    query = query.Where(c => c.PositionId == positionId.Value);
+                }
+
+                if (!string.IsNullOrWhiteSpace(recruiterId))
+                {
+                    query = query.Where(c => c.Position.RecruiterId == recruiterId);
+                }
+
+                if (minCompletion.HasValue && minCompletion.Value > 0)
+                {
+                    query = query.Where(c => c.CompletionPercentage >= minCompletion.Value);
+                }
+
+                if (!string.IsNullOrWhiteSpace(search))
+                {
+                    var s = search.ToLower();
+                    query = query.Where(c =>
+                        c.Title.ToLower().Contains(s) ||
+                        (c.CandidateProfile != null && c.CandidateProfile.FullName.ToLower().Contains(s)) ||
+                        (c.ProfessionalSummary != null && c.ProfessionalSummary.ToLower().Contains(s)) ||
+                        c.Position.Title.ToLower().Contains(s));
+                }
+
+                return await query.OrderByDescending(c => c.CreatedAt).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to query recruiter CVs from database. Using fallback store.");
+            }
+        }
+
+        lock (_lock)
+        {
+            var list = _fallbackCvs.AsEnumerable();
+
+            if (positionId.HasValue && positionId.Value > 0)
+            {
+                list = list.Where(c => c.PositionId == positionId.Value);
+            }
+
+            if (minCompletion.HasValue && minCompletion.Value > 0)
+            {
+                list = list.Where(c => c.CompletionPercentage >= minCompletion.Value);
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var s = search.ToLower();
+                list = list.Where(c =>
+                    c.Title.ToLower().Contains(s) ||
+                    (c.CandidateProfile != null && c.CandidateProfile.FullName.ToLower().Contains(s)) ||
+                    (c.ProfessionalSummary != null && c.ProfessionalSummary.ToLower().Contains(s)) ||
+                    (c.Position != null && c.Position.Title.ToLower().Contains(s)));
+            }
+
+            return list
+                .OrderByDescending(c => c.CreatedAt)
+                .Select(CloneCv)
+                .ToList();
+        }
+    }
+
     private static void EnsureFallbackSeeded()
     {
         lock (_lock)
