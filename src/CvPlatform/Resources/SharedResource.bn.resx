@@ -263,4 +263,12 @@
   <data name="Recruiter_BtnInspect" xml:space="preserve"><value>আবেদন পর্যালোচনা</value></data>
   <data name="Th_Candidate" xml:space="preserve"><value>প্রার্থী</value></data>
   <data name="Th_TargetPosition" xml:space="preserve"><value>লক্ষ্য পদ</value></data>
+
+  <!-- Real-Time Discussions (Phase 10) -->
+  <data name="Discussions_PageTitle" xml:space="preserve"><value>পদের প্রশ্নোত্তর ও আলোচনা</value></data>
+  <data name="Discussions_PageSubtitle" xml:space="preserve"><value>সিগন্যালআর দ্বারা পরিচালিত প্রার্থী ও নিয়োগ দলের মধ্যে সরাসরি প্রশ্নোত্তর ও আলোচনা।</value></data>
+  <data name="Discussions_PositionThreads" xml:space="preserve"><value>পদের আলোচনা চ্যানেল</value></data>
+  <data name="Discussions_InputPlaceholder" xml:space="preserve"><value>এই পদ সম্পর্কিত প্রশ্ন করুন (প্রয়োজনীয়তা, ইন্টারভিউ প্রক্রিয়া, কর্মপরিবেশ)...</value></data>
+  <data name="Discussions_BtnSend" xml:space="preserve"><value>প্রশ্ন পাঠান</value></data>
+  <data name="Discussions_NoMessagesYet" xml:space="preserve"><value>এই চ্যানেলে এখনও কোনো প্রশ্ন নেই। প্রথম প্রশ্নটি আপনি করুন!</value></data>
 </root>

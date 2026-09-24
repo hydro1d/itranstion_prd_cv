@@ -1,0 +1,353 @@
+@page "/discussions"
+@page "/discussions/{PositionId:int}"
+@attribute [Authorize]
+@using System.Security.Claims
+@using CvPlatform.Data.Entities
+@using CvPlatform.Data.Enums
+@using CvPlatform.Hubs
+@using CvPlatform.Services
+@inject IDiscussionService DiscussionService
+@inject IPositionService PositionService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IStringLocalizer<SharedResource> Loc
+@inject NavigationManager Navigation
+
+<PageTitle>@Loc["Discussions_PageTitle"] - @Loc["App_Title"]</PageTitle>
+
+<div class="container-fluid px-4 py-3">
+    <!-- Top Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+                <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                    <i class="bi bi-broadcast me-1"></i> Real-Time SignalR
+                </span>
+                <span class="text-muted small">• Interactive Q&A</span>
+            </div>
+            <h2 class="fw-bold mb-0">@Loc["Discussions_PageTitle"]</h2>
+            <p class="text-muted small mb-0 mt-1">
+                @Loc["Discussions_PageSubtitle"]
+            </p>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge bg-success-subtle text-success border py-2 px-3">
+                <i class="bi bi-dot text-success me-1 fs-5 align-middle"></i> Live Channel Connected
+            </span>
+            <a href="positions" class="btn btn-outline-secondary btn-sm">
+                <i class="bi bi-briefcase me-1"></i> Browse Positions
+            </a>
+        </div>
+    </div>
+
+    <!-- 2-Column Split: Position Threads & Live Message Stream -->
+    <div class="row g-4">
+        <!-- Left: Openings Thread Selector -->
+        <div class="col-lg-4">
+            <div class="card border shadow-sm">
+                <div class="card-header bg-transparent py-3">
+                    <h6 class="fw-bold mb-2">@Loc["Discussions_PositionThreads"]</h6>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text bg-light border-end-0">
+                            <i class="bi bi-search text-muted"></i>
+                        </span>
+                        <input type="text" class="form-control border-start-0"
+                               placeholder="Filter position threads..."
+                               @bind="searchFilter" @bind:event="oninput" />
+                    </div>
+                </div>
+
+                <div class="list-group list-group-flush" style="max-height: 560px; overflow-y: auto;">
+                    @if (isLoadingPositions)
+                    {
+                        <div class="text-center py-4 text-muted small">
+                            <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+                            <div>Loading discussion channels...</div>
+                        </div>
+                    }
+                    else if (!filteredPositions.Any())
+                    {
+                        <div class="text-center py-4 text-muted small">
+                            No position openings found.
+                        </div>
+                    }
+                    else
+                    {
+                        @foreach (var pos in filteredPositions)
+                        {
+                            var isSelected = activePositionId == pos.Id;
+                            var msgCount = messageCounts.TryGetValue(pos.Id, out var count) ? count : 0;
+
+                            <button type="button" 
+                                    class="list-group-item list-group-item-action p-3 @(isSelected ? "bg-light border-primary" : "")"
+                                    @onclick="() => SelectPositionThread(pos.Id)">
+                                <div class="d-flex justify-content-between align-items-start mb-1">
+                                    <h6 class="fw-bold mb-0 @(isSelected ? "text-primary" : "text-body")">
+                                        @pos.Title
+                                    </h6>
+                                    <span class="badge @(msgCount > 0 ? "bg-primary-subtle text-primary border border-primary-subtle" : "bg-light text-muted border")" style="font-size: 0.7rem;">
+                                        @msgCount msgs
+                                    </span>
+                                </div>
+                                <div class="text-muted small mb-1">
+                                    <i class="bi bi-building me-1"></i> @pos.Company • @pos.Location
+                                </div>
+                                <div class="d-flex align-items-center gap-1">
+                                    <span class="badge bg-secondary-subtle text-secondary" style="font-size: 0.68rem;">
+                                        @pos.EmploymentType
+                                    </span>
+                                </div>
+                            </button>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Active Discussion Stream -->
+        <div class="col-lg-8">
+            <div class="card border shadow-sm h-100 d-flex flex-column" style="min-height: 600px;">
+                @if (activePosition == null)
+                {
+                    <div class="d-flex flex-column align-items-center justify-content-center flex-grow-1 p-5 text-center text-muted">
+                        <i class="bi bi-chat-square-dots fs-1 mb-3 text-secondary"></i>
+                        <h5 class="fw-bold">Select a Discussion Channel</h5>
+                        <p class="small mb-0">Choose an opening from the left pane to join the live Q&A thread.</p>
+                    </div>
+                }
+                else
+                {
+                    <!-- Thread Header -->
+                    <div class="card-header bg-light border-bottom p-3 d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="d-flex align-items-center gap-2">
+                                <h5 class="fw-bold mb-0">@activePosition.Title</h5>
+                                <span class="badge bg-secondary-subtle text-secondary small">
+                                    @activePosition.Company
+                                </span>
+                            </div>
+                            <span class="text-muted small">
+                                Recruiter / Hiring Contact: <strong>@(activePosition.Recruiter?.FullName ?? "Hiring Lead")</strong>
+                            </span>
+                        </div>
+                        <a href="positions/@activePosition.Id" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-box-arrow-up-right me-1"></i> Opening Spec
+                        </a>
+                    </div>
+
+                    <!-- Messages Stream Container -->
+                    <div class="card-body p-4 flex-grow-1" style="overflow-y: auto; max-height: 440px; background-color: var(--app-surface-subtle);">
+                        @if (isLoadingMessages)
+                        {
+                            <div class="text-center py-4 text-muted small">
+                                <div class="spinner-border spinner-border-sm text-primary mb-2" role="status"></div>
+                                <div>Loading discussion messages...</div>
+                            </div>
+                        }
+                        else if (!activeMessages.Any())
+                        {
+                            <div class="text-center py-5 text-muted">
+                                <i class="bi bi-chat-text fs-2 d-block mb-2 text-secondary"></i>
+                                <h6 class="fw-bold">No Questions Posted Yet</h6>
+                                <p class="small mb-0">Be the first to ask about this role, requirements, or the team culture!</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="d-flex flex-column gap-3">
+                                @foreach (var msg in activeMessages)
+                                {
+                                    var isMine = msg.UserId == currentUserId;
+                                    var isRecruiter = msg.AuthorRole.Contains("Recruiter", StringComparison.OrdinalIgnoreCase);
+
+                                    <div class="d-flex gap-2 @(isMine ? "justify-content-end" : "justify-content-start")">
+                                        @if (!isMine)
+                                        {
+                                            <div class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center fw-bold small border" style="width: 38px; height: 38px; min-width: 38px;">
+                                                @GetInitials(msg.AuthorName)
+                                            </div>
+                                        }
+
+                                        <div class="card border shadow-sm p-3" style="max-width: 75%; background-color: @(isMine ? "var(--app-surface)" : (isRecruiter ? "rgba(37,99,235,0.04)" : "var(--app-surface)")); border-left: @(isRecruiter ? "3px solid var(--app-primary) !important" : "");">
+                                            <div class="d-flex align-items-center justify-content-between gap-2 mb-1">
+                                                <div class="d-flex align-items-center gap-2">
+                                                    <span class="fw-bold small">@msg.AuthorName</span>
+                                                    <span class="badge @(isRecruiter ? "bg-primary-subtle text-primary border border-primary-subtle" : (isMine ? "bg-success-subtle text-success" : "bg-light text-muted border"))" style="font-size: 0.65rem;">
+                                                        @(isRecruiter ? "Recruiter" : (isMine ? "You" : "Candidate"))
+                                                    </span>
+                                                </div>
+                                                <span class="text-muted" style="font-size: 0.7rem;">
+                                                    @msg.SentAt.ToString("MMM dd, h:mm tt")
+                                                </span>
+                                            </div>
+                                            <p class="mb-0 text-body small" style="white-space: pre-wrap; word-break: break-word;">
+                                                @msg.Message
+                                            </p>
+                                        </div>
+
+                                        @if (isMine)
+                                        {
+                                            <div class="rounded-circle bg-success-subtle text-success d-flex align-items-center justify-content-center fw-bold small border" style="width: 38px; height: 38px; min-width: 38px;">
+                                                @GetInitials(msg.AuthorName)
+                                            </div>
+                                        }
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <!-- Message Input Bar -->
+                    <div class="card-footer bg-light border-top p-3">
+                        <div class="input-group">
+                            <input type="text" class="form-control"
+                                   placeholder="@Loc["Discussions_InputPlaceholder"]"
+                                   maxlength="500"
+                                   @bind="newMessageText"
+                                   @bind:event="oninput"
+                                   @onkeydown="HandleKeyDown" />
+                            <button type="button" class="btn btn-primary"
+                                    disabled="@(string.IsNullOrWhiteSpace(newMessageText) || isSending)"
+                                    @onclick="SendMessageAsync">
+                                @if (isSending)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-1" role="status"></span>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-send-fill me-1"></i>
+                                }
+                                @Loc["Discussions_BtnSend"]
+                            </button>
+                        </div>
+                        <div class="d-flex justify-content-between text-muted mt-1 px-1" style="font-size: 0.72rem;">
+                            <span>Press <kbd class="bg-light text-muted border">Enter</kbd> to send question</span>
+                            <span>@(newMessageText.Length)/500 characters</span>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public int? PositionId { get; set; }
+
+    private bool isLoadingPositions = true;
+    private bool isLoadingMessages = false;
+    private bool isSending = false;
+
+    private List<Position> positionsList = new();
+    private Dictionary<int, int> messageCounts = new();
+    private string searchFilter = "";
+
+    private int? activePositionId;
+    private Position? activePosition;
+    private List<DiscussionMessageDto> activeMessages = new();
+    private string newMessageText = "";
+
+    private string currentUserId = "";
+    private string currentUserName = "User";
+    private string currentUserRole = "Candidate";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        if (user.Identity?.IsAuthenticated == true)
+        {
+            currentUserId = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "demo-user";
+            currentUserName = user.FindFirst(ClaimTypes.Name)?.Value ?? (user.Identity.Name?.Split('@')[0] ?? "User");
+            currentUserRole = user.IsInRole(ApplicationRole.Recruiter) ? "Recruiter" :
+                              user.IsInRole(ApplicationRole.Administrator) ? "Administrator" : "Candidate";
+        }
+
+        await LoadPositionsAsync();
+
+        if (PositionId.HasValue && PositionId.Value > 0)
+        {
+            await SelectPositionThread(PositionId.Value);
+        }
+        else if (positionsList.Any())
+        {
+            await SelectPositionThread(positionsList.First().Id);
+        }
+    }
+
+    private async Task LoadPositionsAsync()
+    {
+        isLoadingPositions = true;
+        try
+        {
+            positionsList = await PositionService.GetPositionsAsync();
+            messageCounts = await DiscussionService.GetMessageCountsForPositionsAsync();
+        }
+        finally
+        {
+            isLoadingPositions = false;
+        }
+    }
+
+    private IEnumerable<Position> filteredPositions => positionsList
+        .Where(p => string.IsNullOrWhiteSpace(searchFilter) ||
+                    p.Title.Contains(searchFilter, StringComparison.OrdinalIgnoreCase) ||
+                    p.Company.Contains(searchFilter, StringComparison.OrdinalIgnoreCase));
+
+    private async Task SelectPositionThread(int positionId)
+    {
+        activePositionId = positionId;
+        activePosition = positionsList.FirstOrDefault(p => p.Id == positionId);
+        isLoadingMessages = true;
+        try
+        {
+            activeMessages = await DiscussionService.GetMessagesAsync(positionId);
+        }
+        finally
+        {
+            isLoadingMessages = false;
+        }
+    }
+
+    private async Task HandleKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter" && !e.ShiftKey && !string.IsNullOrWhiteSpace(newMessageText) && !isSending)
+        {
+            await SendMessageAsync();
+        }
+    }
+
+    private async Task SendMessageAsync()
+    {
+        if (string.IsNullOrWhiteSpace(newMessageText) || !activePositionId.HasValue || isSending) return;
+
+        isSending = true;
+        try
+        {
+            var text = newMessageText.Trim();
+            newMessageText = "";
+
+            var dto = await DiscussionService.PostMessageAsync(
+                activePositionId.Value,
+                currentUserId,
+                currentUserName,
+                currentUserRole,
+                text);
+
+            activeMessages.Add(dto);
+            messageCounts[activePositionId.Value] = activeMessages.Count;
+        }
+        finally
+        {
+            isSending = false;
+        }
+    }
+
+    private string GetInitials(string? fullName)
+    {
+        if (string.IsNullOrWhiteSpace(fullName)) return "QA";
+        var parts = fullName.Trim().Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length == 1) return parts[0][0].ToString().ToUpper();
+        return $"{parts[0][0]}{parts[^1][0]}".ToUpper();
+    }
+}
