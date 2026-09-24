@@ -1,18 +1,30 @@
 using System.Net.Sockets;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 
 namespace CvPlatform.Data;
 
 /// <summary>
-/// Fast, non-blocking database reachability detector.
-/// Uses a short-timeout TCP probe and caching to prevent 15-30 second socket timeouts
-/// when PostgreSQL is not running locally.
+/// Fast, non-blocking database reachability detector supporting both local and cloud databases.
+/// Dynamically extracts host/port from the active connection string, supports DNS resolution,
+/// and uses adaptive timeouts (short for localhost, cloud-friendly for remote hosts).
 /// </summary>
 public static class DatabaseAvailability
 {
+    private static string? _connectionString;
     private static bool? _isAvailable;
     private static DateTime _lastChecked = DateTime.MinValue;
     private static readonly object _lock = new();
+
+    public static void SetConnectionString(string? connStr)
+    {
+        _connectionString = connStr;
+        lock (_lock)
+        {
+            _isAvailable = null;
+            _lastChecked = DateTime.MinValue;
+        }
+    }
 
     public static async Task<bool> IsAvailableAsync(DbContext? context = null)
     {
@@ -25,57 +37,73 @@ public static class DatabaseAvailability
             }
         }
 
-        return await Task.Run(async () =>
+        try
         {
-            try
+            var connStr = _connectionString ?? context?.Database.GetConnectionString();
+            string host = "127.0.0.1";
+            int port = 5432;
+
+            if (!string.IsNullOrWhiteSpace(connStr))
             {
-                // 1. Ultra-fast TCP socket probe to 127.0.0.1:5432 (150ms max)
-                using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                var ar = socket.BeginConnect("127.0.0.1", 5432, null, null);
-                bool connected = ar.AsyncWaitHandle.WaitOne(150, true);
-
-                if (!connected || !socket.Connected)
+                try
                 {
-                    lock (_lock)
+                    var builder = new NpgsqlConnectionStringBuilder(connStr);
+                    if (!string.IsNullOrWhiteSpace(builder.Host))
                     {
-                        _isAvailable = false;
-                        _lastChecked = DateTime.UtcNow;
+                        host = builder.Host;
                     }
-                    return false;
-                }
-
-                socket.EndConnect(ar);
-
-                // 2. If TCP succeeded and context provided, verify EF Core connection with short cancellation
-                if (context != null)
-                {
-                    using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(400));
-                    var canConnect = await context.Database.CanConnectAsync(cts.Token);
-                    lock (_lock)
+                    if (builder.Port > 0)
                     {
-                        _isAvailable = canConnect;
-                        _lastChecked = DateTime.UtcNow;
+                        port = builder.Port;
                     }
-                    return canConnect;
                 }
-
-                lock (_lock)
+                catch
                 {
-                    _isAvailable = true;
-                    _lastChecked = DateTime.UtcNow;
+                    // Fall back to default host/port if unparseable
                 }
-                return true;
             }
-            catch
+
+            bool isLocal = host == "127.0.0.1" || host == "localhost" || host == "::1";
+            int timeoutMs = isLocal ? 200 : 3500;
+
+            // 1. Fast DNS and TCP handshake
+            using var tcpClient = new TcpClient();
+            using var cts = new CancellationTokenSource(timeoutMs);
+            await tcpClient.ConnectAsync(host, port, cts.Token);
+
+            if (!tcpClient.Connected)
             {
-                lock (_lock)
-                {
-                    _isAvailable = false;
-                    _lastChecked = DateTime.UtcNow;
-                }
+                SetResult(false);
                 return false;
             }
-        });
+
+            // 2. If EF Core DbContext is provided, test authentication & database access
+            if (context != null)
+            {
+                int efTimeoutMs = isLocal ? 400 : 4000;
+                using var efCts = new CancellationTokenSource(efTimeoutMs);
+                var canConnect = await context.Database.CanConnectAsync(efCts.Token);
+                SetResult(canConnect);
+                return canConnect;
+            }
+
+            SetResult(true);
+            return true;
+        }
+        catch
+        {
+            SetResult(false);
+            return false;
+        }
+    }
+
+    private static void SetResult(bool available)
+    {
+        lock (_lock)
+        {
+            _isAvailable = available;
+            _lastChecked = DateTime.UtcNow;
+        }
     }
 
     /// <summary>

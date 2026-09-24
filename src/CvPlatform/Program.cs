@@ -24,6 +24,7 @@ var rawConn = builder.Configuration["DATABASE_URL"]
     ?? "Host=127.0.0.1;Port=5432;Database=cv_platform_db;Username=postgres;Password=postgres;Timeout=2;Command Timeout=3";
 
 var connectionString = ResolveConnectionString(rawConn);
+DatabaseAvailability.SetConnectionString(connectionString);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(connectionString));
