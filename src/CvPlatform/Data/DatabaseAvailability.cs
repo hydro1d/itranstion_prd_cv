@@ -25,15 +25,48 @@ public static class DatabaseAvailability
             }
         }
 
-        try
+        return await Task.Run(async () =>
         {
-            // 1. Ultra-fast TCP probe to 127.0.0.1:5432 (max 300ms)
-            using var tcpClient = new TcpClient();
-            var connectTask = tcpClient.ConnectAsync("127.0.0.1", 5432);
-            var timeoutTask = Task.Delay(300);
+            try
+            {
+                // 1. Ultra-fast TCP socket probe to 127.0.0.1:5432 (150ms max)
+                using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                var ar = socket.BeginConnect("127.0.0.1", 5432, null, null);
+                bool connected = ar.AsyncWaitHandle.WaitOne(150, true);
 
-            var completedTask = await Task.WhenAny(connectTask, timeoutTask);
-            if (completedTask != connectTask || !tcpClient.Connected)
+                if (!connected || !socket.Connected)
+                {
+                    lock (_lock)
+                    {
+                        _isAvailable = false;
+                        _lastChecked = DateTime.UtcNow;
+                    }
+                    return false;
+                }
+
+                socket.EndConnect(ar);
+
+                // 2. If TCP succeeded and context provided, verify EF Core connection with short cancellation
+                if (context != null)
+                {
+                    using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(400));
+                    var canConnect = await context.Database.CanConnectAsync(cts.Token);
+                    lock (_lock)
+                    {
+                        _isAvailable = canConnect;
+                        _lastChecked = DateTime.UtcNow;
+                    }
+                    return canConnect;
+                }
+
+                lock (_lock)
+                {
+                    _isAvailable = true;
+                    _lastChecked = DateTime.UtcNow;
+                }
+                return true;
+            }
+            catch
             {
                 lock (_lock)
                 {
@@ -42,36 +75,7 @@ public static class DatabaseAvailability
                 }
                 return false;
             }
-
-            // 2. If TCP succeeded and context provided, verify EF Core connection with short cancellation
-            if (context != null)
-            {
-                using var cts = new CancellationTokenSource(TimeSpan.FromMilliseconds(400));
-                var canConnect = await context.Database.CanConnectAsync(cts.Token);
-                lock (_lock)
-                {
-                    _isAvailable = canConnect;
-                    _lastChecked = DateTime.UtcNow;
-                }
-                return canConnect;
-            }
-
-            lock (_lock)
-            {
-                _isAvailable = true;
-                _lastChecked = DateTime.UtcNow;
-            }
-            return true;
-        }
-        catch
-        {
-            lock (_lock)
-            {
-                _isAvailable = false;
-                _lastChecked = DateTime.UtcNow;
-            }
-            return false;
-        }
+        });
     }
 
     /// <summary>

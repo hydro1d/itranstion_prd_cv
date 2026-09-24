@@ -559,6 +559,15 @@ public class AttributeService : IAttributeService
         }).ToList()
     };
 
+    public static List<CvAttribute> GetFallbackAttributesStatic()
+    {
+        lock (_lock)
+        {
+            EnsureFallbackSeeded();
+            return _fallbackAttributes.Select(CloneAttribute).ToList();
+        }
+    }
+
     private static void EnsureFallbackSeeded()
     {
         lock (_lock)

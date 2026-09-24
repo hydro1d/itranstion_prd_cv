@@ -215,9 +215,9 @@ public class PositionService : IPositionService
             }
         }
 
+        var allAttributes = await _attributeService.GetAttributesAsync();
         lock (_lock)
         {
-            var allAttributes = _attributeService.GetAttributesAsync().GetAwaiter().GetResult();
 
             if (position.Id == 0)
             {
@@ -463,7 +463,7 @@ public class PositionService : IPositionService
         {
             if (_fallbackInitialized) return;
 
-            var allAttributes = _attributeService.GetAttributesAsync().GetAwaiter().GetResult();
+            var allAttributes = AttributeService.GetFallbackAttributesStatic();
 
             // Opening 1: Senior .NET Core Cloud Architect
             var p1 = new Position
