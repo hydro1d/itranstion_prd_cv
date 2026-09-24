@@ -35,7 +35,7 @@
                             @Loc["Auth_CredentialSignIn"]
                         </h5>
 
-                        <form method="post" action="/account/login">
+                        <form method="post" action="/api/account/login">
                             <input type="hidden" name="returnUrl" value="@returnUrl" />
 
                             <div class="mb-3">
@@ -73,15 +73,15 @@
                             </span>
                         </div>
 
-                        <!-- Social Login Fast-Track (Mocked for evaluation) -->
+                        <!-- Social Login Fast-Track (Google & GitHub external authentication simulation) -->
                         <div class="row g-2 mt-2">
                             <div class="col-6">
-                                <a href="/account/external-login?provider=github" class="btn btn-outline-custom w-100">
+                                <a href="/api/account/external-login?provider=github" target="_top" rel="external" class="btn btn-outline-custom w-100">
                                     <i class="bi bi-github me-1"></i> <span>GitHub</span>
                                 </a>
                             </div>
                             <div class="col-6">
-                                <a href="/account/external-login?provider=google" class="btn btn-outline-custom w-100">
+                                <a href="/api/account/external-login?provider=google" target="_top" rel="external" class="btn btn-outline-custom w-100">
                                     <i class="bi bi-google me-1"></i> <span>Google</span>
                                 </a>
                             </div>
@@ -89,7 +89,7 @@
 
                         <div class="text-center mt-3 pt-3 border-top">
                             <span class="text-muted small">@Loc["Auth_NoAccountPrompt"]</span>
-                            <a href="account/register" class="fw-semibold small text-primary ms-1">@Loc["Btn_Register"]</a>
+                            <a href="/account/register" class="fw-semibold small text-primary ms-1">@Loc["Btn_Register"]</a>
                         </div>
                     </div>
                 </div>
@@ -110,12 +110,12 @@
 
                         <div class="d-flex flex-column gap-2">
                             <!-- 1. Administrator -->
-                            <form method="post" action="/account/demo-login">
+                            <form method="post" action="/api/account/demo-login">
                                 <input type="hidden" name="role" value="admin" />
                                 <button type="submit" class="btn btn-outline-custom role-demo-btn w-100 text-start d-flex align-items-center justify-content-between">
                                     <div>
                                         <div class="fw-semibold small text-body">
-                                            <i class="bi bi-shield-check text-danger me-1"></i>
+                                             <i class="bi bi-shield-check text-danger me-1"></i>
                                             @Loc["Role_Administrator"]
                                         </div>
                                         <div class="text-muted" style="font-size: 0.75rem;">admin@cvplatform.com</div>
@@ -125,7 +125,7 @@
                             </form>
 
                             <!-- 2. Recruiter -->
-                            <form method="post" action="/account/demo-login">
+                            <form method="post" action="/api/account/demo-login">
                                 <input type="hidden" name="role" value="recruiter" />
                                 <button type="submit" class="btn btn-outline-custom role-demo-btn w-100 text-start d-flex align-items-center justify-content-between">
                                     <div>
@@ -140,7 +140,7 @@
                             </form>
 
                             <!-- 3. Candidate -->
-                            <form method="post" action="/account/demo-login">
+                            <form method="post" action="/api/account/demo-login">
                                 <input type="hidden" name="role" value="candidate" />
                                 <button type="submit" class="btn btn-outline-custom role-demo-btn w-100 text-start d-flex align-items-center justify-content-between">
                                     <div>

@@ -159,6 +159,7 @@
   <data name="Auth_ErrorDemoNotSeeded" xml:space="preserve"><value>Demo accounts have not yet been seeded in the database.</value></data>
   <data name="Auth_ErrorGeneric" xml:space="preserve"><value>An error occurred during authentication. Please try again.</value></data>
   <data name="Auth_ErrorDatabaseOffline" xml:space="preserve"><value>Database is currently unreachable (127.0.0.1:5432). Please ensure PostgreSQL is running, or use the One-Click Evaluation Demo buttons on the right.</value></data>
+  <data name="Auth_ErrorPasswordTooShort" xml:space="preserve"><value>Password must be at least 6 characters long.</value></data>
 
   <!-- Reusable Attribute Library (Killer Feature #1) -->
   <data name="Attr_LibraryTitle" xml:space="preserve"><value>Reusable Attribute Library</value></data>

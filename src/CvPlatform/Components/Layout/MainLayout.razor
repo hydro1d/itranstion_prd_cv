@@ -55,7 +55,7 @@
                             <div class="avatar-circle" title="@(context.User.Identity?.Name ?? "User")">
                                 @GetInitials(context.User.Identity?.Name)
                             </div>
-                            <form action="/account/logout" method="post" class="m-0">
+                            <form action="/api/account/logout" method="post" class="m-0">
                                 <button type="submit" class="btn btn-outline-danger btn-sm p-1 px-2 d-inline-flex align-items-center justify-content-center" title="@Loc["Btn_SignOut"]">
                                     <i class="bi bi-box-arrow-right"></i>
                                 </button>
@@ -64,11 +64,11 @@
                     </Authorized>
                     <NotAuthorized>
                         <div class="d-flex align-items-center gap-2 ms-2 border-start ps-3">
-                            <a href="account/login" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1.5">
+                            <a href="/account/login" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1.5">
                                 <i class="bi bi-box-arrow-in-right"></i>
                                 <span>@Loc["Btn_SignIn"]</span>
                             </a>
-                            <a href="account/register" class="btn btn-outline-custom btn-sm d-none d-md-inline-flex align-items-center gap-1.5">
+                            <a href="/account/register" class="btn btn-outline-custom btn-sm d-none d-md-inline-flex align-items-center gap-1.5">
                                 <i class="bi bi-person-plus"></i>
                                 <span>@Loc["Btn_Register"]</span>
                             </a>

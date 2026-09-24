@@ -159,6 +159,7 @@
   <data name="Auth_ErrorDemoNotSeeded" xml:space="preserve"><value>ডেমো অ্যাকাউন্ট এখনো ডেটাবেজে যুক্ত হয়নি।</value></data>
   <data name="Auth_ErrorGeneric" xml:space="preserve"><value>লগইনে একটি সমস্যা হয়েছে। আবার চেষ্টা করুন।</value></data>
   <data name="Auth_ErrorDatabaseOffline" xml:space="preserve"><value>ডেটাবেজ সক্রিয় নেই (127.0.0.1:5432)। পোস্টগ্রেস চালান অথবা ডানের ডেমো লগইন ব্যবহার করুন।</value></data>
+  <data name="Auth_ErrorPasswordTooShort" xml:space="preserve"><value>পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।</value></data>
 
   <!-- Reusable Attribute Library (Killer Feature #1) -->
   <data name="Attr_LibraryTitle" xml:space="preserve"><value>পুনর্ব্যবহারযোগ্য অ্যাট্রিবিউট লাইব্রেরি</value></data>

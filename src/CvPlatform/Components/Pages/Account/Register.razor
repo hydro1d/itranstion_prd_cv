@@ -26,7 +26,7 @@
                     </div>
                 }
 
-                <form method="post" action="/account/register">
+                <form method="post" action="/api/account/register">
                     <div class="mb-3">
                         <label class="form-label small fw-semibold" for="regFullName">@Loc["Auth_FullNameLabel"]</label>
                         <div class="input-group">
@@ -100,7 +100,7 @@
 
                 <div class="text-center mt-3 pt-3 border-top">
                     <span class="text-muted small">@Loc["Auth_AlreadyHaveAccountPrompt"]</span>
-                    <a href="account/login" class="fw-semibold small text-primary ms-1">@Loc["Btn_SignIn"]</a>
+                    <a href="/account/login" class="fw-semibold small text-primary ms-1">@Loc["Btn_SignIn"]</a>
                 </div>
             </div>
         </div>
@@ -115,7 +115,9 @@
     {
         "MissingFields" => Loc["Auth_ErrorMissingFields"],
         "PasswordMismatch" => Loc["Auth_ErrorPasswordMismatch"],
+        "PasswordTooShort" => Loc["Auth_ErrorPasswordTooShort"],
         "EmailTaken" => Loc["Auth_ErrorEmailTaken"],
+        "DatabaseOffline" => Loc["Auth_ErrorDatabaseOffline"],
         _ => errorCode
     };
 }
